@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8' ?>
+<resources>
+    <string name="app_name">Mate y Fuego</string>
+    <string name="title_activity_main">Mate y Fuego</string>
+    <string name="package_name">app.mateyfuego</string>
+    <string name="custom_url_scheme">app.mateyfuego</string>
+</resources>

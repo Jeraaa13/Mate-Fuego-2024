@@ -1,0 +1,38 @@
+.splash-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  height: 100vh;
+  background-color: #000; /* Color de fondo */
+  color: #fff; /* Color del texto */
+  padding: 20px;
+}
+
+.splash-name {
+  font-size: 2rem;
+  margin-top: 20px;
+}
+
+.splash-division {
+  font-size: 1.5rem;
+  margin-bottom: 20px;
+}
+
+.splash-spinner {
+  width: 50px;
+  height: 50px;
+  border: 5px solid rgba(255, 255, 255, 0.2);
+  border-top: 5px solid #ffffff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}

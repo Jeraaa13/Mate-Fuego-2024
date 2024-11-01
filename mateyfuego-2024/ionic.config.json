@@ -1,0 +1,7 @@
+{
+  "name": "Mate y Fuego",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular-standalone"
+}
