@@ -10,7 +10,7 @@
 
 ## Primer Sprint
 
-## PRELIMINAR FECHA INICIO: 26-10-2024 / FECHA FINAL: 2-11-2024
+## PRELIMINAR FECHA INICIO: 26-10-2024 / FECHA FINAL: 9-11-2024
 
 ✔ Alta empleados - Quimey Rojo
 ✔ Alta dueño / supervisor - Quimey Rojo
@@ -22,5 +22,3 @@
 ✔ QR de ingreso al local - Gerardo Toranzo
 ✔ QR de la mesa - Juan Manuel Portela
 ✔ QR de propina - Quimey Rojo
-
-## Segundo sprint
