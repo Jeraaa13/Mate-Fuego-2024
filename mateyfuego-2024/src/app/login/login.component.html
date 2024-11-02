@@ -15,7 +15,7 @@
           <ion-input
             formControlName="email"
             type="email"
-            placeholder="Email"
+            placeholder="Correo"
             required
           ></ion-input>
         </div>
@@ -24,10 +24,10 @@
           *ngIf="email?.invalid && (email?.dirty || email?.touched)"
         >
           <p class="error-message" *ngIf="email?.errors?.['required']">
-            Email es requerido
+            Correo es requerido
           </p>
           <p class="error-message" *ngIf="email?.errors?.['email']">
-            Email inválido
+            Correo inválido
           </p>
         </ion-text>
 
