@@ -1,0 +1,34 @@
+<div class="registro-container">
+  <h1>Alta de Empleados</h1>
+
+  <form>
+    <label for="nombre">Nombre:</label>
+    <input type="text" [(ngModel)]="nuevoEmpleado.nombre" name="nombre" id="nombre" required>
+
+    <label for="apellido">Apellido:</label>
+    <input type="text" [(ngModel)]="nuevoEmpleado.apellido" name="apellido" id="apellido" required>
+
+    <label for="dni">DNI:</label>
+    <input type="text" [(ngModel)]="nuevoEmpleado.dni" name="dni" id="dni" required>
+
+    <label for="cuil">CUIL:</label>
+    <input type="text" [(ngModel)]="nuevoEmpleado.cuil" name="cuil" id="cuil" required>
+
+    <label for="tipoEmpleado">Tipo de Empleado:</label>
+    <select [(ngModel)]="nuevoEmpleado.tipoPerfil" name="tipoEmpleado" id="tipoEmpleado" required>
+      <option value="Maitre">Maitre</option>
+      <option value="Mozo">Mozo</option>
+      <option value="Cocinero">Cocinero</option>
+      <option value="Bartender">Bartender</option>
+    </select>
+
+    <label for="foto">Foto:</label>
+    <button type="button" (click)="takePhoto()">Subir Foto</button>
+    <img *ngIf="nuevoEmpleado.fotoUrl" [src]="nuevoEmpleado.fotoUrl" class="foto-preview" alt="Vista previa de la foto">
+
+    <button type="button" (click)="toggleScanner()">Leer QR del DNI</button>
+    <zxing-scanner *ngIf="isScannerVisible" [formats]="allowedFormats" (scanSuccess)="handleQrCodeResult($event)"></zxing-scanner>
+
+    <button type="button" (click)="guardarEmpleado()">Guardar Empleado</button>
+  </form>
+</div>

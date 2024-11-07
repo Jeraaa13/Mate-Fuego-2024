@@ -22,5 +22,9 @@ export const routes: Routes = [
   {
     path : 'alta-dueno-supervisor', loadComponent: () => 
       import('./registros/registro-dueno-supervisor/registro-dueno-supervisor.component').then((m) => m.RegistroDuenoSupervisorComponent)
+  },
+  {
+    path : 'alta-empleados', loadComponent: () => 
+      import('./registros/alta-empleados/alta-empleados.component').then((m) => m.AltaEmpleadosComponent)
   }
 ];
