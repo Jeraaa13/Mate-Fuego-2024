@@ -1,0 +1,29 @@
+<ion-content class="ion-padding">
+  <h2>Generar QR de Propina</h2>
+
+  <ion-list>
+    <ion-radio-group [(ngModel)]="selectedPercentage">
+      <ion-list-header>
+        <ion-label>Nivel de Satisfacción</ion-label>
+      </ion-list-header>
+
+      <ion-item *ngFor="let level of satisfactionLevels">
+        <ion-label>{{ level.label }} - {{ level.percentage }}%</ion-label>
+        <ion-radio slot="start" [value]="level.percentage"></ion-radio>
+      </ion-item>
+    </ion-radio-group>
+  </ion-list>
+
+
+  <ion-button expand="block" (click)="generateQrCode()">
+    Generar QR
+  </ion-button>
+
+  <div #qrCodeElement *ngIf="qrData" class="qr-preview">
+    <qrcode [qrdata]="qrData" [width]="200" [errorCorrectionLevel]="'M'"></qrcode>
+  </div>
+
+  <ion-button expand="block" color="success" (click)="saveQrImageToStorage()">
+    Guardar Imagen QR
+  </ion-button>
+</ion-content>
