@@ -1,14 +1,4 @@
-/*
- * App Global CSS
- * ----------------------------------------------------------------------------
- * Put style rules here that you want to apply globally. These styles are for
- * the entire app and not just one component. Additionally, this file can be
- * used as an entry point to import other CSS/Sass files to be included in the
- * output CSS.
- * For more information on global stylesheets, visit the documentation:
- * https://ionicframework.com/docs/layout/global-stylesheets
- */
-/* Core CSS required for Ionic components to work properly */
+
 @import "@ionic/angular/css/core.css";
 /* Basic CSS for apps built with Ionic */
 @import "@ionic/angular/css/normalize.css";
@@ -21,6 +11,8 @@
 @import "@ionic/angular/css/text-alignment.css";
 @import "@ionic/angular/css/text-transformation.css";
 @import "@ionic/angular/css/flex-utils.css";
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+
 /**
  * Ionic Dark Mode
  * -----------------------------------------------------
@@ -48,3 +40,118 @@
   height: 100%; /* Limita la altura */
   object-fit: cover;
 }
+
+
+
+:root {
+  --ion-color-primary: #d2691e;
+  --ion-color-primary-rgb: 210, 105, 30;
+  --ion-color-primary-contrast: #ffffff;
+  --ion-color-primary-contrast-rgb: 255, 255, 255;
+  --ion-color-primary-shade: #bb5d1a;
+  --ion-color-primary-tint: #d87a34;
+
+  --ion-color-secondary: #ffa500;
+  --ion-color-secondary-rgb: 255, 165, 0;
+  --ion-color-secondary-contrast: #000000;
+  --ion-color-secondary-contrast-rgb: 0, 0, 0;
+  --ion-color-secondary-shade: #e09100;
+  --ion-color-secondary-tint: #ffaf1a;
+
+  --ion-color-tertiary: #ff6347;
+  --ion-color-tertiary-rgb: 255, 99, 71;
+  --ion-color-tertiary-contrast: #000000;
+  --ion-color-tertiary-contrast-rgb: 0, 0, 0;
+  --ion-color-tertiary-shade: #e05b3e;
+  --ion-color-tertiary-tint: #ff7359;
+
+  --ion-color-success: #4caf50;
+  --ion-color-success-rgb: 76, 175, 80;
+  --ion-color-success-contrast: #000000;
+  --ion-color-success-contrast-rgb: 0, 0, 0;
+  --ion-color-success-shade: #439a46;
+  --ion-color-success-tint: #5eb762;
+
+  --ion-color-warning: #ffc107;
+  --ion-color-warning-rgb: 255, 193, 7;
+  --ion-color-warning-contrast: #000000;
+  --ion-color-warning-contrast-rgb: 0, 0, 0;
+  --ion-color-warning-shade: #e0ab08;
+  --ion-color-warning-tint: #ffca20;
+
+  --ion-color-danger: #f44336;
+  --ion-color-danger-rgb: 244, 67, 54;
+  --ion-color-danger-contrast: #ffffff;
+  --ion-color-danger-contrast-rgb: 255, 255, 255;
+  --ion-color-danger-shade: #d83b30;
+  --ion-color-danger-tint: #f5574c;
+
+  --ion-color-medium: #92949c;
+  --ion-color-medium-rgb: 146, 148, 156;
+  --ion-color-medium-contrast: #000000;
+  --ion-color-medium-contrast-rgb: 0, 0, 0;
+  --ion-color-medium-shade: #808289;
+  --ion-color-medium-tint: #9d9fa6;
+
+  --ion-color-light: #f4f5f8;
+  --ion-color-light-rgb: 244, 245, 248;
+  --ion-color-light-contrast: #000000;
+  --ion-color-light-contrast-rgb: 0, 0, 0;
+  --ion-color-light-shade: #d7d8da;
+  --ion-color-light-tint: #f5f6f9;
+
+  --ion-font-family: 'Roboto', sans-serif;
+}
+
+/* Common Styles */
+body {
+  background: linear-gradient(to bottom, #ffa500, #ff8c00, #ff6347);
+  font-family: var(--ion-font-family);
+}
+
+ion-content {
+  --background: transparent;
+}
+
+ion-card {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
+  border-radius: 12px;
+}
+
+ion-card-header {
+  background-color: var(--ion-color-primary);
+  color: var(--ion-color-primary-contrast);
+  padding: 20px;
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
+}
+
+ion-card-title {
+  font-size: 1.8rem;
+  font-weight: 600;
+  letter-spacing: 2px;
+}
+
+ion-card-content {
+  padding: 20px;
+  background-color: #fffaf0;
+}
+
+ion-button {
+  --background: var(--ion-color-primary);
+  --color: var(--ion-color-primary-contrast);
+  --border-radius: 6px;
+  --box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  font-size: 1.1rem;
+  font-weight: 500;
+  height: 50px;
+}
+
+ion-button:hover {
+  --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+ion-button:active {
+  --box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+}
+

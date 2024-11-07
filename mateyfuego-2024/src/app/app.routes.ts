@@ -15,4 +15,9 @@ export const routes: Routes = [
     redirectTo: 'login',
     pathMatch: 'full',
   },
+
+  {
+    path : 'registro', loadComponent: () => 
+      import('./paginas/registro/registro.component').then((m) => m.RegistroComponent)
+  }
 ];

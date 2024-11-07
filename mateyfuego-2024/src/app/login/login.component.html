@@ -15,7 +15,7 @@
           <ion-input
             formControlName="email"
             type="email"
-            placeholder="Correo"
+            placeholder="Email"
             required
           ></ion-input>
         </div>
@@ -24,10 +24,10 @@
           *ngIf="email?.invalid && (email?.dirty || email?.touched)"
         >
           <p class="error-message" *ngIf="email?.errors?.['required']">
-            Correo es requerido
+            Email es requerido
           </p>
           <p class="error-message" *ngIf="email?.errors?.['email']">
-            Correo inválido
+            Email inválido
           </p>
         </ion-text>
 
@@ -59,7 +59,11 @@
           <ion-icon name="arrow-forward-outline"></ion-icon>
         </ion-button>
       </form>
-
+      <ion-col size="6" size-md="4" class="ion-padding-bottom">
+        <ion-button expand="block" [routerLink]="['/registro']" class="ion-no-margin">
+          Registrarse
+        </ion-button>
+      </ion-col>
       <div class="quick-access">
         <p>Acceso rápido</p>
         <div class="quick-buttons">

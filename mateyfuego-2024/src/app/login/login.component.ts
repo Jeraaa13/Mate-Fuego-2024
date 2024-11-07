@@ -8,7 +8,7 @@ import {
 import { Auth } from '@angular/fire/auth';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { IonicModule } from '@ionic/angular';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -16,7 +16,7 @@ import { CommonModule } from '@angular/common';
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss'],
   standalone: true,
-  imports: [ReactiveFormsModule, IonicModule, CommonModule],
+  imports: [ReactiveFormsModule, IonicModule, CommonModule,RouterLink],
 })
 export class LoginComponent {
   loginForm: FormGroup;
