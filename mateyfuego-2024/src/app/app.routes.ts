@@ -16,15 +16,31 @@ export const routes: Routes = [
     pathMatch: 'full',
   },
   {
-    path : 'registro', loadComponent: () => 
-      import('./paginas/registro/registro.component').then((m) => m.RegistroComponent)
+    path: 'registro',
+    loadComponent: () =>
+      import('./paginas/registro/registro.component').then(
+        (m) => m.RegistroComponent
+      ),
   },
   {
-    path : 'alta-dueno-supervisor', loadComponent: () => 
-      import('./registros/registro-dueno-supervisor/registro-dueno-supervisor.component').then((m) => m.RegistroDuenoSupervisorComponent)
+    path: 'alta-dueno-supervisor',
+    loadComponent: () =>
+      import(
+        './registros/registro-dueno-supervisor/registro-dueno-supervisor.component'
+      ).then((m) => m.RegistroDuenoSupervisorComponent),
   },
   {
-    path : 'alta-empleados', loadComponent: () => 
-      import('./registros/alta-empleados/alta-empleados.component').then((m) => m.AltaEmpleadosComponent)
-  }
+    path: 'alta-empleados',
+    loadComponent: () =>
+      import('./registros/alta-empleados/alta-empleados.component').then(
+        (m) => m.AltaEmpleadosComponent
+      ),
+  },
+  {
+    path: 'alta-productos',
+    loadComponent: () =>
+      import(
+        './registros/registro-productos/registro-productos.component'
+      ).then((m) => m.RegistroProductosComponent),
+  },
 ];

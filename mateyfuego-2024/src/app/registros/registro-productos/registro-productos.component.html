@@ -1,0 +1,56 @@
+<div class="registro-container">
+  <h2>Registro de Productos</h2>
+  <label for="nombre">Nombre</label>
+  <input
+    id="nombre"
+    type="text"
+    [(ngModel)]="nuevoProducto.nombre"
+    placeholder="Nombre"
+  />
+  <label for="descripcion">Descripción</label>
+  <input
+    id="descripcion"
+    type="text"
+    [(ngModel)]="nuevoProducto.descripcion"
+    placeholder="Descripcion"
+  />
+  <label for="tiempoElaboracion">Tiempo de elaboración</label>
+  <input
+    id="tiempoElaboracion"
+    type="tiempoElaboracion"
+    [(ngModel)]="nuevoProducto.tiempoElaboracion"
+    placeholder="Tiempo de elaboración"
+  />
+  <label for="precio">Precio</label>
+  <input
+    id="precio"
+    type="number"
+    [(ngModel)]="nuevoProducto.precio"
+    placeholder="precio"
+  />
+  <button (click)="takePhoto()">Tomar Foto</button>
+  <div *ngIf="nuevoProducto.fotosUrl.length > 0">
+    <h3>Fotos Capturadas:</h3>
+    <div *ngFor="let foto of nuevoProducto.fotosUrl">
+      <img [src]="foto" alt="Foto del producto" class="foto-preview" />
+    </div>
+  </div>
+
+  <!-- Sección del QR -->
+  <button (click)="generateQRCode()">Generar QR</button>
+  <div *ngIf="showQR" class="qr-container">
+    <h3>Código QR del Producto</h3>
+    <qrcode [qrdata]="qrData" [width]="256" [errorCorrectionLevel]="'M'">
+    </qrcode>
+  </div>
+
+  <button (click)="toggleScanner()">Escanear QR del Producto</button>
+  <div *ngIf="isScannerVisible">
+    <zxing-scanner
+      [formats]="allowedFormats"
+      (scanSuccess)="handleQrCodeResult($event)"
+    ></zxing-scanner>
+  </div>
+
+  <button (click)="guardarProducto()">Guardar Producto</button>
+</div>

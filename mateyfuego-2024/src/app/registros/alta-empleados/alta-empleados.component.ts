@@ -1,7 +1,12 @@
 import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 import { Firestore, doc, getDoc, setDoc } from '@angular/fire/firestore';
-import { Storage, ref, uploadString, getDownloadURL } from '@angular/fire/storage';
+import {
+  Storage,
+  ref,
+  uploadString,
+  getDownloadURL,
+} from '@angular/fire/storage';
 import { ActionSheetController } from '@ionic/angular';
 import { BarcodeFormat } from '@zxing/library';
 import { ZXingScannerModule } from '@zxing/ngx-scanner';
@@ -58,7 +63,11 @@ export class AltaEmpleadosComponent {
       });
 
       if (photo.base64String) {
-        const photoUrl = await this.uploadPhoto(photo.base64String, 'empleados', `${this.nuevoEmpleado.dni}`);
+        const photoUrl = await this.uploadPhoto(
+          photo.base64String,
+          'empleados/',
+          `${this.nuevoEmpleado.dni}`
+        );
         this.nuevoEmpleado.fotoUrl = photoUrl;
         await this.guardarEmpleado();
       }
@@ -67,21 +76,34 @@ export class AltaEmpleadosComponent {
     }
   }
 
-  async uploadPhoto(base64String: string, folder: string, fileName: string): Promise<string> {
+  async uploadPhoto(
+    base64String: string,
+    folder: string,
+    fileName: string
+  ): Promise<string> {
     const photoRef = ref(this.storage, `imagenes/${folder}/${fileName}`);
-    await uploadString(photoRef, base64String, 'base64', { contentType: 'image/jpeg' });
+    await uploadString(photoRef, base64String, 'base64', {
+      contentType: 'image/jpeg',
+    });
     return getDownloadURL(photoRef);
   }
 
   async guardarEmpleado() {
     if (!this.nuevoEmpleado.fotoUrl) {
-      console.error("No hay foto cargada. Sube una foto antes de guardar.");
+      console.error('No hay foto cargada. Sube una foto antes de guardar.');
       return;
     }
 
-    const empleadoRef = doc(this.firestore, 'empleados', this.nuevoEmpleado.dni);
+    const empleadoRef = doc(
+      this.firestore,
+      'empleados',
+      this.nuevoEmpleado.dni
+    );
     await setDoc(empleadoRef, this.nuevoEmpleado);
-    console.log("Datos del empleado guardados en Firestore:", this.nuevoEmpleado);
+    console.log(
+      'Datos del empleado guardados en Firestore:',
+      this.nuevoEmpleado
+    );
     this.resetForm();
   }
 
@@ -119,19 +141,19 @@ export class AltaEmpleadosComponent {
         {
           text: 'Tomar foto',
           icon: 'camera',
-          handler: () => this.capturePhoto(CameraSource.Camera)
+          handler: () => this.capturePhoto(CameraSource.Camera),
         },
         {
           text: 'Elegir de galería',
           icon: 'image',
-          handler: () => this.capturePhoto(CameraSource.Photos)
+          handler: () => this.capturePhoto(CameraSource.Photos),
         },
         {
           text: 'Cancelar',
           icon: 'close',
-          role: 'cancel'
-        }
-      ]
+          role: 'cancel',
+        },
+      ],
     });
     await actionSheet.present();
   }
