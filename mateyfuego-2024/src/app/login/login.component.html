@@ -9,9 +9,7 @@
       <h1>Iniciar Sesión</h1>
       <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
         <div class="input-group">
-          <div class="input-icon">
-            <ion-icon name="person-outline"></ion-icon>
-          </div>
+          <div class="input-icon"></div>
           <ion-input
             formControlName="email"
             type="email"
@@ -32,9 +30,7 @@
         </ion-text>
 
         <div class="input-group">
-          <div class="input-icon">
-            <ion-icon name="lock-closed-outline"></ion-icon>
-          </div>
+          <div class="input-icon"></div>
           <ion-input
             formControlName="password"
             type="password"
@@ -56,24 +52,25 @@
 
         <ion-button expand="block" type="submit" class="login-button">
           <span>Ingresar</span>
-          <ion-icon name="arrow-forward-outline"></ion-icon>
         </ion-button>
       </form>
       <ion-col size="6" size-md="4" class="ion-padding-bottom">
-        <ion-button expand="block" [routerLink]="['/registro']" class="ion-no-margin">
+        <ion-button
+          expand="block"
+          [routerLink]="['/registro']"
+          class="ion-no-margin"
+        >
           Registrarse
         </ion-button>
       </ion-col>
       <div class="quick-access">
-        <p>Acceso rápido</p>
         <div class="quick-buttons">
           <button
             (click)="fillForm('dueño')"
             class="quick-button"
             data-type="owner"
           >
-            <ion-icon name="business-outline"></ion-icon>
-            <span>Dueño</span>
+            <img src="../../assets/accesos-rapidos/dueno.png" />
           </button>
 
           <button
@@ -81,8 +78,7 @@
             class="quick-button"
             data-type="supervisor"
           >
-            <ion-icon name="eye-outline"></ion-icon>
-            <span>Supervisor</span>
+            <img src="../../assets/accesos-rapidos/supervisor.png" />
           </button>
 
           <button
@@ -90,8 +86,7 @@
             class="quick-button"
             data-type="maitre"
           >
-            <ion-icon name="restaurant-outline"></ion-icon>
-            <span>Maître</span>
+            <img src="../../assets/accesos-rapidos/maitre.png" />
           </button>
 
           <button
@@ -99,8 +94,7 @@
             class="quick-button"
             data-type="mozo"
           >
-            <ion-icon name="wine-outline"></ion-icon>
-            <span>Mozo</span>
+            <img src="../../assets/accesos-rapidos/mozo.png" />
           </button>
 
           <button
@@ -108,8 +102,7 @@
             class="quick-button"
             data-type="cook"
           >
-            <ion-icon name="flame-outline"></ion-icon>
-            <span>Cocinero</span>
+            <img src="../../assets/accesos-rapidos/chef.png" />
           </button>
 
           <button
@@ -117,8 +110,7 @@
             class="quick-button"
             data-type="bartender"
           >
-            <ion-icon name="beer-outline"></ion-icon>
-            <span>Bartender</span>
+            <img src="../../assets/accesos-rapidos/bartender.png" />
           </button>
 
           <button
@@ -126,8 +118,7 @@
             class="quick-button"
             data-type="registered"
           >
-            <ion-icon name="person-circle-outline"></ion-icon>
-            <span>Registrado</span>
+            <img src="../../assets/accesos-rapidos/cliente.png" />
           </button>
 
           <button
@@ -135,8 +126,7 @@
             class="quick-button"
             data-type="anonymous"
           >
-            <ion-icon name="help-circle-outline"></ion-icon>
-            <span>Anónimo</span>
+            <img src="../../assets/accesos-rapidos/anonimo.png" />
           </button>
         </div>
       </div>

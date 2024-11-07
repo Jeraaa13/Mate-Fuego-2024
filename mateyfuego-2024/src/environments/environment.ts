@@ -1,10 +1,10 @@
 export const environment = {
-  firebase : {
-    apiKey: "AIzaSyC7jeJbtDWNY94TmgD2x28yf8teGTtvrb8",
-    authDomain: "myapp-279b9.firebaseapp.com",
-    projectId: "myapp-279b9",
-    storageBucket: "myapp-279b9.appspot.com",
-    messagingSenderId: "465452055145",
-    appId: "1:465452055145:web:6bd2f1e2bf31c2cacb80f8"
-  }
+  firebase: {
+    apiKey: 'AIzaSyCo3zhxB0JyjpNbW-Nle9b7AMnEERguShg',
+    authDomain: 'pps-pruebaapp-e74f7.firebaseapp.com',
+    projectId: 'pps-pruebaapp-e74f7',
+    storageBucket: 'pps-pruebaapp-e74f7.appspot.com',
+    messagingSenderId: '157564693983',
+    appId: '1:157564693983:web:d0dddb9bbfe163fdd1686a',
+  },
 };

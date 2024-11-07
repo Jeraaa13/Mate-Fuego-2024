@@ -7,21 +7,20 @@ import {
   signOut,
   User,
 } from '@angular/fire/auth';
-import { AngularFireAuth } from '@angular/fire/compat/auth'; // Asegúrate de tener esto importado
+import { AngularFireAuth } from '@angular/fire/compat/auth';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
-  private user: User | null = null; // Almacena el usuario actual
+  private user: User | null = null;
 
   constructor(private auth: Auth) {
     this.auth.onAuthStateChanged((user) => {
-      this.user = user; // Actualiza el usuario al cambiar el estado de autenticación
+      this.user = user;
     });
   }
 
-  // Método para obtener el usuario actual
   getCurrentUser(): User | null {
     return this.user;
   }
