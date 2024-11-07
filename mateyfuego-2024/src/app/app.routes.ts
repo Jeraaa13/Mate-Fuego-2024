@@ -15,9 +15,12 @@ export const routes: Routes = [
     redirectTo: 'login',
     pathMatch: 'full',
   },
-
   {
     path : 'registro', loadComponent: () => 
       import('./paginas/registro/registro.component').then((m) => m.RegistroComponent)
+  },
+  {
+    path : 'alta-dueno-supervisor', loadComponent: () => 
+      import('./registros/registro-dueno-supervisor/registro-dueno-supervisor.component').then((m) => m.RegistroDuenoSupervisorComponent)
   }
 ];

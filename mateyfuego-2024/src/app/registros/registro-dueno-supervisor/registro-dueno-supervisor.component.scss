@@ -1,0 +1,26 @@
+body {
+    overflow-y: auto;
+  }
+  
+  .registro-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    max-width: 400px;
+    margin: auto;
+    margin-top: 10px;
+    padding-bottom: 20px; 
+  }
+  
+  button {
+    width: 100%;
+    padding: 15px; 
+    font-size: 1.2em; 
+  }
+  
+  .foto-preview {
+    max-width: 80%;
+    height: 40px;
+    margin-top: 10px;
+  }
+  

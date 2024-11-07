@@ -1,0 +1,59 @@
+<div class="registro-container">
+  <h2>Registro de Dueño / Supervisor</h2>
+
+  <label for="nombre">Nombre</label>
+  <input
+    id="nombre"
+    type="text"
+    [(ngModel)]="nuevoDuenoSupervisor.nombre"
+    placeholder="Nombre"
+  />
+
+  <label for="apellido">Apellido</label>
+  <input
+    id="apellido"
+    type="text"
+    [(ngModel)]="nuevoDuenoSupervisor.apellido"
+    placeholder="Apellido"
+  />
+
+  <label for="dni">DNI</label>
+  <input
+    id="dni"
+    type="text"
+    [(ngModel)]="nuevoDuenoSupervisor.dni"
+    placeholder="DNI"
+  />
+
+  <label for="cuil">CUIL</label>
+  <input
+    id="cuil"
+    type="text"
+    [(ngModel)]="nuevoDuenoSupervisor.cuil"
+    placeholder="CUIL"
+  />
+
+  <label for="perfil">Perfil</label>
+  <select id="perfil" [(ngModel)]="nuevoDuenoSupervisor.tipoPerfil">
+    <option value="dueno">Dueño</option>
+    <option value="supervisor">Supervisor</option>
+  </select>
+
+  <button (click)="takePhoto()">Tomar Foto</button>
+
+  <div *ngIf="nuevoDuenoSupervisor.fotoUrl">
+    <h3>Foto Capturada:</h3>
+    <img [src]="nuevoDuenoSupervisor.fotoUrl" alt="Foto del usuario" class="foto-preview" />
+  </div>
+
+  <button (click)="toggleScanner()">Escanear QR del DNI</button>
+
+  <div *ngIf="isScannerVisible">
+    <zxing-scanner
+      [formats]="allowedFormats"
+      (scanSuccess)="handleQrCodeResult($event)"
+    ></zxing-scanner>
+  </div>
+  
+  <button (click)="guardarDuenoSupervisor()">Guardar Dueño / Supervisor</button>
+</div>

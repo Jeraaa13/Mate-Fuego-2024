@@ -21,7 +21,8 @@ import { environment } from './environments/environment';
 import { provideAuth, getAuth } from '@angular/fire/auth';
 import { provideFirestore, getFirestore } from '@angular/fire/firestore';
 import { FIREBASE_OPTIONS } from '@angular/fire/compat';
-
+import { Camera } from '@ionic-native/camera/ngx';
+import { getStorage, provideStorage } from '@angular/fire/storage';
 bootstrapApplication(AppComponent, {
   providers: [
     {
@@ -34,5 +35,7 @@ bootstrapApplication(AppComponent, {
     provideFirebaseApp(() => initializeApp(environment.firebase)),
     provideAuth(() => getAuth()),
     provideFirestore(() => getFirestore()),
+    provideStorage(() => getStorage()),
+    Camera
   ],
 });

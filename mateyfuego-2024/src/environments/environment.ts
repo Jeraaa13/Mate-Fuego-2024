@@ -1,11 +1,10 @@
 export const environment = {
-  production: false,
-  firebase: {
-    apiKey: 'AIzaSyDOGk-vyB0-vyH0c79pr_TmO4KS-1sGixI',
-    authDomain: 'mate-y-fuego.firebaseapp.com',
-    projectId: 'mate-y-fuego',
-    storageBucket: 'mate-y-fuego.firebasestorage.app',
-    messagingSenderId: '638920999873',
-    appId: '1:638920999873:web:d8fa5c51b3908f41fee540',
-  },
+  firebase : {
+    apiKey: "AIzaSyC7jeJbtDWNY94TmgD2x28yf8teGTtvrb8",
+    authDomain: "myapp-279b9.firebaseapp.com",
+    projectId: "myapp-279b9",
+    storageBucket: "myapp-279b9.appspot.com",
+    messagingSenderId: "465452055145",
+    appId: "1:465452055145:web:6bd2f1e2bf31c2cacb80f8"
+  }
 };
