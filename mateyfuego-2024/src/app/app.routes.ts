@@ -50,4 +50,18 @@ export const routes: Routes = [
         './qr-propina/qr-propina.component'
       ).then((m) => m.QrPropinaComponent),
   },
+  {
+    path: 'registro-mesas',
+    loadComponent: () =>
+      import(
+        './registros/registro-mesas/registro-mesas.component'
+      ).then((m) => m.RegistroMesasComponent),
+  },
+  {
+    path: 'registro-clientes',
+    loadComponent: () =>
+      import(
+        './registros/registro-clientes/registro-clientes.component'
+      ).then((m) => m.RegistroClientesComponent),
+  },
 ];
