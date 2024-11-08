@@ -41,6 +41,7 @@
     "cordova-plugin-camera": "^8.0.0",
     "firebase": "^10.14.1",
     "ionicons": "^7.4.0",
+    "nodemailer": "^6.9.16",
     "rxjs": "~7.8.0",
     "sweetalert2": "^11.14.4",
     "tslib": "^2.3.0",
