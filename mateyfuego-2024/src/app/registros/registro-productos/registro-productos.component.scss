@@ -6,6 +6,10 @@
   border-radius: 12px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
 
+  span {
+    color: red;
+  }
+
   h2 {
     color: var(--ion-color-primary);
     font-size: 1.8rem;
@@ -23,7 +27,8 @@
     font-size: 1.1rem;
   }
 
-  input, select {
+  input,
+  select {
     width: 100%;
     padding: 12px;
     margin-bottom: 15px;
@@ -65,9 +70,8 @@
   }
 
   .foto-preview {
-    width: 100%;
-    max-width: 300px;
-    height: auto;
+    width: 60px;
+    height: 60px;
     margin: 10px 0;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -128,7 +132,8 @@
   .registro-container {
     background-color: #1e1e1e;
 
-    h2, h3 {
+    h2,
+    h3 {
       color: var(--ion-color-primary-tint);
     }
 
@@ -136,7 +141,8 @@
       color: #ffffff;
     }
 
-    input, select {
+    input,
+    select {
       background-color: #2e2e2e;
       border-color: #3e3e3e;
       color: #ffffff;

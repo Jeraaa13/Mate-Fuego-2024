@@ -19,12 +19,13 @@ import { BarcodeFormat } from '@zxing/library';
 import { ZXingScannerModule } from '@zxing/ngx-scanner';
 import { CameraSource, Camera, CameraResultType } from '@capacitor/camera';
 import { QRCodeModule } from 'angularx-qrcode';
+import { NgForm } from '@angular/forms';
 
 interface Producto {
   id?: string;
   nombre: string;
   descripcion: string;
-  tiempoElaboracion: string;
+  tiempoElaboracion: number;
   precio: number;
   fotosUrl: string[];
   qrCode?: string;
@@ -41,7 +42,7 @@ export class RegistroProductosComponent {
   nuevoProducto: Producto = {
     nombre: '',
     descripcion: '',
-    tiempoElaboracion: '',
+    tiempoElaboracion: 0,
     precio: 0,
     fotosUrl: [],
   };
@@ -118,33 +119,59 @@ export class RegistroProductosComponent {
   }
 
   async guardarProducto() {
-    if (this.nuevoProducto.fotosUrl.length === 0) {
+    // Validaciones aquí
+    if (!this.nuevoProducto.nombre || this.nuevoProducto.nombre.length < 3) {
       console.error(
-        'No hay fotos cargadas. Sube al menos una foto antes de guardar.'
+        'El nombre es obligatorio y debe tener al menos 3 caracteres.'
       );
       return;
     }
+    if (
+      !this.nuevoProducto.descripcion ||
+      this.nuevoProducto.descripcion.length < 8
+    ) {
+      console.error(
+        'La descripción es obligatoria y debe tener al menos 8 caracteres.'
+      );
+      return;
+    }
+    if (
+      !this.nuevoProducto.tiempoElaboracion ||
+      this.nuevoProducto.tiempoElaboracion <= 0
+    ) {
+      console.error('El tiempo de elaboración debe ser positivo.');
+      return;
+    }
+    if (
+      this.nuevoProducto.precio === undefined ||
+      this.nuevoProducto.precio <= 0
+    ) {
+      console.error('El precio debe ser mayor a 0.');
+      return;
+    }
+    if (this.nuevoProducto.fotosUrl.length < 3) {
+      console.error('Debe cargar al menos 3 fotos del producto.');
+      return;
+    }
+
+    this.generateQRCode();
 
     const productosCollection = collection(this.firestore, 'productos');
     const nuevoDocRef = doc(productosCollection);
     this.nuevoProducto.id = nuevoDocRef.id;
 
-    // Generar el código QR antes de guardar
-    this.generateQRCode();
-
-    // Guardar el QR como parte del producto
-    this.nuevoProducto.qrCode = this.qrData;
-
     await setDoc(nuevoDocRef, this.nuevoProducto);
     console.log('Datos guardados en Firestore:', this.nuevoProducto);
+
     this.resetForm();
+    this.resetValidations();
   }
 
   resetForm() {
     this.nuevoProducto = {
       nombre: '',
       descripcion: '',
-      tiempoElaboracion: '',
+      tiempoElaboracion: 0,
       precio: 0,
       fotosUrl: [],
     };
@@ -167,6 +194,23 @@ export class RegistroProductosComponent {
     } catch (error) {
       console.error('Error al procesar el código QR:', error);
     }
+  }
+
+  resetValidations() {
+    setTimeout(() => {
+      const formControls = [
+        'nombre',
+        'descripcion',
+        'tiempoElaboracion',
+        'precio',
+      ];
+      formControls.forEach((control) => {
+        const element = document.getElementById(control) as HTMLInputElement;
+        if (element) {
+          element.classList.remove('ng-touched', 'ng-dirty', 'ng-invalid');
+        }
+      });
+    });
   }
 
   async takePhoto() {

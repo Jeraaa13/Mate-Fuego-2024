@@ -1,55 +1,92 @@
 <div class="registro-container">
   <h2>Registro de Productos</h2>
-  <label for="nombre">Nombre</label>
+
+  <label for="nombre">Nombre *</label>
   <input
     id="nombre"
     type="text"
     [(ngModel)]="nuevoProducto.nombre"
+    #nombre="ngModel"
     placeholder="Nombre"
+    required
+    minlength="3"
   />
+  <div *ngIf="nombre.invalid && nombre.touched" class="error-message">
+    <span *ngIf="nombre.errors?.['required']">El nombre es obligatorio.</span>
+    <span *ngIf="nombre.errors?.['minlength']"
+      >El nombre debe tener al menos 3 caracteres.</span
+    >
+  </div>
+
   <label for="descripcion">Descripción</label>
   <input
     id="descripcion"
     type="text"
     [(ngModel)]="nuevoProducto.descripcion"
-    placeholder="Descripcion"
+    #descripcion="ngModel"
+    placeholder="Descripción"
+    required
+    minlength="8"
   />
-  <label for="tiempoElaboracion">Tiempo de elaboración</label>
+  <div *ngIf="descripcion.invalid && descripcion.touched" class="error-message">
+    <span *ngIf="descripcion.errors?.['required']"
+      >La descripción es obligatoria.</span
+    >
+    <span *ngIf="descripcion.errors?.['minlength']"
+      >La descripción debe tener al menos 8 caracteres.</span
+    >
+  </div>
+
+  <label for="tiempoElaboracion">Tiempo de elaboración (minutos)</label>
   <input
     id="tiempoElaboracion"
-    type="tiempoElaboracion"
+    type="number"
     [(ngModel)]="nuevoProducto.tiempoElaboracion"
+    #tiempoElaboracion="ngModel"
     placeholder="Tiempo de elaboración"
+    required
+    min="1"
   />
+  <div
+    *ngIf="tiempoElaboracion.invalid && tiempoElaboracion.touched"
+    class="error-message"
+  >
+    <span *ngIf="tiempoElaboracion.errors?.['required']"
+      >El tiempo de elaboración es obligatorio.</span
+    >
+    <span *ngIf="tiempoElaboracion.errors?.['min']"
+      >El tiempo debe ser al menos 1 minuto.</span
+    >
+  </div>
+
   <label for="precio">Precio</label>
   <input
     id="precio"
     type="number"
     [(ngModel)]="nuevoProducto.precio"
-    placeholder="precio"
+    #precio="ngModel"
+    placeholder="Precio"
+    required
+    min="1"
   />
+  <div *ngIf="precio.invalid && precio.touched" class="error-message">
+    <span *ngIf="precio.errors?.['required']">El precio es obligatorio.</span>
+    <span *ngIf="precio.errors?.['min']">El precio debe ser mayor a 0.</span>
+  </div>
+
   <button (click)="takePhoto()">Tomar Foto</button>
   <div *ngIf="nuevoProducto.fotosUrl.length > 0">
     <h3>Fotos Capturadas:</h3>
     <div *ngFor="let foto of nuevoProducto.fotosUrl">
       <img [src]="foto" alt="Foto del producto" class="foto-preview" />
     </div>
+    <span *ngIf="nuevoProducto.fotosUrl.length < 3">Deben ser 3 fotos</span>
   </div>
 
-  <!-- Sección del QR -->
-  <button (click)="generateQRCode()">Generar QR</button>
   <div *ngIf="showQR" class="qr-container">
     <h3>Código QR del Producto</h3>
     <qrcode [qrdata]="qrData" [width]="256" [errorCorrectionLevel]="'M'">
     </qrcode>
-  </div>
-
-  <button (click)="toggleScanner()">Escanear QR del Producto</button>
-  <div *ngIf="isScannerVisible">
-    <zxing-scanner
-      [formats]="allowedFormats"
-      (scanSuccess)="handleQrCodeResult($event)"
-    ></zxing-scanner>
   </div>
 
   <button (click)="guardarProducto()">Guardar Producto</button>
