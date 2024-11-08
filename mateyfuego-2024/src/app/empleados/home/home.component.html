@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+</head>
+<body>
+  <ion-content class="ion-padding">
+    <div class="max-w-4xl mx-auto">
+      <h2 class="text-2xl font-bold mb-6">Encuesta de Ingreso/Egreso</h2>
+
+      <form (ngSubmit)="submitEncuesta($event)" class="space-y-6">
+        <ion-item class="rounded-lg overflow-hidden">
+          <ion-label position="stacked" class="font-medium">Nivel de Limpieza (0-100)</ion-label>
+          <ion-range [(ngModel)]="encuesta.limpieza" 
+                    (ngModelChange)="logChange('limpieza', encuesta.limpieza)"
+                    min="0" 
+                    max="100" 
+                    name="limpieza"
+                    pin="true"
+                    color="primary">
+            <ion-icon slot="start" name="water-outline"></ion-icon>
+            <ion-icon slot="end" name="water"></ion-icon>
+          </ion-range>
+        </ion-item>
+
+        <ion-item class="rounded-lg">
+          <ion-label position="floating">Comentarios sobre el estado del lugar</ion-label>
+          <ion-textarea [(ngModel)]="encuesta.comentario"
+                      (ngModelChange)="logChange('comentario', encuesta.comentario)"
+                      name="comentario"
+                      rows="3"
+                      placeholder="Describe el estado en que encontraste el lugar...">
+          </ion-textarea>
+        </ion-item>
+        <ion-list class="rounded-lg overflow-hidden">
+          <ion-list-header>
+            <ion-label class="font-medium">Estado del Orden</ion-label>
+          </ion-list-header>
+          <ion-radio-group [(ngModel)]="encuesta.orden" name="orden">
+            <ion-item>
+              <ion-label>Ordenado</ion-label>
+              <ion-radio slot="start" [value]="true"></ion-radio>
+            </ion-item>
+            <ion-item>
+              <ion-label>Desordenado</ion-label>
+              <ion-radio slot="start" [value]="false"></ion-radio>
+            </ion-item>
+          </ion-radio-group>
+        </ion-list>
+
+        <ion-list class="rounded-lg overflow-hidden">
+          <ion-list-header>
+            <ion-label class="font-medium">Equipo de Limpieza Disponible</ion-label>
+          </ion-list-header>
+          <ion-item>
+            <ion-checkbox [(ngModel)]="equipoEscoba" 
+                         (ionChange)="onCheckboxChange($event, 'Escoba')"
+                         name="equipoEscoba">
+            </ion-checkbox>
+            <ion-label class="ml-2">Escoba</ion-label>
+          </ion-item>
+          <ion-item>
+            <ion-checkbox [(ngModel)]="equipoTrapeador"
+                         (ionChange)="onCheckboxChange($event, 'Trapeador')"
+                         name="equipoTrapeador">
+            </ion-checkbox>
+            <ion-label class="ml-2">Trapeador</ion-label>
+          </ion-item>
+          <ion-item>
+            <ion-checkbox [(ngModel)]="equipoGuantes"
+                         (ionChange)="onCheckboxChange($event, 'Guantes')"
+                         name="equipoGuantes">
+            </ion-checkbox>
+            <ion-label class="ml-2">Guantes</ion-label>
+          </ion-item>
+        </ion-list>
+
+        <ion-item class="rounded-lg">
+          <ion-label>Turno de Trabajo</ion-label>
+          <ion-select [(ngModel)]="encuesta.turno"
+                     (ngModelChange)="logChange('turno', encuesta.turno)"
+                     name="turno"
+                     interface="popover">
+            <ion-select-option value="Mañana">Mañana</ion-select-option>
+            <ion-select-option value="Tarde">Tarde</ion-select-option>
+            <ion-select-option value="Noche">Noche</ion-select-option>
+          </ion-select>
+        </ion-item>
+
+
+        <div class="space-y-2">
+          <ion-item class="rounded-lg">
+            <ion-label position="stacked" class="font-medium">Foto del Espacio</ion-label>
+            <input type="file"
+                   (change)="uploadPhoto($event)"
+                   accept="image/*"
+                   class="mt-2"/>
+          </ion-item>
+          <div *ngIf="encuesta.fotoUrl" class="mt-2">
+            <img [src]="encuesta.fotoUrl" alt="Foto del espacio" class="max-w-xs rounded-lg"/>
+          </div>
+        </div>
+
+        <div class="flex gap-4">
+          <ion-button expand="block" 
+                      type="button" 
+                      (click)="submitEncuesta($event)"
+                      class="flex-1">
+            <ion-icon name="save-outline" slot="start"></ion-icon>
+            Enviar Encuesta
+          </ion-button>
+          <ion-button expand="block" 
+                      type="button"
+                      color="medium" 
+                      
+                      class="flex-1">
+            <ion-icon name="arrow-forward-outline" slot="start"></ion-icon>
+            Saltear
+          </ion-button>
+        </div>
+      </form>
+
+      <div class="mb-8 grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="p-4 border rounded-lg">
+          <h3 class="text-lg font-semibold mb-2">Nivel de Limpieza</h3>
+          <canvas id="limpiezaChart"></canvas>
+        </div>
+        <div class="p-4 border rounded-lg">
+          <h3 class="text-lg font-semibold mb-2">Estado del Orden</h3>
+          <canvas id="ordenChart"></canvas>
+        </div>
+      </div>
+    </div>
+  </ion-content>
+</body>
+</html>

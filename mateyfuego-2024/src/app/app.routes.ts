@@ -1,10 +1,6 @@
 import { Routes } from '@angular/router';
-
+import { EmpleadosGuard } from './guards/empleados.guard';
 export const routes: Routes = [
-  {
-    path: 'home',
-    loadComponent: () => import('./home/home.page').then((m) => m.HomePage),
-  },
   {
     path: 'login',
     loadComponent: () =>
@@ -63,5 +59,12 @@ export const routes: Routes = [
       import(
         './registros/registro-clientes/registro-clientes.component'
       ).then((m) => m.RegistroClientesComponent),
+  },
+  {
+    path: 'home-empleados',
+    loadComponent: () =>
+      import(
+        './empleados/home/home.component'
+      ).then((m) => m.HomeComponent)
   },
 ];
