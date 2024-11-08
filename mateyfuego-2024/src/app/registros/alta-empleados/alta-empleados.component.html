@@ -2,6 +2,12 @@
   <h2>Alta de Empleados</h2>
 
   <form>
+    <label for="Correo">Correo electronico:</label>
+    <input type="text" [(ngModel)]="nuevoEmpleado.correo" name="nombre" id="nombre" required>
+
+    <label for="Contraseña">Contraseña:</label>
+    <input type="text" [(ngModel)]="nuevoEmpleado.contrasena" name="nombre" id="nombre" required>
+
     <label for="nombre">Nombre:</label>
     <input type="text" [(ngModel)]="nuevoEmpleado.nombre" name="nombre" id="nombre" required>
 

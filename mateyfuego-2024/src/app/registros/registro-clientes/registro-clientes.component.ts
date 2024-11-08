@@ -18,6 +18,7 @@ interface Cliente {
   password: string;
   fotoUrl: string;
   tipoPerfil: string;
+  estadoVerificaicon : false,
 }
 
 @Component({
@@ -37,6 +38,7 @@ export class RegistroClientesComponent {
     password: '',
     fotoUrl: '',
     tipoPerfil: 'cliente',
+    estadoVerificaicon : false,
   };
   contadorAnonimos = 0;
   allowedFormats = [BarcodeFormat.QR_CODE];
@@ -113,6 +115,7 @@ export class RegistroClientesComponent {
       password: '',
       fotoUrl: '',
       tipoPerfil: 'anonimo',
+      estadoVerificaicon : false,
     };
     const datosCliente = doc(this.firestore, 'clientes', 'Anonimo ' + this.contadorAnonimos++);
     await setDoc(datosCliente, this.nuevoCliente);
@@ -129,6 +132,7 @@ export class RegistroClientesComponent {
       password: '',
       fotoUrl: '',
       tipoPerfil: 'cliente',
+      estadoVerificaicon : false,
     };
   }
 

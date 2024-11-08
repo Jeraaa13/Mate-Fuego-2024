@@ -12,6 +12,8 @@ import { BarcodeFormat } from '@zxing/library';
 import { ZXingScannerModule } from '@zxing/ngx-scanner';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Auth, createUserWithEmailAndPassword } from '@angular/fire/auth';
+import { Router } from '@angular/router';
 
 interface Empleado {
   nombre: string;
@@ -20,6 +22,8 @@ interface Empleado {
   cuil: string;
   tipoPerfil: 'empleado';
   fotoUrl: string;
+  correo : string;
+  contrasena :string;
 }
 
 @Component({
@@ -38,6 +42,8 @@ export class AltaEmpleadosComponent {
     cuil: '',
     tipoPerfil: 'empleado',
     fotoUrl: '',
+    correo : '',
+    contrasena : '',
   };
 
   allowedFormats = [BarcodeFormat.QR_CODE];
@@ -46,7 +52,9 @@ export class AltaEmpleadosComponent {
   constructor(
     private firestore: Firestore,
     private storage: Storage,
-    private actionSheetCtrl: ActionSheetController
+    private actionSheetCtrl: ActionSheetController,
+    private auth: Auth,
+    private router: Router
   ) {}
 
   toggleScanner() {
@@ -69,7 +77,6 @@ export class AltaEmpleadosComponent {
           `${this.nuevoEmpleado.dni}`
         );
         this.nuevoEmpleado.fotoUrl = photoUrl;
-        await this.guardarEmpleado();
       }
     } catch (error) {
       console.error('Error al capturar la imagen:', error);
@@ -94,6 +101,25 @@ export class AltaEmpleadosComponent {
       return;
     }
 
+    try {
+      const userCredential = await createUserWithEmailAndPassword(
+        this.auth,
+        this.nuevoEmpleado.correo,
+        this.nuevoEmpleado.contrasena
+      );
+
+      if (userCredential) {
+        const uid = userCredential.user.uid;
+        const datosCliente = doc(this.firestore, 'empleados', uid);
+        await setDoc(datosCliente, this.nuevoEmpleado);
+        console.log('Datos guardados en Firestore:', this.nuevoEmpleado);
+        this.resetForm();
+      }
+    }catch(error)
+    {
+      console.error('Error al registrar empleado:', error);
+    }
+
     const empleadoRef = doc(
       this.firestore,
       'empleados',
@@ -115,6 +141,8 @@ export class AltaEmpleadosComponent {
       cuil: '',
       tipoPerfil: 'empleado',
       fotoUrl: '',
+      correo : '',
+      contrasena : '',
     };
   }
 
