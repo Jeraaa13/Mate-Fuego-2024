@@ -11,7 +11,7 @@ import { ActionSheetController } from '@ionic/angular';
 import { BarcodeFormat } from '@zxing/library';
 import { ZXingScannerModule } from '@zxing/ngx-scanner';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Auth, createUserWithEmailAndPassword } from '@angular/fire/auth';
 import { Router } from '@angular/router';
 
@@ -20,42 +20,75 @@ interface Empleado {
   apellido: string;
   dni: string;
   cuil: string;
-  tipoPerfil: 'empleado';
+  tipoPerfil: string;
   fotoUrl: string;
-  correo : string;
-  contrasena :string;
+  correo: string;
+  contrasena: string;
 }
+
 
 @Component({
   selector: 'app-alta-empleados',
   templateUrl: './alta-empleados.component.html',
   styleUrls: ['./alta-empleados.component.scss'],
   standalone: true,
-  imports: [CommonModule, FormsModule, ZXingScannerModule],
+  imports: [CommonModule, ReactiveFormsModule, ZXingScannerModule],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class AltaEmpleadosComponent {
+  empleadoForm: FormGroup = this.fb.group({
+    correo: ['', [Validators.required, Validators.email]],
+    contrasena: ['', [Validators.required, Validators.minLength(6)]],
+    nombre: ['', Validators.required],
+    apellido: ['', Validators.required],
+    dni: ['', [Validators.required, Validators.pattern('^[0-9]*$')]],
+    cuil: ['', [Validators.required, Validators.pattern('^[0-9]{2}-[0-9]{8}-[0-9]$')]],
+    tipoPerfil: ['', Validators.required],
+    fotoUrl: ['']
+  });
+  
   nuevoEmpleado: Empleado = {
     nombre: '',
     apellido: '',
     dni: '',
     cuil: '',
-    tipoPerfil: 'empleado',
+    tipoPerfil: '',
     fotoUrl: '',
-    correo : '',
-    contrasena : '',
+    correo: '',
+    contrasena: '',
   };
 
   allowedFormats = [BarcodeFormat.QR_CODE];
   isScannerVisible = false;
 
   constructor(
+    private fb: FormBuilder,
     private firestore: Firestore,
     private storage: Storage,
     private actionSheetCtrl: ActionSheetController,
     private auth: Auth,
     private router: Router
-  ) {}
+  ) {
+    this.createForm();
+  }
+
+  createForm() {
+    this.empleadoForm = this.fb.group({
+      correo: ['', [Validators.required, Validators.email]],
+      contrasena: ['', [Validators.required, Validators.minLength(6)]],
+      nombre: ['', Validators.required],
+      apellido: ['', Validators.required],
+      dni: ['', [Validators.required, Validators.pattern('^[0-9]*$')]],
+      cuil: ['', [Validators.required, Validators.pattern('^[0-9]{2}-[0-9]{8}-[0-9]$')]],
+      tipoPerfil: ['', Validators.required],
+      fotoUrl: ['']
+    });
+
+    // Subscribe to form changes to update nuevoEmpleado
+    this.empleadoForm.valueChanges.subscribe(val => {
+      this.nuevoEmpleado = { ...this.nuevoEmpleado, ...val };
+    });
+  }
 
   toggleScanner() {
     this.isScannerVisible = !this.isScannerVisible;
@@ -77,6 +110,7 @@ export class AltaEmpleadosComponent {
           `${this.nuevoEmpleado.dni}`
         );
         this.nuevoEmpleado.fotoUrl = photoUrl;
+        this.empleadoForm.patchValue({ fotoUrl: photoUrl });
       }
     } catch (error) {
       console.error('Error al capturar la imagen:', error);
@@ -96,6 +130,16 @@ export class AltaEmpleadosComponent {
   }
 
   async guardarEmpleado() {
+    if (this.empleadoForm.invalid) {
+      Object.keys(this.empleadoForm.controls).forEach(key => {
+        const control = this.empleadoForm.get(key);
+        if (control?.invalid) {
+          control.markAsTouched();
+        }
+      });
+      return;
+    }
+
     if (!this.nuevoEmpleado.fotoUrl) {
       console.error('No hay foto cargada. Sube una foto antes de guardar.');
       return;
@@ -110,39 +154,27 @@ export class AltaEmpleadosComponent {
 
       if (userCredential) {
         const uid = userCredential.user.uid;
-        const datosCliente = doc(this.firestore, 'empleados', uid);
-        await setDoc(datosCliente, this.nuevoEmpleado);
+        const datosEmpleado = doc(this.firestore, 'empleados', uid);
+        await setDoc(datosEmpleado, this.nuevoEmpleado);
         console.log('Datos guardados en Firestore:', this.nuevoEmpleado);
         this.resetForm();
       }
-    }catch(error)
-    {
+    } catch (error) {
       console.error('Error al registrar empleado:', error);
     }
-
-    const empleadoRef = doc(
-      this.firestore,
-      'empleados',
-      this.nuevoEmpleado.dni
-    );
-    await setDoc(empleadoRef, this.nuevoEmpleado);
-    console.log(
-      'Datos del empleado guardados en Firestore:',
-      this.nuevoEmpleado
-    );
-    this.resetForm();
   }
 
   resetForm() {
+    this.empleadoForm.reset();
     this.nuevoEmpleado = {
       nombre: '',
       apellido: '',
       dni: '',
       cuil: '',
-      tipoPerfil: 'empleado',
+      tipoPerfil: '',
       fotoUrl: '',
-      correo : '',
-      contrasena : '',
+      correo: '',
+      contrasena: '',
     };
   }
 
@@ -153,6 +185,7 @@ export class AltaEmpleadosComponent {
       if (docSnap.exists()) {
         const datosQr = docSnap.data() as Empleado;
         this.nuevoEmpleado = { ...datosQr };
+        this.empleadoForm.patchValue(datosQr);
         console.log('Datos obtenidos del QR:', datosQr);
       } else {
         console.error('No existe un documento con ese ID en Firestore.');
