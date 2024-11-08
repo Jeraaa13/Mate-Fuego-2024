@@ -1,12 +1,8 @@
 import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 import { Firestore, doc, getDoc, setDoc } from '@angular/fire/firestore';
-import {
-  Storage,
-  ref,
-  uploadString,
-  getDownloadURL,
-} from '@angular/fire/storage';
+import { Auth, createUserWithEmailAndPassword } from '@angular/fire/auth';
+import { Storage, ref, uploadString, getDownloadURL } from '@angular/fire/storage';
 import { ActionSheetController } from '@ionic/angular';
 import { BarcodeFormat } from '@zxing/library';
 import { ZXingScannerModule } from '@zxing/ngx-scanner';
@@ -17,7 +13,10 @@ interface Cliente {
   nombre: string;
   apellido: string;
   dni: string;
+  correo: string;
+  password: string;
   fotoUrl: string;
+  tipoPerfil: string;
 }
 
 @Component({
@@ -33,13 +32,18 @@ export class RegistroClientesComponent {
     nombre: '',
     apellido: '',
     dni: '',
+    correo: '',
+    password: '',
     fotoUrl: '',
+    tipoPerfil: 'cliente',
   };
   contadorAnonimos = 0;
   allowedFormats = [BarcodeFormat.QR_CODE];
   isScannerVisible = false;
+
   constructor(
     private firestore: Firestore,
+    private auth: Auth,
     private storage: Storage,
     private actionSheetCtrl: ActionSheetController
   ) {}
@@ -58,11 +62,7 @@ export class RegistroClientesComponent {
       });
 
       if (photo.base64String) {
-        const photoUrl = await this.uploadPhoto(
-          photo.base64String,
-          'clientes',
-          `${this.nuevoCliente.nombre}`
-        );
+        const photoUrl = await this.uploadPhoto(photo.base64String, 'clientes', `${this.nuevoCliente.nombre}`);
         this.nuevoCliente.fotoUrl = photoUrl;
       }
     } catch (error) {
@@ -70,49 +70,51 @@ export class RegistroClientesComponent {
     }
   }
 
-  async uploadPhoto(
-    base64String: string,
-    folder: string,
-    fileName: string
-  ): Promise<string> {
+  async uploadPhoto(base64String: string, folder: string, fileName: string): Promise<string> {
     const photoRef = ref(this.storage, `imagenes/${folder}/${fileName}`);
-    await uploadString(photoRef, base64String, 'base64', {
-      contentType: 'image/jpeg',
-    });
+    await uploadString(photoRef, base64String, 'base64', { contentType: 'image/jpeg' });
     return getDownloadURL(photoRef);
   }
 
   async guardarCliente() {
-    if (!this.nuevoCliente.fotoUrl) {
-      console.error('No hay foto cargada. Sube una foto antes de guardar.');
+    if (!this.nuevoCliente.correo || !this.nuevoCliente.password) {
+      console.error('Correo y contraseña son requeridos');
       return;
     }
-    {
-      const datosCliente = doc(
-        this.firestore,
-        'clientes',
-        this.nuevoCliente.dni
+
+    try {
+      const userCredential = await createUserWithEmailAndPassword(
+        this.auth,
+        this.nuevoCliente.correo,
+        this.nuevoCliente.password
       );
-      await setDoc(datosCliente, this.nuevoCliente);
-      console.log('Datos guardados en Firestore:', this.nuevoCliente);
-      this.resetForm();
+
+      if (userCredential) {
+        const uid = userCredential.user.uid;
+        const datosCliente = doc(this.firestore, 'clientes', uid);
+        await setDoc(datosCliente, this.nuevoCliente);
+        console.log('Datos guardados en Firestore:', this.nuevoCliente);
+        this.resetForm();
+      }
+    } catch (error) {
+      console.error('Error al registrar usuario:', error);
     }
   }
 
   async GuardarClienteAnonimo() {
-    {
-      this.nuevoCliente.fotoUrl = '';
-      this.nuevoCliente.apellido = '';
-      this.nuevoCliente.dni = '';
-      const datosCliente = doc(
-        this.firestore,
-        'clientes',
-        'Anonimo ' + this.contadorAnonimos++
-      );
-      await setDoc(datosCliente, this.nuevoCliente);
-      console.log('Datos guardados en Firestore:', this.nuevoCliente);
-      this.resetForm();
-    }
+    this.nuevoCliente = {
+      nombre : this.nuevoCliente.nombre,
+      apellido: '',
+      dni: '',
+      correo: '',
+      password: '',
+      fotoUrl: '',
+      tipoPerfil: 'anonimo',
+    };
+    const datosCliente = doc(this.firestore, 'clientes', 'Anonimo ' + this.contadorAnonimos++);
+    await setDoc(datosCliente, this.nuevoCliente);
+    console.log('Datos guardados en Firestore:', this.nuevoCliente);
+    this.resetForm();
   }
 
   resetForm() {
@@ -120,7 +122,10 @@ export class RegistroClientesComponent {
       nombre: '',
       apellido: '',
       dni: '',
+      correo: '',
+      password: '',
       fotoUrl: '',
+      tipoPerfil: 'cliente',
     };
   }
 
