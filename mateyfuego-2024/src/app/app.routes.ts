@@ -42,29 +42,32 @@ export const routes: Routes = [
   {
     path: 'qr-propina',
     loadComponent: () =>
-      import(
-        './qr-propina/qr-propina.component'
-      ).then((m) => m.QrPropinaComponent),
+      import('./qr-propina/qr-propina.component').then(
+        (m) => m.QrPropinaComponent
+      ),
   },
   {
     path: 'registro-mesas',
     loadComponent: () =>
-      import(
-        './registros/registro-mesas/registro-mesas.component'
-      ).then((m) => m.RegistroMesasComponent),
+      import('./registros/registro-mesas/registro-mesas.component').then(
+        (m) => m.RegistroMesasComponent
+      ),
   },
   {
     path: 'registro-clientes',
     loadComponent: () =>
-      import(
-        './registros/registro-clientes/registro-clientes.component'
-      ).then((m) => m.RegistroClientesComponent),
+      import('./registros/registro-clientes/registro-clientes.component').then(
+        (m) => m.RegistroClientesComponent
+      ),
   },
   {
     path: 'home-empleados',
     loadComponent: () =>
-      import(
-        './empleados/home/home.component'
-      ).then((m) => m.HomeComponent)
+      import('./empleados/home/home.component').then((m) => m.HomeComponent),
+  },
+  {
+    path: 'home-clientes',
+    loadComponent: () =>
+      import('./clientes/home/home.component').then((m) => m.HomeComponent),
   },
 ];

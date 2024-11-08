@@ -1,0 +1,15 @@
+<div>
+  <h2>¡Bienvenido/a a Mate y Fuego!</h2>
+
+  <h3>Por favor, escanee el QR del local para ingresar a la lista de espera</h3>
+
+  <h3>Sera asignado/a a una mesa en breves</h3>
+
+  <button (click)="toggleScanner()">
+    <img src="../../../assets/qrcode.png" />
+  </button>
+  <div *ngIf="isScannerVisible">
+    <zxing-scanner [torch]="true" (scanSuccess)="onScanSuccess($event)">
+    </zxing-scanner>
+  </div>
+</div>
