@@ -8,6 +8,7 @@ import { BarcodeFormat } from '@zxing/library';
 import { ZXingScannerModule } from '@zxing/ngx-scanner';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { Router, RouterLink } from '@angular/router';
 
 interface Cliente {
   nombre: string;
@@ -45,7 +46,8 @@ export class RegistroClientesComponent {
     private firestore: Firestore,
     private auth: Auth,
     private storage: Storage,
-    private actionSheetCtrl: ActionSheetController
+    private actionSheetCtrl: ActionSheetController,
+    private router: Router
   ) {}
 
   toggleScanner() {
@@ -94,6 +96,7 @@ export class RegistroClientesComponent {
         const datosCliente = doc(this.firestore, 'clientes', uid);
         await setDoc(datosCliente, this.nuevoCliente);
         console.log('Datos guardados en Firestore:', this.nuevoCliente);
+        this.router.navigate(['/home-clientes']);
         this.resetForm();
       }
     } catch (error) {
