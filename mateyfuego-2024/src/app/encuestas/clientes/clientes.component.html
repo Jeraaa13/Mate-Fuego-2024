@@ -1,0 +1,150 @@
+<ion-content class="ion-padding">
+  <div class="max-w-4xl mx-auto">
+    <h2 class="text-2xl font-bold mb-6">Encuesta de Satisfacción del Cliente</h2>
+
+    <form (ngSubmit)="submitEncuesta($event)" class="space-y-6">
+      <!-- Input para nombre -->
+      <ion-item class="rounded-lg">
+        <ion-label position="floating">Nombre</ion-label>
+        <ion-input [(ngModel)]="encuesta.nombre"
+                  name="nombre"
+                  required
+                  placeholder="Ingrese su nombre">
+        </ion-input>
+      </ion-item>
+
+      <!-- Range para satisfacción -->
+      <ion-item class="rounded-lg overflow-hidden">
+        <ion-label position="stacked" class="font-medium">Nivel de Satisfacción (0-100)</ion-label>
+        <ion-range [(ngModel)]="encuesta.satisfaccionGeneral"
+                  min="0"
+                  max="100"
+                  name="satisfaccionGeneral"
+                  pin="true"
+                  color="primary">
+          <ion-icon slot="start" name="sad-outline"></ion-icon>
+          <ion-icon slot="end" name="happy"></ion-icon>
+        </ion-range>
+      </ion-item>
+
+      <!-- Radio para recomendación -->
+      <ion-list class="rounded-lg overflow-hidden">
+        <ion-list-header>
+          <ion-label class="font-medium">¿Recomendaría nuestro servicio?</ion-label>
+        </ion-list-header>
+        <ion-radio-group [(ngModel)]="encuesta.recomendaria" name="recomendaria">
+          <ion-item>
+            <ion-label>Sí</ion-label>
+            <ion-radio slot="start" [value]="true"></ion-radio>
+          </ion-item>
+          <ion-item>
+            <ion-label>No</ion-label>
+            <ion-radio slot="start" [value]="false"></ion-radio>
+          </ion-item>
+        </ion-radio-group>
+      </ion-list>
+
+      <!-- Checkboxes para servicios -->
+      <ion-list class="rounded-lg overflow-hidden">
+        <ion-list-header>
+          <ion-label class="font-medium">Servicios Utilizados</ion-label>
+        </ion-list-header>
+        <ion-item>
+          <ion-checkbox [(ngModel)]="servicioRestaurante"
+                       (ionChange)="onCheckboxChange($event, 'Restaurante')"
+                       name="servicioRestaurante">
+          </ion-checkbox>
+          <ion-label class="ml-2">Restaurante</ion-label>
+        </ion-item>
+        <ion-item>
+          <ion-checkbox [(ngModel)]="servicioBar"
+                       (ionChange)="onCheckboxChange($event, 'Bar')"
+                       name="servicioBar">
+          </ion-checkbox>
+          <ion-label class="ml-2">Bar</ion-label>
+        </ion-item>
+        <ion-item>
+          <ion-checkbox [(ngModel)]="servicioDelivery"
+                       (ionChange)="onCheckboxChange($event, 'Delivery')"
+                       name="servicioDelivery">
+          </ion-checkbox>
+          <ion-label class="ml-2">Delivery</ion-label>
+        </ion-item>
+      </ion-list>
+
+      <!-- Select para tipo de cliente -->
+      <ion-item class="rounded-lg">
+        <ion-label>Tipo de Cliente</ion-label>
+        <ion-select [(ngModel)]="encuesta.tipoCliente"
+                   name="tipoCliente"
+                   interface="popover">
+          <ion-select-option value="nuevo">Nuevo</ion-select-option>
+          <ion-select-option value="ocasional">Ocasional</ion-select-option>
+          <ion-select-option value="frecuente">Frecuente</ion-select-option>
+        </ion-select>
+      </ion-item>
+
+      <!-- Textarea para comentarios -->
+      <ion-item class="rounded-lg">
+        <ion-label position="floating">Comentarios adicionales</ion-label>
+        <ion-textarea [(ngModel)]="encuesta.comentarios"
+                     name="comentarios"
+                     rows="3"
+                     placeholder="Comparta su experiencia...">
+        </ion-textarea>
+      </ion-item>
+
+      <!-- Carga de fotos -->
+      <div class="space-y-2">
+        <ion-item class="rounded-lg">
+          <ion-label position="stacked" class="font-medium">Fotos (máximo 3)</ion-label>
+          <input type="file"
+                 (change)="uploadPhotos($event)"
+                 accept="image/*"
+                 multiple
+                 [disabled]="encuesta.fotosUrls.length >= 3"
+                 class="mt-2"/>
+        </ion-item>
+        
+        <!-- Preview de fotos -->
+        <div class="grid grid-cols-3 gap-4 mt-2">
+          <div *ngFor="let foto of encuesta.fotosUrls; let i = index" class="relative">
+            <img [src]="foto" alt="Foto" class="w-full h-32 object-cover rounded-lg"/>
+            <ion-button fill="clear"
+                       (click)="removePhoto(i)"
+                       class="absolute top-0 right-0">
+              <ion-icon name="close-circle" color="danger"></ion-icon>
+            </ion-button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Botón de envío -->
+      <ion-button expand="block" 
+                  type="submit"
+                  [disabled]="loading">
+        <ion-icon name="paper-plane-outline" slot="start"></ion-icon>
+        {{ loading ? 'Enviando...' : 'Enviar Encuesta' }}
+      </ion-button>
+    </form>
+
+    <!-- Gráficos de estadísticas -->
+    <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div class="bg-white p-4 rounded-lg shadow">
+        <h3 class="text-lg font-semibold mb-4">Satisfacción General</h3>
+        <div class="h-64">
+          <!-- Aquí irá el componente de gráfico -->
+          <canvas #satisfactionChart></canvas>
+        </div>
+      </div>
+      
+      <div class="bg-white p-4 rounded-lg shadow">
+        <h3 class="text-lg font-semibold mb-4">Servicios Más Utilizados</h3>
+        <div class="h-64">
+          <!-- Aquí irá el componente de gráfico -->
+          <canvas #servicesChart></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+</ion-content>

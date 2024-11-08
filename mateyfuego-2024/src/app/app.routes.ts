@@ -68,11 +68,21 @@ export const routes: Routes = [
   {
     path: 'home-empleados',
     loadComponent: () =>
-      import('./empleados/home/home.component').then((m) => m.HomeComponent),
+      import('./encuestas/empleados/home.component').then((m) => m.HomeComponent),
   },
   {
     path: 'home-clientes',
     loadComponent: () =>
       import('./clientes/home/home.component').then((m) => m.HomeComponent),
+  },
+  {
+    path: 'encuestas-clientes',
+    loadComponent: () =>
+      import('./encuestas/clientes/clientes.component').then((m) => m.ClientesComponent),
+  },
+  {
+    path: 'encuestas-supervisores',
+    loadComponent: () =>
+      import('./encuestas/supervisores/supervisores.component').then((m) => m.SupervisorComponent),
   },
 ];

@@ -1,0 +1,268 @@
+import { CommonModule } from '@angular/common';
+import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { IonicModule } from '@ionic/angular';
+import { AngularFireStorage } from '@angular/fire/compat/storage';
+import { Firestore, addDoc, collection, collectionData } from '@angular/fire/firestore';
+import { Chart, registerables } from 'chart.js';
+import { lastValueFrom, Observable } from 'rxjs';
+
+interface EncuestaCliente {
+  satisfaccionGeneral: number;      // range
+  nombre: string;                   // input
+  recomendaria: boolean;           // radio
+  serviciosUtilizados: string[];   // checkbox
+  tipoCliente: string;             // select
+  comentarios: string;             // textarea
+  fotosUrls: string[];             // multiple photos
+  fechaCreacion: Date;
+}
+
+@Component({
+  selector: 'app-ClientesComponent',
+  templateUrl: './clientes.component.html',
+  styleUrls: ['./clientes.component.scss'],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
+  standalone: true,
+  imports: [CommonModule, FormsModule, IonicModule]
+})
+export class ClientesComponent implements OnInit {
+  encuesta: EncuestaCliente = {
+    satisfaccionGeneral: 50,
+    nombre: '',
+    recomendaria: false,
+    serviciosUtilizados: [],
+    tipoCliente: '',
+    comentarios: '',
+    fotosUrls: [],
+    fechaCreacion: new Date()
+  };
+
+  // Charts
+  satisfaccionChart: Chart | null = null;
+  recomendacionChart: Chart | null = null;
+  serviciosChart: Chart | null = null;
+  
+  loading = false;
+  
+  // Checkboxes para servicios
+  servicioRestaurante: boolean = false;
+  servicioBar: boolean = false;
+  servicioDelivery: boolean = false;
+
+  constructor(
+    private storage: AngularFireStorage,
+    private firestore: Firestore
+  ) {
+    Chart.register(...registerables);
+  }
+
+  ngOnInit() {
+    this.obtenerEstadisticas();
+  }
+
+  async uploadPhotos(event: any) {
+    try {
+      const files = event.target.files;
+      if (!files) return;
+
+      if (this.encuesta.fotosUrls.length + files.length > 3) {
+        throw new Error('Solo puedes cargar hasta 3 fotos.');
+      }
+
+      this.loading = true;
+      
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        const filePath = `encuestas_clientes/foto_${new Date().getTime()}_${file.name}`;
+        const fileRef = this.storage.ref(filePath);
+        
+        await fileRef.put(file);
+        const photoUrl = await lastValueFrom(fileRef.getDownloadURL());
+        
+        this.encuesta.fotosUrls.push(photoUrl);
+      }
+      
+      console.log('Fotos subidas exitosamente:', this.encuesta.fotosUrls);
+    } catch (error) {
+      console.error('Error al subir las fotos:', error);
+    } finally {
+      this.loading = false;
+    }
+  }
+
+  removePhoto(index: number) {
+    this.encuesta.fotosUrls.splice(index, 1);
+  }
+
+  async submitEncuesta(event: Event) {
+    event.preventDefault();
+    
+    try {
+      if (!this.validarEncuesta()) {
+        throw new Error('Por favor complete todos los campos requeridos');
+      }
+
+      this.loading = true;
+      const encuestaToSave = {
+        ...this.encuesta,
+        fechaCreacion: new Date()
+      };
+
+      const encuestasCollection = collection(this.firestore, 'encuestas_clientes');
+      await addDoc(encuestasCollection, encuestaToSave);
+      
+      alert('Encuesta enviada con éxito');
+      this.resetForm();
+    } catch (error) {
+      console.error('Error al enviar la encuesta:', error);
+    } finally {
+      this.loading = false;
+    }
+  }
+
+  private validarEncuesta(): boolean {
+    return (
+      this.encuesta.satisfaccionGeneral >= 0 &&
+      this.encuesta.satisfaccionGeneral <= 100 &&
+      this.encuesta.nombre.trim() !== '' &&
+      this.encuesta.tipoCliente !== ''
+    );
+  }
+
+  resetForm() {
+    this.encuesta = {
+      satisfaccionGeneral: 50,
+      nombre: '',
+      recomendaria: false,
+      serviciosUtilizados: [],
+      tipoCliente: '',
+      comentarios: '',
+      fotosUrls: [],
+      fechaCreacion: new Date()
+    };
+    this.servicioRestaurante = false;
+    this.servicioBar = false;
+    this.servicioDelivery = false;
+  }
+
+  onCheckboxChange(event: any, item: string) {
+    const isChecked = event.detail.checked;
+    
+    if (isChecked && !this.encuesta.serviciosUtilizados.includes(item)) {
+      this.encuesta.serviciosUtilizados.push(item);
+    } else {
+      this.encuesta.serviciosUtilizados = this.encuesta.serviciosUtilizados.filter(
+        servicio => servicio !== item
+      );
+    }
+  }
+
+  obtenerEstadisticas() {
+    const encuestasRef = collection(this.firestore, 'encuestas_clientes');
+    const encuestas$ = collectionData(encuestasRef, { idField: 'id' }) as Observable<EncuestaCliente[]>;
+
+    encuestas$.subscribe({
+      next: (data) => {
+        this.generarGraficos(data);
+      },
+      error: (error) => {
+        console.error('Error al obtener estadísticas:', error);
+      }
+    });
+  }
+
+  private generarGraficos(data: EncuestaCliente[]) {
+    // Gráfico de satisfacción general
+    const satisfaccionPromedio = data.reduce((acc, curr) => acc + curr.satisfaccionGeneral, 0) / data.length;
+
+    if (this.satisfaccionChart) {
+      this.satisfaccionChart.destroy();
+    }
+
+    this.satisfaccionChart = new Chart('satisfaccionChart', {
+      type: 'bar',
+      data: {
+        labels: ['Promedio de Satisfacción'],
+        datasets: [{
+          label: 'Nivel de Satisfacción',
+          data: [satisfaccionPromedio],
+          backgroundColor: 'rgba(54, 162, 235, 0.5)',
+          borderColor: 'rgb(54, 162, 235)',
+          borderWidth: 1
+        }]
+      },
+      options: {
+        responsive: true,
+        scales: {
+          y: {
+            beginAtZero: true,
+            max: 100
+          }
+        }
+      }
+    });
+
+    // Gráfico de recomendación
+    const recomendarian = data.filter(e => e.recomendaria).length;
+    const noRecomendarian = data.length - recomendarian;
+
+    if (this.recomendacionChart) {
+      this.recomendacionChart.destroy();
+    }
+
+    this.recomendacionChart = new Chart('recomendacionChart', {
+      type: 'bar',
+      data: {
+        labels: ['Recomendarían', 'No Recomendarían'],
+        datasets: [{
+          data: [recomendarian, noRecomendarian],
+          backgroundColor: [
+            'rgba(75, 192, 192, 0.5)',
+            'rgba(255, 99, 132, 0.5)'
+          ],
+          borderColor: [
+            'rgb(75, 192, 192)',
+            'rgb(255, 99, 132)'
+          ],
+          borderWidth: 1
+        }]
+      },
+      options: {
+        responsive: true
+      }
+    });
+
+    // Gráfico de servicios utilizados
+    const servicios = ['Restaurante', 'Bar', 'Delivery'];
+    const serviciosCount = servicios.map(servicio => 
+      data.filter(e => e.serviciosUtilizados.includes(servicio)).length
+    );
+
+    if (this.serviciosChart) {
+      this.serviciosChart.destroy();
+    }
+
+    this.serviciosChart = new Chart('serviciosChart', {
+      type: 'bar',
+      data: {
+        labels: servicios,
+        datasets: [{
+          label: 'Servicios Utilizados',
+          data: serviciosCount,
+          backgroundColor: 'rgba(153, 102, 255, 0.5)',
+          borderColor: 'rgb(153, 102, 255)',
+          borderWidth: 1
+        }]
+      },
+      options: {
+        responsive: true,
+        scales: {
+          y: {
+            beginAtZero: true
+          }
+        }
+      }
+    });
+  }
+}
