@@ -16,7 +16,7 @@ import { CommonModule } from '@angular/common';
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss'],
   standalone: true,
-  imports: [ReactiveFormsModule, IonicModule, CommonModule,RouterLink],
+  imports: [ReactiveFormsModule, IonicModule, CommonModule, RouterLink],
 })
 export class LoginComponent {
   loginForm: FormGroup;
@@ -54,7 +54,7 @@ export class LoginComponent {
         password
       );
       console.log('User logged in: ', userCredential);
-      this.router.navigate(['/home']);
+      this.router.navigate(['/home-clientes']);
     } catch (error) {
       this.errorMessage = 'Error al iniciar sesión. Verifica tus credenciales.';
       console.error('Error during login: ', error);

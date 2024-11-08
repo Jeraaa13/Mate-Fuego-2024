@@ -21,6 +21,9 @@ export class HomeComponent {
   }
 
   onScanSuccess(resultado: string) {
+    console.log('Resultado QR => ', resultado);
+
     this.qrService.onScanSuccess(resultado);
+    this.toggleScanner();
   }
 }

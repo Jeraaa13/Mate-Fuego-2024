@@ -17,6 +17,7 @@ export class QrService {
 
     if (this.resultadoScaneo.includes('restaurante:12345')) {
       const currentUser = this.authService.getCurrentUser();
+      console.log(currentUser);
       if (currentUser) {
         const clienteId = currentUser.uid;
 
