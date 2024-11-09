@@ -256,8 +256,7 @@ export class RegistroClientesComponent {
           from_name: 'Mate y Fuego',
         });
 
-        const tokens =
-          await this.pushNotificationService.obtenerTokensSupervisoresYDueno();
+        const tokens = await this.pushNotificationService.obtenerTokensSupervisoresYDueno();
 
         await this.pushNotificationService.enviarNotificacionAMultiplesDestinatarios(
           tokens,

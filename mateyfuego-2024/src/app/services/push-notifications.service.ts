@@ -129,4 +129,34 @@ export class PushNotificationService {
     }
     return tokens;
   }
+
+  async obtenerTokensPorPerfil(tipos: string[], colecciones: string[]): Promise<string[]> {
+    const tokens: string[] = [];
+    try {
+      for (const coleccion of colecciones) {
+        const usuariosSnapshot = await getDocs(collection(this.firestore, coleccion));
+        usuariosSnapshot.forEach((doc) => {
+          const data = doc.data();
+          if (tipos.includes(data['tipoPerfil']) && data['token']) { 
+            tokens.push(data['token']);
+          }
+        });
+      }
+    } catch (error) {
+      console.error('Error getting tokens by profile from multiple collections:', error);
+    }
+    return tokens;
+  }
+
+  async agregarClienteNuevo() {
+    const tokens = await this.obtenerTokensPorPerfil(
+      ['supervisor', 'dueno'],
+      ['empleados', 'duenosSupervisores']  
+    );
+    await this.enviarNotificacionAMultiplesDestinatarios(
+      tokens,
+      'Nuevo cliente agregado.',
+      'Notificación de Supervisión'
+    );
+  }
 }
