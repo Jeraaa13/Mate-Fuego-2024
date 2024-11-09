@@ -7,7 +7,7 @@ import { BarcodeFormat } from '@zxing/library';
 import { ZXingScannerModule } from '@zxing/ngx-scanner';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-
+import { BarcodeScanner } from '@capacitor-community/barcode-scanner';
 interface DuenoSupervisor {
   nombre: string;
   apellido: string;
@@ -37,6 +37,7 @@ export class RegistroDuenoSupervisorComponent {
 
   allowedFormats = [BarcodeFormat.QR_CODE];
   isScannerVisible = false;
+  isScanning = false;
   constructor(
     private firestore: Firestore,
     private storage: Storage,
@@ -133,5 +134,57 @@ export class RegistroDuenoSupervisorComponent {
       ]
     });
     await actionSheet.present();
+  }
+  async startScan() {
+    const permission = await BarcodeScanner.checkPermission({ force: true });
+    
+    if (!permission.granted) {
+      console.error('Camera permission not granted');
+      return;
+    }
+
+    this.isScanning = true;
+    document.querySelector('body')?.classList.add('scanner-active');
+    
+    try {
+      await BarcodeScanner.hideBackground();
+      const result = await BarcodeScanner.startScan();
+      
+      if (result.hasContent) {
+        console.log('QR Code content:', result.content);
+        this.parseDNIQR(result.content);
+      }
+    } catch (error) {
+      console.error('Scanning failed:', error);
+    } finally {
+      this.stopScan();
+    }
+  }
+
+  public stopScan() {
+    BarcodeScanner.stopScan();
+    BarcodeScanner.showBackground();
+    this.isScanning = false;
+    document.querySelector('body')?.classList.remove('scanner-active');
+  }
+
+  private parseDNIQR(content: string) {
+    const parts = content.split('@');
+    const apellido = parts[1] || '';
+    const nombre = parts[2] || '';
+    const dni = parts[4] || '';
+
+    console.log('Parsed QR data - Apellido:', apellido, 'Nombre:', nombre, 'DNI:', dni);
+    this.updateWithDNIInfo({ dni, nombre, apellido });
+  }
+
+  private updateWithDNIInfo(info: any) {
+    this.nuevoDuenoSupervisor = {
+      ...this.nuevoDuenoSupervisor,
+      dni: info.dni,
+      nombre: info.nombre,
+      apellido: info.apellido
+    };
+    console.log('Fields updated with parsed QR data:', info);
   }
 }

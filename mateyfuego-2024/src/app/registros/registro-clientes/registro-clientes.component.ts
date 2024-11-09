@@ -9,8 +9,7 @@ import {
   getDownloadURL,
 } from '@angular/fire/storage';
 import { ActionSheetController } from '@ionic/angular';
-import { BarcodeFormat } from '@zxing/library';
-import { ZXingScannerModule } from '@zxing/ngx-scanner';
+import { BarcodeScanner } from '@capacitor-community/barcode-scanner';
 import { CommonModule } from '@angular/common';
 import {
   FormBuilder,
@@ -19,7 +18,8 @@ import {
   FormsModule,
   ReactiveFormsModule,
 } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
+import { BarcodeFormat } from '@zxing/library';
 
 interface Cliente {
   nombre: string;
@@ -29,7 +29,7 @@ interface Cliente {
   password: string;
   fotoUrl: string;
   tipoPerfil: string;
-  estadoVerificacion?: false;
+  estadoVerificaicon?: false;
 }
 
 @Component({
@@ -37,7 +37,7 @@ interface Cliente {
   templateUrl: './registro-clientes.component.html',
   styleUrls: ['./registro-clientes.component.scss'],
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, ZXingScannerModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class RegistroClientesComponent {
@@ -50,12 +50,12 @@ export class RegistroClientesComponent {
     password: '',
     fotoUrl: '',
     tipoPerfil: 'cliente',
-    estadoVerificacion: false,
+    estadoVerificaicon: false,
   };
   contadorAnonimos = 0;
-  allowedFormats = [BarcodeFormat.QR_CODE];
+  isScanning = false; // Controls QR scanning visibility
   isScannerVisible = false;
-
+  allowedFormats = [BarcodeFormat.QR_CODE];
   constructor(
     private firestore: Firestore,
     private auth: Auth,
@@ -78,11 +78,77 @@ export class RegistroClientesComponent {
       ],
       correo: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]],
+      cuil: ['', [Validators.required, Validators.pattern('^[0-9]{2}[0-9]{8}[0-9]$')]]
     });
   }
-
   toggleScanner() {
     this.isScannerVisible = !this.isScannerVisible;
+  }
+  async startScan() {
+    // Check if camera permission is granted
+    const permission = await BarcodeScanner.checkPermission({ force: true });
+    
+    if (!permission.granted) {
+      console.error('Camera permission not granted');
+      return;
+    }
+
+    // Prepare UI for scanning
+    this.isScanning = true;
+    document.querySelector('body')?.classList.add('scanner-active');
+    
+    try {
+      // Start the scanner
+      await BarcodeScanner.hideBackground();
+      const result = await BarcodeScanner.startScan();
+      
+      if (result.hasContent) {
+        console.log('QR Code content:', result.content);
+        this.parseDNIQR(result.content);
+      }
+    } catch (error) {
+      console.error('Scanning failed:', error);
+    } finally {
+      this.stopScan();
+    }
+  }
+
+  public stopScan() {
+    BarcodeScanner.stopScan();
+    BarcodeScanner.showBackground();
+    this.isScanning = false;
+    document.querySelector('body')?.classList.remove('scanner-active');
+  }
+
+  private parseDNIQR(content: string) {
+    const parts = content.split('@');
+    const apellido = parts[1] || '';
+    const nombre = parts[2] || '';
+    const dni = parts[4] || '';
+
+    console.log('Parsed QR data - Apellido:', apellido, 'Nombre:', nombre, 'DNI:', dni);
+    this.updateFormWithDNIInfo({ dni, nombre, apellido });
+  }
+
+  private updateFormWithDNIInfo(info: any) {
+    this.registroForm.patchValue({
+      dni: info.dni,
+      nombre: info.nombre,
+      apellido: info.apellido
+    });
+    console.log('Form fields updated with parsed QR data:', info);
+  }
+
+  validateCUIL() {
+    const dni = this.registroForm.get('dni')?.value;
+    const cuil = this.registroForm.get('cuil')?.value;
+
+    if (dni && cuil && dni.length === 8) {
+      const dniPart = cuil.substring(2, 10);
+      if (dniPart !== dni) {
+        this.registroForm.get('cuil')?.setErrors({ invalidCuil: true });
+      }
+    }
   }
 
   async capturePhoto(source: CameraSource) {
@@ -193,12 +259,23 @@ export class RegistroClientesComponent {
     this.registroForm.reset();
   }
 
-  async handleQrCodeResult(result: string) {
+  handleQrCodeResult(event: any) {
+    const resultText = event?.text || ''; 
+
+    if (!resultText) {
+      console.error('QR Code result is empty or invalid.');
+      return;
+    }
+
+    this.fetchClientDataFromQRCode(resultText);
+  }
+  async fetchClientDataFromQRCode(result: string) {
     try {
       const docRef = doc(this.firestore, 'codigosValidos', result);
       const docSnap = await getDoc(docRef);
       if (docSnap.exists()) {
         const datosQr = docSnap.data() as Cliente;
+        this.nuevoCliente = { ...datosQr };
         this.registroForm.patchValue(datosQr);
         console.log('Datos obtenidos del QR:', datosQr);
       } else {
@@ -207,6 +284,7 @@ export class RegistroClientesComponent {
     } catch (error) {
       console.error('Error al buscar el documento en Firestore:', error);
     }
+    this.isScannerVisible = false; 
   }
 
   async takePhoto() {

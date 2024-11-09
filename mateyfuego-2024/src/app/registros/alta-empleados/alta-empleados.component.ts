@@ -14,7 +14,7 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Auth, createUserWithEmailAndPassword } from '@angular/fire/auth';
 import { Router } from '@angular/router';
-
+import { BarcodeScanner } from '@capacitor-community/barcode-scanner';
 interface Empleado {
   nombre: string;
   apellido: string;
@@ -60,7 +60,7 @@ export class AltaEmpleadosComponent {
 
   allowedFormats = [BarcodeFormat.QR_CODE];
   isScannerVisible = false;
-
+  isScanning = false;
   constructor(
     private fb: FormBuilder,
     private firestore: Firestore,
@@ -84,7 +84,6 @@ export class AltaEmpleadosComponent {
       fotoUrl: ['']
     });
 
-    // Subscribe to form changes to update nuevoEmpleado
     this.empleadoForm.valueChanges.subscribe(val => {
       this.nuevoEmpleado = { ...this.nuevoEmpleado, ...val };
     });
@@ -217,5 +216,56 @@ export class AltaEmpleadosComponent {
       ],
     });
     await actionSheet.present();
+  }
+  async startScan() {
+    const permission = await BarcodeScanner.checkPermission({ force: true });
+    
+    if (!permission.granted) {
+      console.error('Camera permission not granted');
+      return;
+    }
+
+    this.isScanning = true;
+    document.querySelector('body')?.classList.add('scanner-active');
+    
+    try {
+      await BarcodeScanner.hideBackground();
+      const result = await BarcodeScanner.startScan();
+      
+      if (result.hasContent) {
+        console.log('QR Code content:', result.content);
+        this.parseDNIQR(result.content);
+      }
+    } catch (error) {
+      console.error('Scanning failed:', error);
+    } finally {
+      this.stopScan();
+    }
+  }
+
+  public stopScan() {
+    BarcodeScanner.stopScan();
+    BarcodeScanner.showBackground();
+    this.isScanning = false;
+    document.querySelector('body')?.classList.remove('scanner-active');
+  }
+
+  private parseDNIQR(content: string) {
+    const parts = content.split('@');
+    const apellido = parts[1] || '';
+    const nombre = parts[2] || '';
+    const dni = parts[4] || '';
+
+    console.log('Parsed QR data - Apellido:', apellido, 'Nombre:', nombre, 'DNI:', dni);
+    this.updateFormWithDNIInfo({ dni, nombre, apellido });
+  }
+
+  private updateFormWithDNIInfo(info: any) {
+    this.empleadoForm.patchValue({
+      dni: info.dni,
+      nombre: info.nombre,
+      apellido: info.apellido
+    });
+    console.log('Form fields updated with parsed QR data:', info);
   }
 }

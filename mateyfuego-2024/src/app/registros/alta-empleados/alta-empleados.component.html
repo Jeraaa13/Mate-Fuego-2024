@@ -114,8 +114,19 @@
     <img *ngIf="nuevoEmpleado.fotoUrl" [src]="nuevoEmpleado.fotoUrl" class="foto-preview" alt="Vista previa de la foto">
   </div>
 
-  <button type="button" (click)="toggleScanner()" class="btn btn-secondary">Leer QR del DNI</button>
-  <zxing-scanner *ngIf="isScannerVisible" [formats]="allowedFormats" (scanSuccess)="handleQrCodeResult($event)"></zxing-scanner>
+  <ion-button expand="block" color="primary" (click)="startScan()" style="--background: #e86c1c;">
+    <ion-icon slot="start" name="qr-code-outline"></ion-icon>
+    ESCANEAR DNI
+  </ion-button>
+  <div class="scanner-container" *ngIf="isScanning">
+    <div class="scanner-overlay">
+      <div class="scanner-frame"></div>
+      <p class="scanner-instructions">Centra el código QR del DNI en el marco</p>
+      <button class="cancel-button" (click)="stopScan()">
+        Cancelar Escaneo
+      </button>
+    </div>
+  </div>
 
   <button type="submit" [disabled]="empleadoForm.invalid" class="btn btn-primary">Guardar Empleado</button>
 </form>
