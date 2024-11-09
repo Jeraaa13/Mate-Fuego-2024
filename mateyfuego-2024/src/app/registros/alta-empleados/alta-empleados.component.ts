@@ -11,7 +11,12 @@ import { ActionSheetController } from '@ionic/angular';
 import { BarcodeFormat } from '@zxing/library';
 import { ZXingScannerModule } from '@zxing/ngx-scanner';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  Validators,
+  ReactiveFormsModule,
+} from '@angular/forms';
 import { Auth, createUserWithEmailAndPassword } from '@angular/fire/auth';
 import { Router } from '@angular/router';
 import { BarcodeScanner } from '@capacitor-community/barcode-scanner';
@@ -25,7 +30,6 @@ interface Empleado {
   correo: string;
   contrasena: string;
 }
-
 
 @Component({
   selector: 'app-alta-empleados',
@@ -42,11 +46,14 @@ export class AltaEmpleadosComponent {
     nombre: ['', Validators.required],
     apellido: ['', Validators.required],
     dni: ['', [Validators.required, Validators.pattern('^[0-9]*$')]],
-    cuil: ['', [Validators.required, Validators.pattern('^[0-9]{2}-[0-9]{8}-[0-9]$')]],
+    cuil: [
+      '',
+      [Validators.required, Validators.pattern('^[0-9]{2}-[0-9]{8}-[0-9]$')],
+    ],
     tipoPerfil: ['', Validators.required],
-    fotoUrl: ['']
+    fotoUrl: [''],
   });
-  
+
   nuevoEmpleado: Empleado = {
     nombre: '',
     apellido: '',
@@ -79,12 +86,15 @@ export class AltaEmpleadosComponent {
       nombre: ['', Validators.required],
       apellido: ['', Validators.required],
       dni: ['', [Validators.required, Validators.pattern('^[0-9]*$')]],
-      cuil: ['', [Validators.required, Validators.pattern('^[0-9]{2}-[0-9]{8}-[0-9]$')]],
+      cuil: [
+        '',
+        [Validators.required, Validators.pattern('^[0-9]{2}-[0-9]{8}-[0-9]$')],
+      ],
       tipoPerfil: ['', Validators.required],
-      fotoUrl: ['']
+      fotoUrl: [''],
     });
 
-    this.empleadoForm.valueChanges.subscribe(val => {
+    this.empleadoForm.valueChanges.subscribe((val) => {
       this.nuevoEmpleado = { ...this.nuevoEmpleado, ...val };
     });
   }
@@ -130,7 +140,7 @@ export class AltaEmpleadosComponent {
 
   async guardarEmpleado() {
     if (this.empleadoForm.invalid) {
-      Object.keys(this.empleadoForm.controls).forEach(key => {
+      Object.keys(this.empleadoForm.controls).forEach((key) => {
         const control = this.empleadoForm.get(key);
         if (control?.invalid) {
           control.markAsTouched();
@@ -154,7 +164,19 @@ export class AltaEmpleadosComponent {
       if (userCredential) {
         const uid = userCredential.user.uid;
         const datosEmpleado = doc(this.firestore, 'empleados', uid);
-        await setDoc(datosEmpleado, this.nuevoEmpleado);
+
+        console.log('Guardando empleado con datos:', {
+          ...this.empleadoForm.value,
+          fotoUrl: this.nuevoEmpleado.fotoUrl,
+          uid: userCredential.user.uid,
+        });
+
+        await setDoc(datosEmpleado, {
+          ...this.empleadoForm.value,
+          fotoUrl: this.nuevoEmpleado.fotoUrl,
+          uid: userCredential.user.uid,
+        });
+
         console.log('Datos guardados en Firestore:', this.nuevoEmpleado);
         this.resetForm();
       }
@@ -219,7 +241,7 @@ export class AltaEmpleadosComponent {
   }
   async startScan() {
     const permission = await BarcodeScanner.checkPermission({ force: true });
-    
+
     if (!permission.granted) {
       console.error('Camera permission not granted');
       return;
@@ -227,11 +249,11 @@ export class AltaEmpleadosComponent {
 
     this.isScanning = true;
     document.querySelector('body')?.classList.add('scanner-active');
-    
+
     try {
       await BarcodeScanner.hideBackground();
       const result = await BarcodeScanner.startScan();
-      
+
       if (result.hasContent) {
         console.log('QR Code content:', result.content);
         this.parseDNIQR(result.content);
@@ -256,7 +278,14 @@ export class AltaEmpleadosComponent {
     const nombre = parts[2] || '';
     const dni = parts[4] || '';
 
-    console.log('Parsed QR data - Apellido:', apellido, 'Nombre:', nombre, 'DNI:', dni);
+    console.log(
+      'Parsed QR data - Apellido:',
+      apellido,
+      'Nombre:',
+      nombre,
+      'DNI:',
+      dni
+    );
     this.updateFormWithDNIInfo({ dni, nombre, apellido });
   }
 
@@ -264,7 +293,7 @@ export class AltaEmpleadosComponent {
     this.empleadoForm.patchValue({
       dni: info.dni,
       nombre: info.nombre,
-      apellido: info.apellido
+      apellido: info.apellido,
     });
     console.log('Form fields updated with parsed QR data:', info);
   }

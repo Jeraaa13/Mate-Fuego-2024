@@ -5,11 +5,20 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { Auth } from '@angular/fire/auth';
+import { Auth, user } from '@angular/fire/auth';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { IonicModule } from '@ionic/angular';
 import { Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import {
+  getFirestore,
+  doc,
+  getDoc,
+  collection,
+  query,
+  where,
+  getDocs,
+} from 'firebase/firestore';
 
 @Component({
   selector: 'app-login',
@@ -48,16 +57,74 @@ export class LoginComponent {
 
     const { email, password } = this.loginForm.value;
     try {
+      // Sign in the user with Firebase
       const userCredential = await signInWithEmailAndPassword(
         this.auth,
         email,
         password
       );
       console.log('User logged in: ', userCredential);
-      this.router.navigate(['/home-clientes']);
+
+      // After login, fetch user profile from Firestore
+      await this.checkUserInCollections(userCredential.user.uid);
     } catch (error) {
       this.errorMessage = 'Error al iniciar sesión. Verifica tus credenciales.';
       console.error('Error during login: ', error);
+    }
+  }
+
+  async checkUserInCollections(uid: string) {
+    const db = getFirestore();
+    let found = false;
+
+    const collections = ['duenosSupervisores', 'empleados', 'clientes'];
+
+    for (const collectionName of collections) {
+      const colRef = collection(db, collectionName);
+      const q = query(colRef, where('uid', '==', uid));
+      const querySnapshot = await getDocs(q);
+
+      console.log('uid => ', uid);
+
+      if (!querySnapshot.empty) {
+        const userDoc = querySnapshot.docs[0];
+        const userData = userDoc.data();
+        const tipoPerfil = userData?.['tipoPerfil'];
+
+        console.log(`${collectionName} =>`, tipoPerfil);
+
+        if (tipoPerfil) {
+          this.navigateToTipoPerfil(tipoPerfil);
+        } else {
+          this.errorMessage = `Tipo de perfil no encontrado en ${collectionName}.`;
+        }
+        found = true;
+        break;
+      }
+    }
+
+    if (!found) {
+      this.errorMessage =
+        'No se encontró información del usuario en las colecciones.';
+    }
+  }
+  navigateToTipoPerfil(tipoPerfil: string) {
+    switch (tipoPerfil) {
+      case 'cliente':
+        this.router.navigate(['/home-clientes']);
+        break;
+
+      case 'dueno':
+        this.router.navigate(['/home-dueno-supervisores']);
+        break;
+
+      case 'supervisor':
+        this.router.navigate(['/home-dueno-supervisores']);
+        break;
+
+      default:
+        this.router.navigate(['/home-empleados']);
+        break;
     }
   }
 

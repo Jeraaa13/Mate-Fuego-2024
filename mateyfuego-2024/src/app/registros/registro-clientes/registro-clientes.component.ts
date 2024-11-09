@@ -88,7 +88,6 @@ export class RegistroClientesComponent {
     this.isScannerVisible = !this.isScannerVisible;
   }
   async startScan() {
-    // Check if camera permission is granted
     const permission = await BarcodeScanner.checkPermission({ force: true });
 
     if (!permission.granted) {
@@ -96,12 +95,10 @@ export class RegistroClientesComponent {
       return;
     }
 
-    // Prepare UI for scanning
     this.isScanning = true;
     document.querySelector('body')?.classList.add('scanner-active');
 
     try {
-      // Start the scanner
       await BarcodeScanner.hideBackground();
       const result = await BarcodeScanner.startScan();
 
@@ -228,6 +225,7 @@ export class RegistroClientesComponent {
         console.log('Guardando cliente con datos:', {
           ...this.registroForm.value,
           fotoUrl: this.nuevoCliente.fotoUrl,
+          uid: userCredential.user.uid,
         });
 
         await setDoc(datosCliente, {
@@ -235,6 +233,7 @@ export class RegistroClientesComponent {
           fotoUrl: this.nuevoCliente.fotoUrl,
           estadoVerificacion: false,
           tipoPerfil: 'cliente',
+          uid: userCredential.user.uid,
         });
 
         console.log('Datos guardados en Firestore');

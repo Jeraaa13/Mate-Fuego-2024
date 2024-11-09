@@ -1,13 +1,20 @@
 import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 import { Firestore, doc, getDoc, setDoc } from '@angular/fire/firestore';
-import { Storage, ref, uploadString, getDownloadURL } from '@angular/fire/storage';
+import {
+  Storage,
+  ref,
+  uploadString,
+  getDownloadURL,
+} from '@angular/fire/storage';
 import { ActionSheetController } from '@ionic/angular';
 import { BarcodeFormat } from '@zxing/library';
 import { ZXingScannerModule } from '@zxing/ngx-scanner';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { BarcodeScanner } from '@capacitor-community/barcode-scanner';
+import { Auth, createUserWithEmailAndPassword } from '@angular/fire/auth';
+
 interface DuenoSupervisor {
   nombre: string;
   apellido: string;
@@ -15,6 +22,8 @@ interface DuenoSupervisor {
   cuil: string;
   tipoPerfil: 'dueno' | 'supervisor';
   fotoUrl: string;
+  email: string;
+  password: string;
 }
 
 @Component({
@@ -33,6 +42,8 @@ export class RegistroDuenoSupervisorComponent {
     cuil: '',
     tipoPerfil: 'dueno',
     fotoUrl: '',
+    email: '',
+    password: '',
   };
 
   allowedFormats = [BarcodeFormat.QR_CODE];
@@ -41,6 +52,7 @@ export class RegistroDuenoSupervisorComponent {
   constructor(
     private firestore: Firestore,
     private storage: Storage,
+    private auth: Auth,
     private actionSheetCtrl: ActionSheetController
   ) {}
 
@@ -58,7 +70,11 @@ export class RegistroDuenoSupervisorComponent {
       });
 
       if (photo.base64String) {
-        const photoUrl = await this.uploadPhoto(photo.base64String, 'duenosSupervisores', `${this.nuevoDuenoSupervisor.dni}`);
+        const photoUrl = await this.uploadPhoto(
+          photo.base64String,
+          'duenosSupervisores',
+          `${this.nuevoDuenoSupervisor.dni}`
+        );
         this.nuevoDuenoSupervisor.fotoUrl = photoUrl;
         await this.guardarDuenoSupervisor();
       }
@@ -67,22 +83,48 @@ export class RegistroDuenoSupervisorComponent {
     }
   }
 
-  async uploadPhoto(base64String: string, folder: string, fileName: string): Promise<string> {
-    const photoRef = ref(this.storage, `imagenes/${folder}/${fileName}`); 
-    await uploadString(photoRef, base64String, 'base64', { contentType: 'image/jpeg' });
+  async uploadPhoto(
+    base64String: string,
+    folder: string,
+    fileName: string
+  ): Promise<string> {
+    const photoRef = ref(this.storage, `imagenes/${folder}/${fileName}`);
+    await uploadString(photoRef, base64String, 'base64', {
+      contentType: 'image/jpeg',
+    });
     return getDownloadURL(photoRef);
   }
 
   async guardarDuenoSupervisor() {
     if (!this.nuevoDuenoSupervisor.fotoUrl) {
-      console.error("No hay foto cargada. Sube una foto antes de guardar.");
+      console.error('No hay foto cargada. Sube una foto antes de guardar.');
       return;
     }
 
-    const duenoSupervisorRef = doc(this.firestore, 'duenosSupervisores', this.nuevoDuenoSupervisor.dni);
-    await setDoc(duenoSupervisorRef, this.nuevoDuenoSupervisor);
-    console.log("Datos guardados en Firestore:", this.nuevoDuenoSupervisor);
-    this.resetForm();
+    try {
+      // Crear usuario en Firebase Auth
+      const userCredential = await createUserWithEmailAndPassword(
+        this.auth,
+        this.nuevoDuenoSupervisor.email,
+        this.nuevoDuenoSupervisor.password
+      );
+
+      // Una vez creado el usuario, guardar los datos en Firestore
+      const duenoSupervisorRef = doc(
+        this.firestore,
+        'duenosSupervisores',
+        userCredential.user.uid
+      );
+      await setDoc(duenoSupervisorRef, {
+        ...this.nuevoDuenoSupervisor,
+        uid: userCredential.user.uid, // Guardar UID de Firebase Auth
+      });
+
+      console.log('Datos guardados en Firestore:', this.nuevoDuenoSupervisor);
+      this.resetForm();
+    } catch (error) {
+      console.error('Error al guardar los datos:', error);
+    }
   }
 
   resetForm() {
@@ -93,6 +135,8 @@ export class RegistroDuenoSupervisorComponent {
       cuil: '',
       tipoPerfil: 'dueno',
       fotoUrl: '',
+      email: '',
+      password: '',
     };
   }
 
@@ -119,25 +163,25 @@ export class RegistroDuenoSupervisorComponent {
         {
           text: 'Tomar foto',
           icon: 'camera',
-          handler: () => this.capturePhoto(CameraSource.Camera)
+          handler: () => this.capturePhoto(CameraSource.Camera),
         },
         {
           text: 'Elegir de galería',
           icon: 'image',
-          handler: () => this.capturePhoto(CameraSource.Photos)
+          handler: () => this.capturePhoto(CameraSource.Photos),
         },
         {
           text: 'Cancelar',
           icon: 'close',
-          role: 'cancel'
-        }
-      ]
+          role: 'cancel',
+        },
+      ],
     });
     await actionSheet.present();
   }
   async startScan() {
     const permission = await BarcodeScanner.checkPermission({ force: true });
-    
+
     if (!permission.granted) {
       console.error('Camera permission not granted');
       return;
@@ -145,11 +189,11 @@ export class RegistroDuenoSupervisorComponent {
 
     this.isScanning = true;
     document.querySelector('body')?.classList.add('scanner-active');
-    
+
     try {
       await BarcodeScanner.hideBackground();
       const result = await BarcodeScanner.startScan();
-      
+
       if (result.hasContent) {
         console.log('QR Code content:', result.content);
         this.parseDNIQR(result.content);
@@ -174,7 +218,14 @@ export class RegistroDuenoSupervisorComponent {
     const nombre = parts[2] || '';
     const dni = parts[4] || '';
 
-    console.log('Parsed QR data - Apellido:', apellido, 'Nombre:', nombre, 'DNI:', dni);
+    console.log(
+      'Parsed QR data - Apellido:',
+      apellido,
+      'Nombre:',
+      nombre,
+      'DNI:',
+      dni
+    );
     this.updateWithDNIInfo({ dni, nombre, apellido });
   }
 
@@ -183,7 +234,7 @@ export class RegistroDuenoSupervisorComponent {
       ...this.nuevoDuenoSupervisor,
       dni: info.dni,
       nombre: info.nombre,
-      apellido: info.apellido
+      apellido: info.apellido,
     };
     console.log('Fields updated with parsed QR data:', info);
   }
