@@ -1,13 +1,5 @@
 import { Injectable } from '@angular/core';
-import {
-  Auth,
-  createUserWithEmailAndPassword,
-  sendEmailVerification,
-  signInWithEmailAndPassword,
-  signOut,
-  User,
-} from '@angular/fire/auth';
-import { AngularFireAuth } from '@angular/fire/compat/auth';
+import { Auth, signOut, User } from '@angular/fire/auth';
 
 @Injectable({
   providedIn: 'root',
@@ -21,8 +13,16 @@ export class AuthService {
     });
   }
 
-  getCurrentUser(): User | null {
-    return this.user;
+  async getCurrentUser(): Promise<User | null> {
+    return new Promise<User | null>((resolve) => {
+      if (this.user) {
+        resolve(this.user);
+      } else {
+        this.auth.onAuthStateChanged((user) => {
+          resolve(user);
+        });
+      }
+    });
   }
 
   async logout() {

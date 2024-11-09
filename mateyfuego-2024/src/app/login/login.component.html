@@ -7,6 +7,11 @@
     </div>
     <div class="form-container">
       <h1>Iniciar Sesión</h1>
+
+      <ion-text color="danger" *ngIf="errorMessage">
+        <p>{{ errorMessage }}</p>
+      </ion-text>
+
       <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
         <div class="input-group">
           <div class="input-icon"></div>

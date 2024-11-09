@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -8,7 +8,7 @@ import {
 import { Auth, user } from '@angular/fire/auth';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { IonicModule } from '@ionic/angular';
-import { Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import {
   getFirestore,
@@ -27,18 +27,28 @@ import {
   standalone: true,
   imports: [ReactiveFormsModule, IonicModule, CommonModule, RouterLink],
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit {
   loginForm: FormGroup;
   errorMessage: string | null = null;
 
   constructor(
     private fb: FormBuilder,
     private auth: Auth,
-    private router: Router
+    private router: Router,
+    private route: ActivatedRoute
   ) {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]],
+    });
+  }
+
+  ngOnInit(): void {
+    this.route.queryParams.subscribe((params) => {
+      if (params['noVerified']) {
+        this.errorMessage =
+          'Tu cuenta aún no ha sido verificada por un administrador.';
+      }
     });
   }
 

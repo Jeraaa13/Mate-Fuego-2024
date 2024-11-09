@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { EmpleadosGuard } from './guards/empleados.guard';
+import { AuthGuard } from './guards/auth.guard';
 export const routes: Routes = [
   {
     path: 'login',
@@ -75,6 +76,7 @@ export const routes: Routes = [
     path: 'home-clientes',
     loadComponent: () =>
       import('./clientes/home/home.component').then((m) => m.HomeComponent),
+    canActivate: [AuthGuard],
   },
   {
     path: 'home-dueno-supervisores',

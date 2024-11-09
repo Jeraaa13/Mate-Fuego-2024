@@ -2,12 +2,13 @@ import { Injectable } from '@angular/core';
 import { LocalNotifications } from '@capacitor/local-notifications';
 import { PushNotifications, Token } from '@capacitor/push-notifications';
 import { Platform } from '@ionic/angular';
+import { Firestore, collection, getDocs } from '@angular/fire/firestore';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class PushNotificationService {
-  constructor(private platform: Platform) {}
+  constructor(private platform: Platform, private firestore: Firestore) {}
 
   async inicializarNotificaciones() {
     try {
@@ -21,14 +22,20 @@ export class PushNotificationService {
             console.log('Token FCM:', token.value);
             this.guardarTokenEnServidor(token.value);
           });
-          PushNotifications.addListener('pushNotificationReceived', (notification) => {
-            console.log('Notification received:', notification);
-            this.mostrarNotificacion(notification);
-          });
-          PushNotifications.addListener('pushNotificationActionPerformed', (action) => {
-            console.log('Notification action performed:', action);
-            this.manejarAccionNotificacion(action);
-          });
+          PushNotifications.addListener(
+            'pushNotificationReceived',
+            (notification) => {
+              console.log('Notification received:', notification);
+              this.mostrarNotificacion(notification);
+            }
+          );
+          PushNotifications.addListener(
+            'pushNotificationActionPerformed',
+            (action) => {
+              console.log('Notification action performed:', action);
+              this.manejarAccionNotificacion(action);
+            }
+          );
         } else {
           console.error('Push notification permission not granted');
         }
@@ -64,13 +71,62 @@ export class PushNotificationService {
             id: 1,
             schedule: { at: new Date(Date.now() + 500) },
             actionTypeId: '',
-            extra: null
-          }
-        ]
+            extra: null,
+          },
+        ],
       });
       console.log('Test notification scheduled');
     } catch (error) {
       console.error('Error sending test notification:', error);
     }
+  }
+
+  async enviarNotificacionAMultiplesDestinatarios(
+    tokens: string[],
+    mensaje: string,
+    titulo: string
+  ) {
+    try {
+      for (const token of tokens) {
+        await LocalNotifications.schedule({
+          notifications: [
+            {
+              title: titulo,
+              body: mensaje,
+              id: Date.now(),
+              schedule: { at: new Date(Date.now() + 500) },
+              extra: { token },
+            },
+          ],
+        });
+        console.log('Notification sent to token:', token);
+      }
+    } catch (error) {
+      console.error(
+        'Error sending notification to multiple recipients:',
+        error
+      );
+    }
+  }
+
+  async obtenerTokensSupervisoresYDueno(): Promise<string[]> {
+    const tokens: string[] = [];
+    try {
+      const usuariosSnapshot = await getDocs(
+        collection(this.firestore, 'usuarios')
+      );
+      usuariosSnapshot.forEach((doc) => {
+        const data = doc.data();
+        if (
+          data['tipoPerfil'] === 'supervisor' ||
+          data['tipoPerfil'] === 'dueno'
+        ) {
+          tokens.push(data['token']);
+        }
+      });
+    } catch (error) {
+      console.error('Error getting supervisor and owner tokens:', error);
+    }
+    return tokens;
   }
 }

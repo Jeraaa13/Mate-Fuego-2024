@@ -24,7 +24,6 @@ export class HomeComponent implements OnInit {
 
   constructor(
     private firestore: AngularFirestore,
-    private authService: AuthService,
     private mailService: MailService
   ) {}
 
@@ -44,10 +43,11 @@ export class HomeComponent implements OnInit {
           return { ...clienteData, id: e.payload.doc.id };
         });
       });
+
+    console.log(this.clientesPendientes);
   }
 
   aprobarCliente(clienteId: string): void {
-    // Obtener los datos del cliente a partir del clienteId
     this.firestore
       .collection('clientes')
       .doc(clienteId)
@@ -55,8 +55,7 @@ export class HomeComponent implements OnInit {
       .toPromise()
       .then((docSnapshot) => {
         if (docSnapshot?.exists) {
-          const cliente = docSnapshot?.data() as Cliente; // Obtener los datos del cliente
-          // Actualizar el estado de verificación
+          const cliente = docSnapshot?.data() as Cliente;
           this.firestore
             .collection('clientes')
             .doc(clienteId)
@@ -83,12 +82,32 @@ export class HomeComponent implements OnInit {
     this.firestore
       .collection('clientes')
       .doc(clienteId)
-      .delete()
-      .then(() => {
-        alert('Cliente rechazado y eliminado');
+      .get()
+      .toPromise()
+      .then((docSnapshot) => {
+        if (docSnapshot?.exists) {
+          const cliente = docSnapshot?.data() as Cliente;
+
+          // Send the rejection email to the client
+          this.mailService.enviarConfirmacionDeshabilitado(cliente);
+
+          // Delete the rejected client from Firestore
+          this.firestore
+            .collection('clientes')
+            .doc(clienteId)
+            .delete()
+            .then(() => {
+              alert('Cliente rechazado y eliminado');
+            })
+            .catch((error) => {
+              console.error('Error al rechazar cliente: ', error);
+            });
+        } else {
+          console.error('Cliente no encontrado');
+        }
       })
       .catch((error) => {
-        console.error('Error al rechazar cliente: ', error);
+        console.error('Error al obtener datos del cliente: ', error);
       });
   }
 }

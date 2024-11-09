@@ -1,7 +1,7 @@
 import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 import { Firestore, doc, getDoc, setDoc } from '@angular/fire/firestore';
-import { Auth, createUserWithEmailAndPassword } from '@angular/fire/auth';
+import { Auth, createUserWithEmailAndPassword, user } from '@angular/fire/auth';
 import {
   Storage,
   ref,
@@ -18,8 +18,10 @@ import {
   FormsModule,
   ReactiveFormsModule,
 } from '@angular/forms';
-import { Router } from '@angular/router';
 import { BarcodeFormat } from '@zxing/library';
+import { MailService } from 'src/app/services/mail.service';
+import { PushNotificationService } from 'src/app/services/push-notifications.service';
+import { Router } from '@angular/router';
 
 interface Cliente {
   nombre: string;
@@ -42,6 +44,7 @@ interface Cliente {
 })
 export class RegistroClientesComponent {
   registroForm: FormGroup;
+  registroAnonimoForm: FormGroup;
   nuevoCliente: Cliente = {
     nombre: '',
     apellido: '',
@@ -56,37 +59,46 @@ export class RegistroClientesComponent {
   isScanning = false; // Controls QR scanning visibility
   isScannerVisible = false;
   allowedFormats = [BarcodeFormat.QR_CODE];
+  tipoCliente: string = '';
+
   constructor(
     private firestore: Firestore,
     private auth: Auth,
     private storage: Storage,
     private actionSheetCtrl: ActionSheetController,
-    private router: Router,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private mailService: MailService,
+    private pushNotificationService: PushNotificationService,
+    private router: Router
   ) {
     this.registroForm = this.fb.group({
-      nombre: ['', Validators.required, Validators.minLength(3)],
-      apellido: ['', Validators.required, Validators.minLength(3)],
+      nombre: ['', Validators.required],
+      apellido: ['', Validators.required],
       dni: [
         '',
         [
           Validators.required,
           Validators.pattern(/^\d+$/),
-          Validators.maxLength(8),
           Validators.minLength(8),
         ],
       ],
       correo: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]],
-      cuil: [
-        '',
-        [Validators.required, Validators.pattern('^[0-9]{2}[0-9]{8}[0-9]$')],
-      ],
+    });
+
+    this.registroAnonimoForm = this.fb.group({
+      nombre: ['', Validators.required],
     });
   }
+
   toggleScanner() {
     this.isScannerVisible = !this.isScannerVisible;
   }
+
+  seleccionarTipoCliente(tipo: string) {
+    this.tipoCliente = tipo;
+  }
+
   async startScan() {
     const permission = await BarcodeScanner.checkPermission({ force: true });
 
@@ -168,14 +180,12 @@ export class RegistroClientesComponent {
       });
 
       if (photo.base64String) {
-        console.log('Foto capturada en base64:', photo.base64String);
         const photoUrl = await this.uploadPhoto(
           photo.base64String,
           'clientes',
           `${this.registroForm.value.nombre}`
         );
         this.nuevoCliente.fotoUrl = photoUrl;
-        console.log('Foto subida y URL obtenida:', photoUrl);
       }
     } catch (error) {
       console.error('Error al capturar la imagen:', error);
@@ -193,7 +203,6 @@ export class RegistroClientesComponent {
         contentType: 'image/jpeg',
       });
       const downloadUrl = await getDownloadURL(photoRef);
-      console.log('URL de la foto obtenida de Storage:', downloadUrl);
       return downloadUrl;
     } catch (error) {
       console.error('Error al subir la imagen:', error);
@@ -211,6 +220,7 @@ export class RegistroClientesComponent {
       console.error('No hay foto cargada. Sube una foto antes de guardar.');
       return;
     }
+
     try {
       const userCredential = await createUserWithEmailAndPassword(
         this.auth,
@@ -237,7 +247,24 @@ export class RegistroClientesComponent {
         });
 
         console.log('Datos guardados en Firestore');
-        this.router.navigate(['/home-clientes']);
+
+        this.mailService.enviarAviso({
+          email_cliente: this.registroForm.value.correo,
+          to_name: this.registroForm.value.nombre,
+          message:
+            'Para acceder a la aplicación debe aguardar a que su cuenta sea activada',
+          from_name: 'Mate y Fuego',
+        });
+
+        const tokens =
+          await this.pushNotificationService.obtenerTokensSupervisoresYDueno();
+
+        await this.pushNotificationService.enviarNotificacionAMultiplesDestinatarios(
+          tokens,
+          'Se ha agregado un nuevo cliente',
+          'Nuevo Cliente'
+        );
+
         this.resetForm();
       }
     } catch (error) {
@@ -245,28 +272,36 @@ export class RegistroClientesComponent {
     }
   }
 
-  async GuardarClienteAnonimo() {
-    this.nuevoCliente = {
-      nombre: this.registroForm.value.nombre,
-      apellido: '',
-      dni: '',
-      correo: '',
-      password: '',
-      fotoUrl: '',
+  async guardarClienteAnonimo() {
+    if (this.registroAnonimoForm.invalid) {
+      console.error('Formulario inválido');
+      return;
+    }
+
+    const datosCliente = {
+      nombre: this.registroAnonimoForm.value.nombre,
       tipoPerfil: 'anonimo',
+      estadoVerificacion: true,
     };
-    const datosCliente = doc(
-      this.firestore,
-      'clientes',
-      'Anonimo ' + this.contadorAnonimos++
-    );
-    await setDoc(datosCliente, this.nuevoCliente);
-    console.log('Datos guardados en Firestore:', this.nuevoCliente);
-    this.resetForm();
+
+    try {
+      const idAnonimo = `Anonimo_${++this.contadorAnonimos}`;
+      const clienteRef = doc(this.firestore, 'clientes', idAnonimo);
+      await setDoc(clienteRef, datosCliente);
+      console.log('Cliente anónimo guardado en Firestore:', datosCliente);
+      this.router.navigate(['/home-clientes'], {
+        queryParams: { skipVerification: true },
+      });
+      this.resetForm();
+    } catch (error) {
+      console.error('Error al guardar cliente anónimo:', error);
+    }
   }
 
   resetForm() {
     this.registroForm.reset();
+    this.registroAnonimoForm.reset();
+    this.tipoCliente = '';
   }
 
   handleQrCodeResult(event: any) {
