@@ -3,7 +3,6 @@ import { IonApp, IonRouterOutlet } from '@ionic/angular/standalone';
 import { SplashScreen } from '@capacitor/splash-screen';
 import { Router } from '@angular/router';
 import { Platform } from '@ionic/angular';
-
 @Component({
   selector: 'app-root',
   templateUrl: 'app.component.html',
@@ -15,7 +14,7 @@ export class AppComponent {
     this.initializeApp();
   }
 
-  initializeApp() {
+  async initializeApp() {
     this.platform.ready().then(() => {
       SplashScreen.hide();
     });
