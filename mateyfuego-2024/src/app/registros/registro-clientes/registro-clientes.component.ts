@@ -29,7 +29,7 @@ interface Cliente {
   password: string;
   fotoUrl: string;
   tipoPerfil: string;
-  estadoVerificaicon?: false;
+  estadoVerificacion?: false;
 }
 
 @Component({
@@ -50,7 +50,7 @@ export class RegistroClientesComponent {
     password: '',
     fotoUrl: '',
     tipoPerfil: 'cliente',
-    estadoVerificaicon: false,
+    estadoVerificacion: false,
   };
   contadorAnonimos = 0;
   allowedFormats = [BarcodeFormat.QR_CODE];

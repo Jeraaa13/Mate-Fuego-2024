@@ -12,7 +12,7 @@ import { Firestore, doc, setDoc } from '@angular/fire/firestore';
   styleUrls: ['./home.component.scss'],
 })
 export class HomeComponent {
-  clientesPendientes = [];
+  clientesPendiente = [];
   constructor(private firestore: Firestore) {}
 
   // Método para aprobar un cliente
@@ -37,9 +37,7 @@ export class HomeComponent {
     }
   }
 
-  // Método para enviar correo, si tu aplicación utiliza algún backend o Firebase Functions
   enviarCorreo(clienteId: string, aprobado: boolean) {
-    // Aquí puedes agregar la lógica para enviar correos a través de algún servicio
     const estado = aprobado ? 'aprobado' : 'rechazado';
     const mensaje = `Estimado/a, su solicitud ha sido ${estado}.`;
 
