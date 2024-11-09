@@ -8,8 +8,7 @@ export const routes: Routes = [
   },
   {
     path: 'home',
-    loadComponent: () =>
-      import('./home/home.page').then((m) => m.HomePage),
+    loadComponent: () => import('./home/home.page').then((m) => m.HomePage),
   },
   {
     path: '',
@@ -68,7 +67,9 @@ export const routes: Routes = [
   {
     path: 'home-empleados',
     loadComponent: () =>
-      import('./encuestas/empleados/home.component').then((m) => m.HomeComponent),
+      import('./encuestas/empleados/home.component').then(
+        (m) => m.HomeComponent
+      ),
   },
   {
     path: 'home-clientes',
@@ -76,13 +77,24 @@ export const routes: Routes = [
       import('./clientes/home/home.component').then((m) => m.HomeComponent),
   },
   {
+    path: 'home-dueno-supervisores',
+    loadComponent: () =>
+      import('./duenos-supervisores/home/home.component').then(
+        (m) => m.HomeComponent
+      ),
+  },
+  {
     path: 'encuestas-clientes',
     loadComponent: () =>
-      import('./encuestas/clientes/clientes.component').then((m) => m.ClientesComponent),
+      import('./encuestas/clientes/clientes.component').then(
+        (m) => m.ClientesComponent
+      ),
   },
   {
     path: 'encuestas-supervisores',
     loadComponent: () =>
-      import('./encuestas/supervisores/supervisores.component').then((m) => m.SupervisorComponent),
+      import('./encuestas/supervisores/supervisores.component').then(
+        (m) => m.SupervisorComponent
+      ),
   },
 ];

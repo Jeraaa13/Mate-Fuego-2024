@@ -1,5 +1,5 @@
 {
-  "name": "Mate y Fuego",
+  "name": "mate-y-fuego",
   "version": "0.0.1",
   "author": "Ionic Framework",
   "homepage": "https://ionicframework.com/",
@@ -38,9 +38,14 @@
     "@zxing/library": "^0.21.3",
     "@zxing/ngx-scanner": "^18.0.1",
     "angularx-qrcode": "^18.0.2",
+    "body-parser": "^1.20.3",
     "chart.js": "^4.4.6",
     "cordova-plugin-camera": "^8.0.0",
+    "dotenv": "^16.4.5",
+    "emailjs-com": "^3.2.0",
+    "express": "^4.21.1",
     "firebase": "^10.14.1",
+    "firebase-admin": "^12.7.0",
     "ionicons": "^7.4.0",
     "nodemailer": "^6.9.16",
     "rxjs": "~7.8.0",
@@ -77,5 +82,8 @@
     "karma-jasmine-html-reporter": "~2.1.0",
     "typescript": "~5.4.0"
   },
-  "description": "An Ionic project"
+  "description": "An Ionic project",
+  "main": "karma.conf.js",
+  "keywords": [],
+  "license": "ISC"
 }

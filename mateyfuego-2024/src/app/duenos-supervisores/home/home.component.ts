@@ -1,53 +1,94 @@
-import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { Component, OnInit } from '@angular/core';
+import { AngularFirestore } from '@angular/fire/compat/firestore';
+import { AuthService } from 'src/app/services/auth.service';
 import { IonicModule } from '@ionic/angular';
-import { Firestore, doc, setDoc } from '@angular/fire/firestore';
+import { CommonModule } from '@angular/common';
+import { MailService } from 'src/app/services/mail.service';
+
+interface Cliente {
+  id: string;
+  nombre: string;
+  correo: string;
+  estadoVerificacion: boolean;
+}
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [IonicModule, FormsModule, CommonModule, ReactiveFormsModule],
+  imports: [IonicModule, CommonModule],
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
 })
-export class HomeComponent {
-  clientesPendiente = [];
-  constructor(private firestore: Firestore) {}
+export class HomeComponent implements OnInit {
+  clientesPendientes: Cliente[] = [];
 
-  // Método para aprobar un cliente
-  async aprobarCliente(clienteId: string) {
-    try {
-      const clienteRef = doc(this.firestore, 'clientes', clienteId);
-      await setDoc(clienteRef, { aprobado: true }, { merge: true }); // Marca como aprobado
-      this.enviarCorreo(clienteId, true); // Enviar correo de aprobación
-    } catch (error) {
-      console.error('Error al aprobar el cliente:', error);
-    }
+  constructor(
+    private firestore: AngularFirestore,
+    private authService: AuthService,
+    private mailService: MailService
+  ) {}
+
+  ngOnInit(): void {
+    this.cargarClientesPendientes();
   }
 
-  // Método para rechazar un cliente
-  async rechazarCliente(clienteId: string) {
-    try {
-      const clienteRef = doc(this.firestore, 'clientes', clienteId);
-      await setDoc(clienteRef, { aprobado: false }, { merge: true }); // Marca como rechazado
-      this.enviarCorreo(clienteId, false); // Enviar correo de rechazo
-    } catch (error) {
-      console.error('Error al rechazar el cliente:', error);
-    }
+  cargarClientesPendientes(): void {
+    this.firestore
+      .collection('clientes', (ref) =>
+        ref.where('estadoVerificacion', '==', false)
+      )
+      .snapshotChanges()
+      .subscribe((data) => {
+        this.clientesPendientes = data.map((e) => {
+          const clienteData = e.payload.doc.data() as Cliente;
+          return { ...clienteData, id: e.payload.doc.id };
+        });
+      });
   }
 
-  enviarCorreo(clienteId: string, aprobado: boolean) {
-    const estado = aprobado ? 'aprobado' : 'rechazado';
-    const mensaje = `Estimado/a, su solicitud ha sido ${estado}.`;
+  aprobarCliente(clienteId: string): void {
+    // Obtener los datos del cliente a partir del clienteId
+    this.firestore
+      .collection('clientes')
+      .doc(clienteId)
+      .get()
+      .toPromise()
+      .then((docSnapshot) => {
+        if (docSnapshot?.exists) {
+          const cliente = docSnapshot?.data() as Cliente; // Obtener los datos del cliente
+          // Actualizar el estado de verificación
+          this.firestore
+            .collection('clientes')
+            .doc(clienteId)
+            .update({ estadoVerificacion: true })
+            .then(() => {
+              this.mailService.enviarConfirmacionHabilitado(cliente);
+              console.log(
+                'Cliente aprobado exitosamente, enviando mail con datos del cliente...'
+              );
+            })
+            .catch((error) => {
+              console.error('Error al aprobar cliente: ', error);
+            });
+        } else {
+          console.error('Cliente no encontrado');
+        }
+      })
+      .catch((error) => {
+        console.error('Error al obtener datos del cliente: ', error);
+      });
+  }
 
-    // Este es un ejemplo básico de cómo podrías preparar el mensaje
-    console.log(
-      `Enviando correo a cliente ${clienteId} con mensaje: ${mensaje}`
-    );
-
-    // Si tienes un servicio de correo, lo llamas aquí
-    // Ejemplo:
-    // this.emailService.enviarEmail(clienteId, mensaje);
+  rechazarCliente(clienteId: string): void {
+    this.firestore
+      .collection('clientes')
+      .doc(clienteId)
+      .delete()
+      .then(() => {
+        alert('Cliente rechazado y eliminado');
+      })
+      .catch((error) => {
+        console.error('Error al rechazar cliente: ', error);
+      });
   }
 }

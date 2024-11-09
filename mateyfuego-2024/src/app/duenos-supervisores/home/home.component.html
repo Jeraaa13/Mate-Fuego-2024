@@ -1,0 +1,28 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>Clientes Pendientes de Aprobación</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <div *ngIf="clientesPendientes.length > 0; else noClientes">
+    <ion-list>
+      <ion-item *ngFor="let cliente of clientesPendientes">
+        <ion-label>
+          <h2>{{ cliente.nombre }}</h2>
+          <p>{{ cliente.correo }}</p>
+        </ion-label>
+        <ion-button (click)="aprobarCliente(cliente.id)" color="success">
+          Aceptar
+        </ion-button>
+        <ion-button (click)="rechazarCliente(cliente.id)" color="danger">
+          Rechazar
+        </ion-button>
+      </ion-item>
+    </ion-list>
+  </div>
+
+  <ng-template #noClientes>
+    <p>No hay clientes pendientes de aprobación.</p>
+  </ng-template>
+</ion-content>

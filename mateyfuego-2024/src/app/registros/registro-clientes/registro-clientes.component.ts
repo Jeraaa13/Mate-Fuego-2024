@@ -29,7 +29,7 @@ interface Cliente {
   password: string;
   fotoUrl: string;
   tipoPerfil: string;
-  estadoVerificaicon?: false;
+  estadoVerificacion?: false;
 }
 
 @Component({
@@ -50,7 +50,7 @@ export class RegistroClientesComponent {
     password: '',
     fotoUrl: '',
     tipoPerfil: 'cliente',
-    estadoVerificaicon: false,
+    estadoVerificacion: false,
   };
   contadorAnonimos = 0;
   isScanning = false; // Controls QR scanning visibility
@@ -78,7 +78,10 @@ export class RegistroClientesComponent {
       ],
       correo: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]],
-      cuil: ['', [Validators.required, Validators.pattern('^[0-9]{2}[0-9]{8}[0-9]$')]]
+      cuil: [
+        '',
+        [Validators.required, Validators.pattern('^[0-9]{2}[0-9]{8}[0-9]$')],
+      ],
     });
   }
   toggleScanner() {
@@ -87,7 +90,7 @@ export class RegistroClientesComponent {
   async startScan() {
     // Check if camera permission is granted
     const permission = await BarcodeScanner.checkPermission({ force: true });
-    
+
     if (!permission.granted) {
       console.error('Camera permission not granted');
       return;
@@ -96,12 +99,12 @@ export class RegistroClientesComponent {
     // Prepare UI for scanning
     this.isScanning = true;
     document.querySelector('body')?.classList.add('scanner-active');
-    
+
     try {
       // Start the scanner
       await BarcodeScanner.hideBackground();
       const result = await BarcodeScanner.startScan();
-      
+
       if (result.hasContent) {
         console.log('QR Code content:', result.content);
         this.parseDNIQR(result.content);
@@ -126,7 +129,14 @@ export class RegistroClientesComponent {
     const nombre = parts[2] || '';
     const dni = parts[4] || '';
 
-    console.log('Parsed QR data - Apellido:', apellido, 'Nombre:', nombre, 'DNI:', dni);
+    console.log(
+      'Parsed QR data - Apellido:',
+      apellido,
+      'Nombre:',
+      nombre,
+      'DNI:',
+      dni
+    );
     this.updateFormWithDNIInfo({ dni, nombre, apellido });
   }
 
@@ -134,7 +144,7 @@ export class RegistroClientesComponent {
     this.registroForm.patchValue({
       dni: info.dni,
       nombre: info.nombre,
-      apellido: info.apellido
+      apellido: info.apellido,
     });
     console.log('Form fields updated with parsed QR data:', info);
   }
@@ -223,7 +233,8 @@ export class RegistroClientesComponent {
         await setDoc(datosCliente, {
           ...this.registroForm.value,
           fotoUrl: this.nuevoCliente.fotoUrl,
-          aprobado: false,
+          estadoVerificacion: false,
+          tipoPerfil: 'cliente',
         });
 
         console.log('Datos guardados en Firestore');
@@ -260,7 +271,7 @@ export class RegistroClientesComponent {
   }
 
   handleQrCodeResult(event: any) {
-    const resultText = event?.text || ''; 
+    const resultText = event?.text || '';
 
     if (!resultText) {
       console.error('QR Code result is empty or invalid.');
@@ -284,7 +295,7 @@ export class RegistroClientesComponent {
     } catch (error) {
       console.error('Error al buscar el documento en Firestore:', error);
     }
-    this.isScannerVisible = false; 
+    this.isScannerVisible = false;
   }
 
   async takePhoto() {
