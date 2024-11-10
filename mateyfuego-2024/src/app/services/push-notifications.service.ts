@@ -29,14 +29,18 @@ export class PushNotificationService {
   ) {}
 
   async inicializarNotificaciones(userId: string, userType: string) {
+    console.log('Iniciando inicializarNotificaciones');
     try {
       await this.platform.ready();
+      console.log('Platform ready');
 
-      if (this.platform.is('android') || this.platform.is('ios')) {
+      if (this.platform.is('capacitor')) {
         const permResult = await PushNotifications.requestPermissions();
+        console.log('Permiso concedido');
 
         if (permResult.receive === 'granted') {
           await PushNotifications.register();
+          console.log('Registro exitoso');
 
           PushNotifications.addListener(
             'registration',
@@ -49,8 +53,23 @@ export class PushNotificationService {
           PushNotifications.addListener(
             'pushNotificationReceived',
             (notification) => {
-              console.log('Notification received:', notification);
+              console.log('Notificación recibida:', notification);
+              console.log('ID:', notification.id);
+              console.log('Título:', notification.title);
+              console.log('Cuerpo:', notification.body);
+              console.log('Datos:', notification.data);
+
               this.mostrarNotificacion(notification);
+
+              if (
+                notification.data &&
+                notification.data.type === 'nuevoCliente'
+              ) {
+                console.log(
+                  'Nueva notificación de cliente:',
+                  notification.data
+                );
+              }
             }
           );
 
@@ -229,6 +248,26 @@ export class PushNotificationService {
       console.log('Token saved successfully:', token);
     } catch (error) {
       console.error('Error saving token in Firestore:', error);
+    }
+  }
+
+  async verificarToken(token: string) {
+    try {
+      console.log('Verificando token:', token);
+      // Intenta enviar una notificación de prueba
+      const response = await this.http
+        .post(`${this.NOTIFICATION_SERVER_URL}/api/push/role`, {
+          title: 'Test',
+          body: 'Test notification',
+          tokens: [token],
+        })
+        .toPromise();
+
+      console.log('Respuesta de verificación:', response);
+      return response;
+    } catch (error) {
+      console.error('Error al verificar token:', error);
+      throw error;
     }
   }
 }

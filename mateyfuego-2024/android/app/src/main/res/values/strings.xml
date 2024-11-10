@@ -4,4 +4,6 @@
     <string name="title_activity_main">Mate y Fuego</string>
     <string name="package_name">app.mateyfuego</string>
     <string name="custom_url_scheme">app.mateyfuego</string>
+    <string name="default_notification_channel_id">default_channel</string>
+    <string name="default_notification_channel_name">Default Channel</string>
 </resources>
