@@ -11,9 +11,16 @@ import { ActionSheetController } from '@ionic/angular';
 import { BarcodeFormat } from '@zxing/library';
 import { ZXingScannerModule } from '@zxing/ngx-scanner';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { BarcodeScanner } from '@capacitor-community/barcode-scanner';
 import { Auth, createUserWithEmailAndPassword } from '@angular/fire/auth';
+import { PushNotificationService } from 'src/app/services/push-notifications.service';
 
 interface DuenoSupervisor {
   nombre: string;
@@ -31,7 +38,7 @@ interface DuenoSupervisor {
   templateUrl: './registro-dueno-supervisor.component.html',
   styleUrls: ['./registro-dueno-supervisor.component.scss'],
   standalone: true,
-  imports: [CommonModule, FormsModule, ZXingScannerModule,ReactiveFormsModule],
+  imports: [CommonModule, FormsModule, ZXingScannerModule, ReactiveFormsModule],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class RegistroDuenoSupervisorComponent implements OnInit {
@@ -44,13 +51,14 @@ export class RegistroDuenoSupervisorComponent implements OnInit {
     private firestore: Firestore,
     private storage: Storage,
     private actionSheetCtrl: ActionSheetController,
-    private auth: Auth
+    private auth: Auth,
+    private pushNotificationService: PushNotificationService
   ) {
     this.registroForm = this.initForm();
   }
 
   ngOnInit() {
-    this.registroForm.valueChanges.subscribe(value => {
+    this.registroForm.valueChanges.subscribe((value) => {
       console.log('Form values:', value);
     });
   }
@@ -61,18 +69,21 @@ export class RegistroDuenoSupervisorComponent implements OnInit {
       apellido: ['', [Validators.required, Validators.minLength(2)]],
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]],
-      dni: ['', [
-        Validators.required,
-        Validators.pattern('^[0-9]*$'),
-        Validators.minLength(8),
-        Validators.maxLength(8)
-      ]],
-      cuil: ['', [
-        Validators.required,
-        Validators.pattern('^[0-9]{2}-[0-9]{8}-[0-9]$')
-      ]],
+      dni: [
+        '',
+        [
+          Validators.required,
+          Validators.pattern('^[0-9]*$'),
+          Validators.minLength(8),
+          Validators.maxLength(8),
+        ],
+      ],
+      cuil: [
+        '',
+        [Validators.required, Validators.pattern('^[0-9]{2}-[0-9]{8}-[0-9]$')],
+      ],
       tipoPerfil: ['dueno', Validators.required],
-      fotoUrl: ['', Validators.required]
+      fotoUrl: ['', Validators.required],
     });
   }
 
@@ -87,7 +98,11 @@ export class RegistroDuenoSupervisorComponent implements OnInit {
 
       if (photo.base64String) {
         const dni = this.registroForm.get('dni')?.value;
-        const photoUrl = await this.uploadPhoto(photo.base64String, 'duenosSupervisores', dni);
+        const photoUrl = await this.uploadPhoto(
+          photo.base64String,
+          'duenosSupervisores',
+          dni
+        );
         this.registroForm.patchValue({ fotoUrl: photoUrl });
       }
     } catch (error) {
@@ -95,9 +110,15 @@ export class RegistroDuenoSupervisorComponent implements OnInit {
     }
   }
 
-  async uploadPhoto(base64String: string, folder: string, fileName: string): Promise<string> {
+  async uploadPhoto(
+    base64String: string,
+    folder: string,
+    fileName: string
+  ): Promise<string> {
     const photoRef = ref(this.storage, `imagenes/${folder}/${fileName}`);
-    await uploadString(photoRef, base64String, 'base64', { contentType: 'image/jpeg' });
+    await uploadString(photoRef, base64String, 'base64', {
+      contentType: 'image/jpeg',
+    });
     return getDownloadURL(photoRef);
   }
 
@@ -123,20 +144,25 @@ export class RegistroDuenoSupervisorComponent implements OnInit {
           cuil: this.registroForm.get('cuil')?.value,
           tipoPerfil: this.registroForm.get('tipoPerfil')?.value,
           fotoUrl: this.registroForm.get('fotoUrl')?.value,
-          password : this.registroForm.get('password')?.value,
-          uid :uid
+          password: this.registroForm.get('password')?.value,
+          uid: uid,
         };
 
-        const duenoSupervisorRef = doc(this.firestore, 'duenosSupervisores', uid);
+        const duenoSupervisorRef = doc(
+          this.firestore,
+          'duenosSupervisores',
+          uid
+        );
         await setDoc(duenoSupervisorRef, formData);
-        
-        console.log("Usuario creado exitosamente con UID:", uid);
+
+        await this.pushNotificationService.obtenerYGuardarToken(uid);
+
+        console.log('Usuario creado exitosamente con UID:', uid);
         this.registroForm.reset({
-          tipoPerfil: 'dueno'
+          tipoPerfil: 'dueno',
         });
       } catch (error) {
         console.error('Error en el proceso de registro:', error);
-        // Aquí podrías agregar un manejo de errores más específico
       }
     } else {
       this.markFormGroupTouched(this.registroForm);
@@ -144,7 +170,7 @@ export class RegistroDuenoSupervisorComponent implements OnInit {
   }
 
   private markFormGroupTouched(formGroup: FormGroup) {
-    Object.values(formGroup.controls).forEach(control => {
+    Object.values(formGroup.controls).forEach((control) => {
       control.markAsTouched();
       if (control instanceof FormGroup) {
         this.markFormGroupTouched(control);
@@ -156,7 +182,7 @@ export class RegistroDuenoSupervisorComponent implements OnInit {
     try {
       const docRef = doc(this.firestore, 'codigosValidos', result);
       const docSnap = await getDoc(docRef);
-      
+
       if (docSnap.exists()) {
         const datosQr = docSnap.data() as DuenoSupervisor;
         this.registroForm.patchValue(datosQr);
@@ -179,19 +205,19 @@ export class RegistroDuenoSupervisorComponent implements OnInit {
         {
           text: 'Tomar foto',
           icon: 'camera',
-          handler: () => this.capturePhoto(CameraSource.Camera)
+          handler: () => this.capturePhoto(CameraSource.Camera),
         },
         {
           text: 'Elegir de galería',
           icon: 'image',
-          handler: () => this.capturePhoto(CameraSource.Photos)
+          handler: () => this.capturePhoto(CameraSource.Photos),
         },
         {
           text: 'Cancelar',
           icon: 'close',
-          role: 'cancel'
-        }
-      ]
+          role: 'cancel',
+        },
+      ],
     });
     await actionSheet.present();
   }

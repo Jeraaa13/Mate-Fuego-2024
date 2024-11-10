@@ -99,7 +99,7 @@ export class PushNotificationService {
             id: Date.now(),
             schedule: { at: new Date(Date.now()) },
             sound: 'default',
-            attachments: undefined, // Corregido: usando undefined en lugar de null
+            attachments: undefined,
             actionTypeId: '',
             extra: null,
           },
@@ -119,7 +119,7 @@ export class PushNotificationService {
   async obtenerTokensSupervisoresYDueno(): Promise<string[]> {
     const tokens: string[] = [];
     try {
-      const collections = ['usuarios', 'duenosSupervisores'];
+      const collections = ['duenosSupervisores'];
 
       for (const collectionName of collections) {
         const q = query(
@@ -181,6 +181,37 @@ export class PushNotificationService {
       }
     } catch (error) {
       console.error('Error notifying new client:', error);
+    }
+  }
+
+  async obtenerYGuardarToken(userId: string) {
+    try {
+      const permResult = await PushNotifications.requestPermissions();
+      if (permResult.receive === 'granted') {
+        await PushNotifications.register();
+
+        PushNotifications.addListener('registration', async (token: Token) => {
+          console.log('Token FCM:', token.value);
+          await this.guardarTokenEnFirestore(token.value, userId);
+        });
+      } else {
+        console.error('Push notification permission not granted');
+      }
+    } catch (error) {
+      console.error('Error obtaining and saving token:', error);
+    }
+  }
+
+  private async guardarTokenEnFirestore(token: string, userId: string) {
+    try {
+      const userRef = doc(this.firestore, 'duenosSupervisores', userId);
+      await updateDoc(userRef, {
+        token: token,
+        tokenLastUpdated: new Date().toISOString(),
+      });
+      console.log('Token saved successfully:', token);
+    } catch (error) {
+      console.error('Error saving token in Firestore:', error);
     }
   }
 }
