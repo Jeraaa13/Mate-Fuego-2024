@@ -19,6 +19,7 @@ import { environment } from 'src/environments/environment';
   providedIn: 'root',
 })
 export class PushNotificationService {
+  private apiUrl = 'http://localhost:4000/api/push/role';
   private readonly NOTIFICATION_SERVER_URL = environment.notificationServerUrl;
 
   constructor(

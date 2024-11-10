@@ -125,7 +125,6 @@ export class RegistroDuenoSupervisorComponent implements OnInit {
   async onSubmit() {
     if (this.registroForm.valid) {
       try {
-        // 1. Crear usuario en Firebase Auth
         const { email, password } = this.registroForm.value;
         const userCredential = await createUserWithEmailAndPassword(
           this.auth,
@@ -133,7 +132,6 @@ export class RegistroDuenoSupervisorComponent implements OnInit {
           password
         );
 
-        // 2. Obtener el UID del usuario creado
         const uid = userCredential.user.uid;
 
         const formData = {

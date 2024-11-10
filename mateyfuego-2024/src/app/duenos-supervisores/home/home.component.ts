@@ -4,6 +4,7 @@ import { AuthService } from 'src/app/services/auth.service';
 import { IonicModule } from '@ionic/angular';
 import { CommonModule } from '@angular/common';
 import { MailService } from 'src/app/services/mail.service';
+import { PushNotificationService } from 'src/app/services/push-notifications.service';
 
 interface Cliente {
   id: string;
@@ -21,14 +22,33 @@ interface Cliente {
 })
 export class HomeComponent implements OnInit {
   clientesPendientes: Cliente[] = [];
+  userCredential: any;
 
   constructor(
     private firestore: AngularFirestore,
-    private mailService: MailService
+    private mailService: MailService,
+    private pushService: PushNotificationService,
+    private authService: AuthService
   ) {}
 
   ngOnInit(): void {
-    this.cargarClientesPendientes();
+    this.authService
+      .getCurrentUser()
+      .then((user) => {
+        if (user) {
+          this.userCredential = user;
+          this.pushService.inicializarNotificaciones(
+            this.userCredential.uid,
+            'dueno'
+          );
+          this.cargarClientesPendientes();
+        } else {
+          console.error('Usuario no autenticado');
+        }
+      })
+      .catch((error) => {
+        console.error('Error al obtener usuario: ', error);
+      });
   }
 
   cargarClientesPendientes(): void {
@@ -88,10 +108,8 @@ export class HomeComponent implements OnInit {
         if (docSnapshot?.exists) {
           const cliente = docSnapshot?.data() as Cliente;
 
-          // Send the rejection email to the client
           this.mailService.enviarConfirmacionDeshabilitado(cliente);
 
-          // Delete the rejected client from Firestore
           this.firestore
             .collection('clientes')
             .doc(clienteId)
