@@ -74,8 +74,24 @@ export class PushNotificationService {
     userId: string,
     userType: string
   ) {
+    let collectionName = '';
     try {
-      const collectionName = userType === 'cliente' ? 'clientes' : 'usuarios';
+      switch (userType) {
+        case 'dueno':
+          collectionName = 'duenosSupervisores';
+          break;
+        case 'supervisor':
+          collectionName = 'duenosSupervisores';
+          break;
+        case 'cliente':
+          collectionName = 'clientes';
+          break;
+
+        default:
+          collectionName = 'empleados';
+          break;
+      }
+      console.log('tipo usuario => ', userType);
       const userRef = doc(this.firestore, collectionName, userId);
 
       await updateDoc(userRef, {
