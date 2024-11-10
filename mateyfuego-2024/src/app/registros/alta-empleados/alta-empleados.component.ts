@@ -20,6 +20,7 @@ import {
 import { Auth, createUserWithEmailAndPassword } from '@angular/fire/auth';
 import { Router } from '@angular/router';
 import { BarcodeScanner } from '@capacitor-community/barcode-scanner';
+
 interface Empleado {
   nombre: string;
   apellido: string;

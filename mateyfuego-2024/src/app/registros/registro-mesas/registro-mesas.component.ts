@@ -27,6 +27,7 @@ interface Mesa {
   tipo: string;
   fotoUrl: string[];
   qrCode?: string;
+  disponible : boolean;
 }
 
 @Component({
@@ -44,6 +45,7 @@ export class RegistroMesasComponent  {
     cantidadComensales: '',
     tipo: '',
     fotoUrl: [],
+    disponible: true,
   };
 
   qrData: string = '';
@@ -142,6 +144,7 @@ export class RegistroMesasComponent  {
       cantidadComensales: '',
       tipo: '',
       fotoUrl: [],
+      disponible : true,
     };
     this.showQR = false;
     this.qrData = '';

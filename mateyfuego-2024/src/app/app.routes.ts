@@ -99,4 +99,18 @@ export const routes: Routes = [
         (m) => m.SupervisorComponent
       ),
   },
+  {
+    path: 'cliente-home',
+    loadComponent: () =>
+      import('./cliente-home/cliente-home.component').then(
+        (m) => m.ClienteHomeComponent
+      ),
+  },
+  {
+    path: 'home-maitre',
+    loadComponent: () =>
+      import('./maitre-home/maitre-home.component').then(
+        (m) => m.MaitreHomeComponent
+      ),
+  },
 ];

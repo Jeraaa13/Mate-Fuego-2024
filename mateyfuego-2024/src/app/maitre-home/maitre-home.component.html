@@ -1,0 +1,32 @@
+<ion-content class="ion-padding">
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Lista de Espera</ion-card-title>
+    </ion-card-header>
+    
+    <ion-card-content>
+      <div class="users-grid">
+        <div *ngFor="let usuario of listaDeEspera" class="user-card">
+          <div class="user-photo-container">
+            <img [src]="usuario.fotourl || 'assets/usudefault.png'" 
+                 [alt]="usuario.nombre" 
+                 class="user-photo"
+                 (error)="handleImageError($event)">
+          </div>
+          <p class="nombre-usuario">{{ usuario.nombre }}</p>
+          <div class="user-status" [class.assigned]="usuario.mesaAsignada">
+            {{ usuario.mesaAsignada ? 'Mesa Asignada' : 'En Espera' }}
+          </div>
+          <ion-button 
+            (click)="asignarMesa(usuario)"
+            [disabled]="usuario.mesaAsignada"
+            class="asignar-button"
+            color="primary"
+            size="small">
+            Asignar
+          </ion-button>
+        </div>
+      </div>
+    </ion-card-content>
+  </ion-card>
+</ion-content>

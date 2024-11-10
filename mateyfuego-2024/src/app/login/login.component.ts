@@ -95,13 +95,11 @@ export class LoginComponent implements OnInit {
       const querySnapshot = await getDocs(q);
 
       console.log('uid => ', uid);
-
+      
       if (!querySnapshot.empty) {
         const userDoc = querySnapshot.docs[0];
         const userData = userDoc.data();
         const tipoPerfil = userData?.['tipoPerfil'];
-
-        console.log(`${collectionName} =>`, tipoPerfil);
 
         if (tipoPerfil) {
           this.navigateToTipoPerfil(tipoPerfil);
@@ -131,6 +129,10 @@ export class LoginComponent implements OnInit {
       case 'supervisor':
         this.router.navigate(['/home-dueno-supervisores']);
         break;
+
+        case 'Maitre':
+          this.router.navigate(['/home-maitre']);
+          break;
 
       default:
         this.router.navigate(['/home-empleados']);
@@ -174,7 +176,7 @@ export class LoginComponent implements OnInit {
 
       case 'maitre':
         this.loginForm.setValue({
-          email: 'maitre@empresa.com',
+          email: 'juanmanuelportela2@gmail.com',
           password: '123456',
         });
         break;
@@ -209,7 +211,7 @@ export class LoginComponent implements OnInit {
 
       case 'anonimo':
         this.loginForm.setValue({
-          email: 'anonimo@empresa.com',
+          email: 'joraxo1694@gianes.com',
           password: '123456',
         });
         break;

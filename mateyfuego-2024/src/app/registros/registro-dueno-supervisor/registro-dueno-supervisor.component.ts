@@ -123,10 +123,10 @@ export class RegistroDuenoSupervisorComponent implements OnInit {
           cuil: this.registroForm.get('cuil')?.value,
           tipoPerfil: this.registroForm.get('tipoPerfil')?.value,
           fotoUrl: this.registroForm.get('fotoUrl')?.value,
-          password : this.registroForm.get('password')?.value
+          password : this.registroForm.get('password')?.value,
+          uid :uid
         };
 
-        // 4. Guardar en Firestore usando el UID como ID del documento
         const duenoSupervisorRef = doc(this.firestore, 'duenosSupervisores', uid);
         await setDoc(duenoSupervisorRef, formData);
         

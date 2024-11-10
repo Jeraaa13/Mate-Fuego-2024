@@ -263,6 +263,8 @@ export class RegistroClientesComponent {
           'Se ha agregado un nuevo cliente',
           'Nuevo Cliente'
         );
+        this.router.navigate(['/login'])
+       
 
         this.resetForm();
       }
