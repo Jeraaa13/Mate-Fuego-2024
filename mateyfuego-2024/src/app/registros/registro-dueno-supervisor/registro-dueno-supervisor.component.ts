@@ -1,4 +1,4 @@
-import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core';
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 import { Firestore, doc, getDoc, setDoc } from '@angular/fire/firestore';
 import {
@@ -11,7 +11,7 @@ import { ActionSheetController } from '@ionic/angular';
 import { BarcodeFormat } from '@zxing/library';
 import { ZXingScannerModule } from '@zxing/ngx-scanner';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { BarcodeScanner } from '@capacitor-community/barcode-scanner';
 import { Auth, createUserWithEmailAndPassword } from '@angular/fire/auth';
 
@@ -31,33 +31,49 @@ interface DuenoSupervisor {
   templateUrl: './registro-dueno-supervisor.component.html',
   styleUrls: ['./registro-dueno-supervisor.component.scss'],
   standalone: true,
-  imports: [CommonModule, FormsModule, ZXingScannerModule],
+  imports: [CommonModule, FormsModule, ZXingScannerModule,ReactiveFormsModule],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
-export class RegistroDuenoSupervisorComponent {
-  nuevoDuenoSupervisor: DuenoSupervisor = {
-    nombre: '',
-    apellido: '',
-    dni: '',
-    cuil: '',
-    tipoPerfil: 'dueno',
-    fotoUrl: '',
-    email: '',
-    password: '',
-  };
-
+export class RegistroDuenoSupervisorComponent implements OnInit {
+  registroForm: FormGroup;
   allowedFormats = [BarcodeFormat.QR_CODE];
   isScannerVisible = false;
-  isScanning = false;
+
   constructor(
+    private fb: FormBuilder,
     private firestore: Firestore,
     private storage: Storage,
-    private auth: Auth,
-    private actionSheetCtrl: ActionSheetController
-  ) {}
+    private actionSheetCtrl: ActionSheetController,
+    private auth: Auth
+  ) {
+    this.registroForm = this.initForm();
+  }
 
-  toggleScanner() {
-    this.isScannerVisible = !this.isScannerVisible;
+  ngOnInit() {
+    this.registroForm.valueChanges.subscribe(value => {
+      console.log('Form values:', value);
+    });
+  }
+
+  private initForm(): FormGroup {
+    return this.fb.group({
+      nombre: ['', [Validators.required, Validators.minLength(2)]],
+      apellido: ['', [Validators.required, Validators.minLength(2)]],
+      email: ['', [Validators.required, Validators.email]],
+      password: ['', [Validators.required, Validators.minLength(6)]],
+      dni: ['', [
+        Validators.required,
+        Validators.pattern('^[0-9]*$'),
+        Validators.minLength(8),
+        Validators.maxLength(8)
+      ]],
+      cuil: ['', [
+        Validators.required,
+        Validators.pattern('^[0-9]{2}-[0-9]{8}-[0-9]$')
+      ]],
+      tipoPerfil: ['dueno', Validators.required],
+      fotoUrl: ['', Validators.required]
+    });
   }
 
   async capturePhoto(source: CameraSource) {
@@ -70,90 +86,90 @@ export class RegistroDuenoSupervisorComponent {
       });
 
       if (photo.base64String) {
-        const photoUrl = await this.uploadPhoto(
-          photo.base64String,
-          'duenosSupervisores',
-          `${this.nuevoDuenoSupervisor.dni}`
-        );
-        this.nuevoDuenoSupervisor.fotoUrl = photoUrl;
-        await this.guardarDuenoSupervisor();
+        const dni = this.registroForm.get('dni')?.value;
+        const photoUrl = await this.uploadPhoto(photo.base64String, 'duenosSupervisores', dni);
+        this.registroForm.patchValue({ fotoUrl: photoUrl });
       }
     } catch (error) {
       console.error('Error al capturar la imagen:', error);
     }
   }
 
-  async uploadPhoto(
-    base64String: string,
-    folder: string,
-    fileName: string
-  ): Promise<string> {
+  async uploadPhoto(base64String: string, folder: string, fileName: string): Promise<string> {
     const photoRef = ref(this.storage, `imagenes/${folder}/${fileName}`);
-    await uploadString(photoRef, base64String, 'base64', {
-      contentType: 'image/jpeg',
-    });
+    await uploadString(photoRef, base64String, 'base64', { contentType: 'image/jpeg' });
     return getDownloadURL(photoRef);
   }
 
-  async guardarDuenoSupervisor() {
-    if (!this.nuevoDuenoSupervisor.fotoUrl) {
-      console.error('No hay foto cargada. Sube una foto antes de guardar.');
-      return;
-    }
+  async onSubmit() {
+    if (this.registroForm.valid) {
+      try {
+        // 1. Crear usuario en Firebase Auth
+        const { email, password } = this.registroForm.value;
+        const userCredential = await createUserWithEmailAndPassword(
+          this.auth,
+          email,
+          password
+        );
 
-    try {
-      // Crear usuario en Firebase Auth
-      const userCredential = await createUserWithEmailAndPassword(
-        this.auth,
-        this.nuevoDuenoSupervisor.email,
-        this.nuevoDuenoSupervisor.password
-      );
+        // 2. Obtener el UID del usuario creado
+        const uid = userCredential.user.uid;
 
-      // Una vez creado el usuario, guardar los datos en Firestore
-      const duenoSupervisorRef = doc(
-        this.firestore,
-        'duenosSupervisores',
-        userCredential.user.uid
-      );
-      await setDoc(duenoSupervisorRef, {
-        ...this.nuevoDuenoSupervisor,
-        uid: userCredential.user.uid, // Guardar UID de Firebase Auth
-      });
+        const formData = {
+          nombre: this.registroForm.get('nombre')?.value,
+          apellido: this.registroForm.get('apellido')?.value,
+          email: this.registroForm.get('email')?.value,
+          dni: this.registroForm.get('dni')?.value,
+          cuil: this.registroForm.get('cuil')?.value,
+          tipoPerfil: this.registroForm.get('tipoPerfil')?.value,
+          fotoUrl: this.registroForm.get('fotoUrl')?.value,
+          password : this.registroForm.get('password')?.value
+        };
 
-      console.log('Datos guardados en Firestore:', this.nuevoDuenoSupervisor);
-      this.resetForm();
-    } catch (error) {
-      console.error('Error al guardar los datos:', error);
+        // 4. Guardar en Firestore usando el UID como ID del documento
+        const duenoSupervisorRef = doc(this.firestore, 'duenosSupervisores', uid);
+        await setDoc(duenoSupervisorRef, formData);
+        
+        console.log("Usuario creado exitosamente con UID:", uid);
+        this.registroForm.reset({
+          tipoPerfil: 'dueno'
+        });
+      } catch (error) {
+        console.error('Error en el proceso de registro:', error);
+        // Aquí podrías agregar un manejo de errores más específico
+      }
+    } else {
+      this.markFormGroupTouched(this.registroForm);
     }
   }
 
-  resetForm() {
-    this.nuevoDuenoSupervisor = {
-      nombre: '',
-      apellido: '',
-      dni: '',
-      cuil: '',
-      tipoPerfil: 'dueno',
-      fotoUrl: '',
-      email: '',
-      password: '',
-    };
+  private markFormGroupTouched(formGroup: FormGroup) {
+    Object.values(formGroup.controls).forEach(control => {
+      control.markAsTouched();
+      if (control instanceof FormGroup) {
+        this.markFormGroupTouched(control);
+      }
+    });
   }
 
   async handleQrCodeResult(result: string) {
     try {
       const docRef = doc(this.firestore, 'codigosValidos', result);
       const docSnap = await getDoc(docRef);
+      
       if (docSnap.exists()) {
         const datosQr = docSnap.data() as DuenoSupervisor;
-        this.nuevoDuenoSupervisor = { ...datosQr };
-        console.log('Datos obtenidos del QR:', datosQr);
+        this.registroForm.patchValue(datosQr);
       } else {
         console.error('No existe un documento con ese ID en Firestore.');
       }
     } catch (error) {
       console.error('Error al buscar el documento en Firestore:', error);
     }
+  }
+
+  toggleScanner() {
+    this.isScannerVisible = !this.isScannerVisible;
   }
 
   async takePhoto() {
@@ -163,79 +179,20 @@ export class RegistroDuenoSupervisorComponent {
         {
           text: 'Tomar foto',
           icon: 'camera',
-          handler: () => this.capturePhoto(CameraSource.Camera),
+          handler: () => this.capturePhoto(CameraSource.Camera)
         },
         {
           text: 'Elegir de galería',
           icon: 'image',
-          handler: () => this.capturePhoto(CameraSource.Photos),
+          handler: () => this.capturePhoto(CameraSource.Photos)
         },
         {
           text: 'Cancelar',
           icon: 'close',
-          role: 'cancel',
-        },
-      ],
+          role: 'cancel'
+        }
+      ]
     });
     await actionSheet.present();
-  }
-  async startScan() {
-    const permission = await BarcodeScanner.checkPermission({ force: true });
-
-    if (!permission.granted) {
-      console.error('Camera permission not granted');
-      return;
-    }
-
-    this.isScanning = true;
-    document.querySelector('body')?.classList.add('scanner-active');
-
-    try {
-      await BarcodeScanner.hideBackground();
-      const result = await BarcodeScanner.startScan();
-
-      if (result.hasContent) {
-        console.log('QR Code content:', result.content);
-        this.parseDNIQR(result.content);
-      }
-    } catch (error) {
-      console.error('Scanning failed:', error);
-    } finally {
-      this.stopScan();
-    }
-  }
-
-  public stopScan() {
-    BarcodeScanner.stopScan();
-    BarcodeScanner.showBackground();
-    this.isScanning = false;
-    document.querySelector('body')?.classList.remove('scanner-active');
-  }
-
-  private parseDNIQR(content: string) {
-    const parts = content.split('@');
-    const apellido = parts[1] || '';
-    const nombre = parts[2] || '';
-    const dni = parts[4] || '';
-
-    console.log(
-      'Parsed QR data - Apellido:',
-      apellido,
-      'Nombre:',
-      nombre,
-      'DNI:',
-      dni
-    );
-    this.updateWithDNIInfo({ dni, nombre, apellido });
-  }
-
-  private updateWithDNIInfo(info: any) {
-    this.nuevoDuenoSupervisor = {
-      ...this.nuevoDuenoSupervisor,
-      dni: info.dni,
-      nombre: info.nombre,
-      apellido: info.apellido,
-    };
-    console.log('Fields updated with parsed QR data:', info);
   }
 }
