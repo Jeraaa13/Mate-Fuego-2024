@@ -211,13 +211,8 @@ export class RegistroClientesComponent {
   }
 
   async guardarCliente() {
-    if (this.registroForm.invalid) {
-      console.error('Formulario inválido');
-      return;
-    }
-
-    if (!this.nuevoCliente.fotoUrl) {
-      console.error('No hay foto cargada. Sube una foto antes de guardar.');
+    if (this.registroForm.invalid || !this.nuevoCliente.fotoUrl) {
+      console.error('Formulario inválido o falta foto');
       return;
     }
 
@@ -232,23 +227,19 @@ export class RegistroClientesComponent {
         const uid = userCredential.user.uid;
         const datosCliente = doc(this.firestore, 'clientes', uid);
 
-        console.log('Guardando cliente con datos:', {
-          ...this.registroForm.value,
-          fotoUrl: this.nuevoCliente.fotoUrl,
-          uid: userCredential.user.uid,
-        });
-
         await setDoc(datosCliente, {
           ...this.registroForm.value,
           fotoUrl: this.nuevoCliente.fotoUrl,
           estadoVerificacion: false,
           tipoPerfil: 'cliente',
-          uid: userCredential.user.uid,
+          uid: uid,
         });
 
-        console.log('Datos guardados en Firestore');
+        await this.pushNotificationService.notificarNuevoCliente(
+          `${this.registroForm.value.nombre} ${this.registroForm.value.apellido}`
+        );
 
-        this.mailService.enviarAviso({
+        await this.mailService.enviarAviso({
           email_cliente: this.registroForm.value.correo,
           to_name: this.registroForm.value.nombre,
           message:
@@ -256,17 +247,7 @@ export class RegistroClientesComponent {
           from_name: 'Mate y Fuego',
         });
 
-        const tokens = await this.pushNotificationService.obtenerTokensSupervisoresYDueno();
-
-        await this.pushNotificationService.enviarNotificacionAMultiplesDestinatarios(
-          tokens,
-          'Se ha agregado un nuevo cliente',
-          'Nuevo Cliente'
-        );
-        this.router.navigate(['/login'])
-       
-
-        this.resetForm();
+        this.router.navigate(['/login']);
       }
     } catch (error) {
       console.error('Error al registrar usuario:', error);

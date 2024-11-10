@@ -1,4 +1,5 @@
 export const environment = {
+  notificationServerUrl: 'http://localhost:4000',
   firebase: {
     apiKey: 'AIzaSyCo3zhxB0JyjpNbW-Nle9b7AMnEERguShg',
     authDomain: 'pps-pruebaapp-e74f7.firebaseapp.com',

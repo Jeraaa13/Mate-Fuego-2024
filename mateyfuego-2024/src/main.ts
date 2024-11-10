@@ -23,6 +23,9 @@ import { provideFirestore, getFirestore } from '@angular/fire/firestore';
 import { FIREBASE_OPTIONS } from '@angular/fire/compat';
 import { Camera } from '@ionic-native/camera/ngx';
 import { getStorage, provideStorage } from '@angular/fire/storage';
+import { PushNotificationService } from './app/services/push-notifications.service';
+import { provideHttpClient } from '@angular/common/http';
+
 bootstrapApplication(AppComponent, {
   providers: [
     {
@@ -36,6 +39,8 @@ bootstrapApplication(AppComponent, {
     provideAuth(() => getAuth()),
     provideFirestore(() => getFirestore()),
     provideStorage(() => getStorage()),
-    Camera
+    Camera,
+    PushNotificationService,
+    provideHttpClient(),
   ],
 });

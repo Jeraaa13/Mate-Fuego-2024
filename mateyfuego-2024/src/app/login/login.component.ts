@@ -19,6 +19,8 @@ import {
   where,
   getDocs,
 } from 'firebase/firestore';
+import { PushNotificationService } from '../services/push-notifications.service';
+import { uid } from 'chart.js/dist/helpers/helpers.core';
 
 @Component({
   selector: 'app-login',
@@ -35,7 +37,8 @@ export class LoginComponent implements OnInit {
     private fb: FormBuilder,
     private auth: Auth,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private pushService: PushNotificationService
   ) {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
@@ -77,6 +80,10 @@ export class LoginComponent implements OnInit {
 
       // After login, fetch user profile from Firestore
       await this.checkUserInCollections(userCredential.user.uid);
+      await this.pushService.inicializarNotificaciones(
+        userCredential.user.uid,
+        'dueno'
+      );
     } catch (error) {
       this.errorMessage = 'Error al iniciar sesión. Verifica tus credenciales.';
       console.error('Error during login: ', error);
@@ -95,7 +102,7 @@ export class LoginComponent implements OnInit {
       const querySnapshot = await getDocs(q);
 
       console.log('uid => ', uid);
-      
+
       if (!querySnapshot.empty) {
         const userDoc = querySnapshot.docs[0];
         const userData = userDoc.data();
@@ -130,9 +137,9 @@ export class LoginComponent implements OnInit {
         this.router.navigate(['/home-dueno-supervisores']);
         break;
 
-        case 'Maitre':
-          this.router.navigate(['/home-maitre']);
-          break;
+      case 'Maitre':
+        this.router.navigate(['/home-maitre']);
+        break;
 
       default:
         this.router.navigate(['/home-empleados']);

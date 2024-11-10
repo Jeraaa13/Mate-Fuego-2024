@@ -1,27 +1,50 @@
 import { Injectable } from '@angular/core';
-import { LocalNotifications } from '@capacitor/local-notifications';
+import { LocalNotifications, Attachment } from '@capacitor/local-notifications';
 import { PushNotifications, Token } from '@capacitor/push-notifications';
 import { Platform } from '@ionic/angular';
-import { Firestore, collection, getDocs } from '@angular/fire/firestore';
+import {
+  Firestore,
+  collection,
+  getDocs,
+  doc,
+  setDoc,
+  query,
+  where,
+  updateDoc,
+} from '@angular/fire/firestore';
+import { HttpClient } from '@angular/common/http';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class PushNotificationService {
-  constructor(private platform: Platform, private firestore: Firestore) {}
+  private readonly NOTIFICATION_SERVER_URL = environment.notificationServerUrl;
 
-  async inicializarNotificaciones() {
+  constructor(
+    private platform: Platform,
+    private firestore: Firestore,
+    private http: HttpClient
+  ) {}
+
+  async inicializarNotificaciones(userId: string, userType: string) {
     try {
       await this.platform.ready();
 
       if (this.platform.is('android') || this.platform.is('ios')) {
         const permResult = await PushNotifications.requestPermissions();
+
         if (permResult.receive === 'granted') {
           await PushNotifications.register();
-          PushNotifications.addListener('registration', (token: Token) => {
-            console.log('Token FCM:', token.value);
-            this.guardarTokenEnServidor(token.value);
-          });
+
+          PushNotifications.addListener(
+            'registration',
+            async (token: Token) => {
+              console.log('Token FCM:', token.value);
+              await this.guardarTokenEnServidor(token.value, userId, userType);
+            }
+          );
+
           PushNotifications.addListener(
             'pushNotificationReceived',
             (notification) => {
@@ -29,6 +52,7 @@ export class PushNotificationService {
               this.mostrarNotificacion(notification);
             }
           );
+
           PushNotifications.addListener(
             'pushNotificationActionPerformed',
             (action) => {
@@ -45,40 +69,76 @@ export class PushNotificationService {
     }
   }
 
-  private async guardarTokenEnServidor(token: string) {
+  private async guardarTokenEnServidor(
+    token: string,
+    userId: string,
+    userType: string
+  ) {
     try {
+      const collectionName = userType === 'cliente' ? 'clientes' : 'usuarios';
+      const userRef = doc(this.firestore, collectionName, userId);
+
+      await updateDoc(userRef, {
+        token: token,
+        tokenLastUpdated: new Date().toISOString(),
+      });
+
       console.log('Token saved successfully:', token);
     } catch (error) {
       console.error('Error saving token:', error);
     }
   }
 
-  private mostrarNotificacion(notificacion: any) {
-    console.log('Displaying notification:', notificacion);
-  }
-
-  private manejarAccionNotificacion(action: any) {
-    console.log('Handling notification action:', action);
-  }
-
-  async enviarNotificacionPrueba() {
+  private async mostrarNotificacion(notificacion: any) {
     try {
       await LocalNotifications.schedule({
         notifications: [
           {
-            title: '¡Bienvenido a Mate y Fuego!',
-            body: 'Tu mesa estará lista en aproximadamente 10 minutos',
-            id: 1,
-            schedule: { at: new Date(Date.now() + 500) },
+            title: notificacion.title,
+            body: notificacion.body,
+            id: Date.now(),
+            schedule: { at: new Date(Date.now()) },
+            sound: 'default',
+            attachments: undefined, // Corregido: usando undefined en lugar de null
             actionTypeId: '',
             extra: null,
           },
         ],
       });
-      console.log('Test notification scheduled');
     } catch (error) {
-      console.error('Error sending test notification:', error);
+      console.error('Error showing local notification:', error);
     }
+  }
+
+  private manejarAccionNotificacion(action: any) {
+    if (action.notification.data?.type === 'newClient') {
+      console.log('New client notification action:', action);
+    }
+  }
+
+  async obtenerTokensSupervisoresYDueno(): Promise<string[]> {
+    const tokens: string[] = [];
+    try {
+      const collections = ['usuarios', 'duenosSupervisores'];
+
+      for (const collectionName of collections) {
+        const q = query(
+          collection(this.firestore, collectionName),
+          where('tipoPerfil', 'in', ['supervisor', 'dueno'])
+        );
+
+        const snapshot = await getDocs(q);
+        snapshot.forEach((doc) => {
+          const data = doc.data();
+          if (data['token']) {
+            tokens.push(data['token']);
+          }
+        });
+      }
+    } catch (error) {
+      console.error('Error getting supervisor and owner tokens:', error);
+    }
+    return tokens;
   }
 
   async enviarNotificacionAMultiplesDestinatarios(
@@ -86,77 +146,41 @@ export class PushNotificationService {
     mensaje: string,
     titulo: string
   ) {
+    if (!tokens || tokens.length === 0) {
+      console.error('No tokens provided for notification');
+      return;
+    }
+
     try {
-      for (const token of tokens) {
-        await LocalNotifications.schedule({
-          notifications: [
-            {
-              title: titulo,
-              body: mensaje,
-              id: Date.now(),
-              schedule: { at: new Date(Date.now() + 500) },
-              extra: { token },
-            },
-          ],
-        });
-        console.log('Notification sent to token:', token);
+      await this.http
+        .post(`${this.NOTIFICATION_SERVER_URL}/api/push/role`, {
+          title: titulo,
+          body: mensaje,
+          tokens: tokens,
+        })
+        .toPromise();
+
+      console.log(`Notifications sent to ${tokens.length} recipients`);
+    } catch (error) {
+      console.error('Error sending notifications:', error);
+    }
+  }
+
+  async notificarNuevoCliente(nombreCliente: string) {
+    try {
+      const tokens = await this.obtenerTokensSupervisoresYDueno();
+
+      if (tokens.length > 0) {
+        await this.enviarNotificacionAMultiplesDestinatarios(
+          tokens,
+          `Nuevo cliente registrado: ${nombreCliente}`,
+          'Nuevo Cliente'
+        );
+      } else {
+        console.log('No se encontraron destinatarios para la notificación');
       }
     } catch (error) {
-      console.error(
-        'Error sending notification to multiple recipients:',
-        error
-      );
+      console.error('Error notifying new client:', error);
     }
-  }
-
-  async obtenerTokensSupervisoresYDueno(): Promise<string[]> {
-    const tokens: string[] = [];
-    try {
-      const usuariosSnapshot = await getDocs(
-        collection(this.firestore, 'usuarios')
-      );
-      usuariosSnapshot.forEach((doc) => {
-        const data = doc.data();
-        if (
-          data['tipoPerfil'] === 'supervisor' ||
-          data['tipoPerfil'] === 'dueno'
-        ) {
-          tokens.push(data['token']);
-        }
-      });
-    } catch (error) {
-      console.error('Error getting supervisor and owner tokens:', error);
-    }
-    return tokens;
-  }
-
-  async obtenerTokensPorPerfil(tipos: string[], colecciones: string[]): Promise<string[]> {
-    const tokens: string[] = [];
-    try {
-      for (const coleccion of colecciones) {
-        const usuariosSnapshot = await getDocs(collection(this.firestore, coleccion));
-        usuariosSnapshot.forEach((doc) => {
-          const data = doc.data();
-          if (tipos.includes(data['tipoPerfil']) && data['token']) { 
-            tokens.push(data['token']);
-          }
-        });
-      }
-    } catch (error) {
-      console.error('Error getting tokens by profile from multiple collections:', error);
-    }
-    return tokens;
-  }
-
-  async agregarClienteNuevo() {
-    const tokens = await this.obtenerTokensPorPerfil(
-      ['supervisor', 'dueno'],
-      ['empleados', 'duenosSupervisores']  
-    );
-    await this.enviarNotificacionAMultiplesDestinatarios(
-      tokens,
-      'Nuevo cliente agregado.',
-      'Notificación de Supervisión'
-    );
   }
 }

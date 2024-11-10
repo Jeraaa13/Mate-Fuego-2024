@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "157564693983",
+    "project_id": "pps-pruebaapp-e74f7",
+    "storage_bucket": "pps-pruebaapp-e74f7.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:157564693983:android:5355b6cffa2ee5d2d1686a",
+        "android_client_info": {
+          "package_name": "app.mateyfuego"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "157564693983-ujp90vhoosdv1v4579thgqm4f2hr30sd.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyArlbVWfZOTkAuOBVK9Whh48pF8XiOjVtw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "157564693983-ujp90vhoosdv1v4579thgqm4f2hr30sd.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
