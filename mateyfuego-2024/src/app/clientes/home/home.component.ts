@@ -42,7 +42,6 @@ export class HomeComponent implements OnInit{
 
         if (docSnap.exists()) {
           this.currentUserDetails = docSnap.data();
-          console.log('Detalles del usuario:', this.currentUserDetails);
         } else {
           console.log('No se encontró el usuario en la colección de clientes.');
         }
@@ -63,7 +62,6 @@ export class HomeComponent implements OnInit{
         mesaAsignada: false ,
         uid : this.currentUser.uid
       };
-      console.log(usuarioEnEspera)
       const datoslista = doc(this.firestore, 'lista-espera', usuarioEnEspera.uid);
       await setDoc(datoslista , usuarioEnEspera)
       
@@ -85,7 +83,6 @@ export class HomeComponent implements OnInit{
           nombre : this.currentUserDetails.nombre,
           fotourl : this.currentUserDetails.fotoUrl
         };
-        console.log(usuarioEnEspera)
         const datoslista = doc(this.firestore, 'lista-espera', usuarioEnEspera.uid);
         await setDoc(datoslista , usuarioEnEspera)
         this.router.navigate(['/cliente-home']);

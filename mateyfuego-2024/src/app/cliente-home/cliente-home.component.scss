@@ -1,0 +1,181 @@
+.container {
+    width: 100%;
+    min-height: 100vh;
+    padding: 20px;
+    background: transparent;
+  }
+  
+  // Estilos para la vista de espera
+  .espera-container {
+    ion-card {
+      margin: 2rem auto;
+      max-width: 600px;
+      background: #fffaf0;
+      
+      ion-card-header {
+        background: var(--ion-color-primary);
+        
+        ion-card-title {
+          font-size: 1.8rem;
+          font-weight: 600;
+          letter-spacing: 2px;
+          color: var(--ion-color-primary-contrast);
+        }
+      }
+      
+      ion-card-content {
+        .alert-info {
+          background: rgba(var(--ion-color-secondary-rgb), 0.1);
+          border-left: 4px solid var(--ion-color-secondary);
+          padding: 1.5rem;
+          border-radius: 8px;
+          margin: 1rem 0;
+          
+          p {
+            margin: 0.8rem 0;
+            font-size: 1.1rem;
+            line-height: 1.5;
+            color: var(--ion-color-dark);
+            
+            &:first-child {
+              color: var(--ion-color-primary);
+              font-weight: 600;
+              font-size: 1.2rem;
+            }
+          }
+        }
+      }
+    }
+  }
+  
+  // Estilos para la vista principal
+  .home-container {
+    ion-card {
+      margin: 2rem auto;
+      max-width: 800px;
+      background: #fffaf0;
+      
+      ion-card-header {
+        background: var(--ion-color-primary);
+        text-align: center;
+        
+        ion-card-title {
+          font-size: 1.8rem;
+          font-weight: 600;
+          letter-spacing: 2px;
+          color: var(--ion-color-primary-contrast);
+        }
+      }
+      
+      ion-card-content {
+        .content {
+          padding: 1rem;
+          
+          p {
+            color: var(--ion-color-dark);
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+          }
+        }
+      }
+    }
+  }
+  
+  // Animaciones
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  ion-card {
+    animation: fadeIn 0.5s ease-out;
+  }
+  
+  // Estado de carga
+  .loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 200px;
+    
+    ion-spinner {
+      --color: var(--ion-color-primary);
+    }
+  }
+  
+  // Clases de utilidad que complementan las de Ionic
+  .rounded-corners {
+    border-radius: 12px;
+  }
+  
+  .shadow-md {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  // Media queries para responsividad
+  @media (max-width: 768px) {
+    .container {
+      padding: 15px;
+    }
+    
+    ion-card {
+      margin: 1rem auto;
+      
+      ion-card-header {
+        padding: 15px;
+        
+        ion-card-title {
+          font-size: 1.5rem;
+        }
+      }
+      
+      ion-card-content {
+        padding: 15px;
+        
+        .alert-info {
+          padding: 1rem;
+          
+          p {
+            font-size: 1rem;
+          }
+        }
+        
+        .content p {
+          font-size: 1rem;
+        }
+      }
+    }
+  }
+  
+  // Botones personalizados que siguen el estilo Ionic
+  ion-button.custom-button {
+    --background: var(--ion-color-primary);
+    --color: var(--ion-color-primary-contrast);
+    --border-radius: 6px;
+    --box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin: 1rem 0;
+    height: 50px;
+    font-size: 1.1rem;
+    font-weight: 500;
+    
+    &:hover {
+      --background: var(--ion-color-primary-shade);
+      --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    
+    &.warning {
+      --background: var(--ion-color-warning);
+      --color: var(--ion-color-warning-contrast);
+      
+      &:hover {
+        --background: var(--ion-color-warning-shade);
+      }
+    }
+  }
