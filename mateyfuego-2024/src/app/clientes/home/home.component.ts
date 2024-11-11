@@ -61,7 +61,9 @@ export class HomeComponent implements OnInit {
     if (resultado === 'encuesta:12345') {
       const usuarioEnEspera = {
         mesaAsignada: false,
-        uid: this.currentUser.uid,
+        uid: this.currentUser.uid,        
+        nombre: this.currentUserDetails.nombre,
+        fotourl: this.currentUserDetails.fotoUrl,
       };
       const datoslista = doc(
         this.firestore,

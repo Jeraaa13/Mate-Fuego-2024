@@ -40,14 +40,16 @@ export class MaitreHomeComponent implements OnInit {
   constructor(private firestore: AngularFirestore) {}
 
   ngOnInit() {
+    // Llama a los métodos que cargan y suscriben a los cambios en Firestore
     this.cargarListaEspera();
     this.CargarMesas();
   }
 
+  // Este método se suscribe a la colección 'lista-espera' en Firestore
   cargarListaEspera(): void {
     this.firestore
       .collection('lista-espera')
-      .snapshotChanges()
+      .snapshotChanges() // Escucha cambios en tiempo real
       .subscribe((data) => {
         this.listaDeEspera = data.map((e) => {
           const clienteData = e.payload.doc.data() as UsuarioListado;
@@ -56,6 +58,7 @@ export class MaitreHomeComponent implements OnInit {
       });
   }
 
+  // Este método se suscribe a la colección 'mesas' en Firestore para obtener solo mesas disponibles
   CargarMesas(): void {
     this.firestore
       .collection('mesas', (ref) =>
@@ -82,7 +85,7 @@ export class MaitreHomeComponent implements OnInit {
     this.mostrarMesas = true;
   }
 
-  async asignarMesaEspecifica(usuario: UsuarioListado, mesa: Mesas){
+  async asignarMesaEspecifica(usuario: UsuarioListado, mesa: Mesas) {
     if (usuario.id) {
       try {
         // Actualizar el estado de la mesa a no disponible
@@ -96,9 +99,10 @@ export class MaitreHomeComponent implements OnInit {
           mesaSeleccionada: mesa.id
         });
 
+        // Cierra el modal y limpia la selección
         this.mostrarMesas = false;
         this.usuarioSeleccionado = null;
-        
+
         console.log('Mesa asignada exitosamente');
       } catch (error) {
         console.error('Error al asignar mesa:', error);

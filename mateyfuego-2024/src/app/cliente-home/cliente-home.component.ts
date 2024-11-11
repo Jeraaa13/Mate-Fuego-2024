@@ -1,10 +1,10 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { ZXingScannerModule } from '@zxing/ngx-scanner';
 import { MailService } from '../services/mail.service';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
-import { Firestore, doc, getDoc, collection, query, where, getDocs } from '@angular/fire/firestore';
+import { Firestore, doc, getDoc, collection, query, where, getDocs, onSnapshot, Unsubscribe } from '@angular/fire/firestore';
 import { Router } from '@angular/router';
 import { IonSpinner, IonButton, IonContent, IonCard, IonCardHeader, IonCardTitle, IonCardContent } from "@ionic/angular/standalone";
 
@@ -15,12 +15,14 @@ import { IonSpinner, IonButton, IonContent, IonCard, IonCardHeader, IonCardTitle
   standalone: true,
   imports: [IonCardContent, IonCardTitle, IonCardHeader, IonCard, IonContent, IonButton, IonSpinner, ZXingScannerModule, CommonModule],
 })
-export class ClienteHomeComponent implements OnInit {
+export class ClienteHomeComponent implements OnInit, OnDestroy {
   currentUser: any | null = null;
   currentUserDetails: any | null = null;
   datosListado: any | null = null;
   mostrarVistaEspera: boolean = false;
   datosMesa: any | null = null;
+  isScannerVisible = false;
+  private listaEsperaSubscription: Unsubscribe | null = null;
 
   constructor(
     private firestore: Firestore,
@@ -32,7 +34,14 @@ export class ClienteHomeComponent implements OnInit {
   ngOnInit(): void {
     this.TraerUsuarioLogueado();
   }
- 
+
+  ngOnDestroy(): void {
+    // Cancela la suscripción al salir del componente para evitar fugas de memoria
+    if (this.listaEsperaSubscription) {
+      this.listaEsperaSubscription();
+    }
+  }
+
   TraerUsuarioLogueado() { 
     this.afAuth.authState.subscribe(async (user) => {
       if (user) {
@@ -45,7 +54,7 @@ export class ClienteHomeComponent implements OnInit {
         if (docSnap.exists()) {
           this.currentUserDetails = docSnap.data();
           console.log('Detalles del usuario:', this.currentUserDetails);
-          await this.estaEnEspera();
+          this.escucharCambiosEnEspera();
           this.verificarEstado();
         } else {
           console.log('No se encontró el usuario en la colección de clientes.');
@@ -56,36 +65,35 @@ export class ClienteHomeComponent implements OnInit {
     });
   }
 
-  async estaEnEspera() {
-    try {
-      if (!this.currentUser) {
-        console.log('No hay usuario autenticado para buscar mesa');
-        return;
-      }
-      const mesasRef = collection(this.firestore, 'lista-espera');
-      const q = query(mesasRef, where('uid', '==', this.currentUser.uid));
-      const querySnapshot = await getDocs(q);
+  escucharCambiosEnEspera() {
+    if (!this.currentUser) {
+      console.log('No hay usuario autenticado para escuchar cambios en la lista de espera');
+      return;
+    }
 
-      if (!querySnapshot.empty) {
-        const listadoc = querySnapshot.docs[0];
+    const mesasRef = collection(this.firestore, 'lista-espera');
+    const q = query(mesasRef, where('uid', '==', this.currentUser.uid));
+
+    this.listaEsperaSubscription = onSnapshot(q, (snapshot) => {
+      if (!snapshot.empty) {
+        const listadoc = snapshot.docs[0];
         this.datosListado = {
           id: listadoc.id,
           ...listadoc.data()
         };
-        console.log('Esta en lista de espera');
-        console.log(this.datosListado);
+        console.log('Actualización en lista de espera:', this.datosListado);
+        this.verificarEstado();
         this.traerMesa();
       } else {
-        console.log('El usuario no esta en la lista de espera ');
+        console.log('El usuario ya no está en la lista de espera');
         this.datosListado = null;
+        this.verificarEstado();
       }
-    } catch (error) {
-      console.error('Error al obtener usuario en la lista:', error);
-      this.datosListado = null;
-    }
+    });
   }
+
   verificarEstado() {
-    if (!this.datosListado.mesaAsignada) {
+    if (this.datosListado && !this.datosListado.mesaAsignada) {
       this.mostrarVistaEspera = true;
       console.log('Mostrando vista de espera');
     } else {
@@ -95,21 +103,29 @@ export class ClienteHomeComponent implements OnInit {
   }
 
   async traerMesa() {
-      const mesaRef = collection(this.firestore, 'mesas');
-      const q = query(mesaRef, where('id', '==', this.datosListado.mesaSeleccionada));
-      const querySnapshot = await getDocs(q);
+    const mesaRef = collection(this.firestore, 'mesas');
+    const q = query(mesaRef, where('id', '==', this.datosListado.mesaSeleccionada));
+    const querySnapshot = await getDocs(q);
 
-      if (!querySnapshot.empty) {
-        const datosmesa = querySnapshot.docs[0];
-        this.datosMesa = {
-          id: datosmesa.id,
-          ...datosmesa.data()
-        };
-        console.log('Mesa asignada :',this.datosMesa);
-      } else {
-        console.log('El usuario no esta en la lista de espera ');
-        this.datosListado = null;
-      }
+    if (!querySnapshot.empty) {
+      const datosmesa = querySnapshot.docs[0];
+      this.datosMesa = {
+        id: datosmesa.id,
+        ...datosmesa.data()
+      };
+      console.log('Mesa asignada:', this.datosMesa);
+    } else {
+      console.log('No se encontró la mesa seleccionada');
+      this.datosMesa = null;
     }
-  
+  }
+
+  toggleScanner() {
+    this.isScannerVisible = !this.isScannerVisible;
+  }
+
+  async onScanSuccess(resultado: string) {
+    console.log('Resultado QR => ', resultado);
+    this.toggleScanner();
+  }
 }

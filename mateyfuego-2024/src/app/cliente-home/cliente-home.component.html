@@ -33,9 +33,14 @@
               <p>Accede a todas nuestras funcionalidades</p>
             </div>
             
-            <ion-button expand="block" class="custom-button">
-              Explorar Opciones
-            </ion-button>
+            <button (click)="toggleScanner()">
+              <img src="../../../assets/qrcode.png" />
+            </button>
+            <div *ngIf="isScannerVisible">
+              <zxing-scanner [torch]="true" (scanSuccess)="onScanSuccess($event)">
+              </zxing-scanner>
+            </div>
+            
           </ion-card-content>
         </ion-card>
       </div>
