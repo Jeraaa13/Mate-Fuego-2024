@@ -78,8 +78,9 @@ export class RegistroClientesComponent {
         '',
         [
           Validators.required,
-          Validators.pattern(/^\d+$/),
+          Validators.pattern('^[0-9]*$'),
           Validators.minLength(8),
+          Validators.maxLength(8),
         ],
       ],
       correo: ['', [Validators.required, Validators.email]],

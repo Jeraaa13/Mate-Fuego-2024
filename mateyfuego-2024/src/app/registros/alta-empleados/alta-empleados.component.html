@@ -1,132 +1,213 @@
-<form [formGroup]="empleadoForm" (ngSubmit)="guardarEmpleado()" class="registro-container">
+<form
+  [formGroup]="empleadoForm"
+  (ngSubmit)="guardarEmpleado()"
+  class="registro-container"
+>
   <h2>Alta de Empleados</h2>
 
   <div class="form-group">
-    <label for="correo">Correo electrónico:</label>
-    <input 
-      type="email" 
-      formControlName="correo" 
-      id="correo" 
-      class="form-control"
-      [class.is-invalid]="empleadoForm.get('correo')?.invalid && empleadoForm.get('correo')?.touched">
-    <div class="invalid-feedback" *ngIf="empleadoForm.get('correo')?.errors?.['required'] && empleadoForm.get('correo')?.touched">
-      El correo es requerido
-    </div>
-    <div class="invalid-feedback" *ngIf="empleadoForm.get('correo')?.errors?.['email'] && empleadoForm.get('correo')?.touched">
-      Ingrese un correo válido
-    </div>
-  </div>
-
-  <div class="form-group">
-    <label for="contrasena">Contraseña:</label>
-    <input 
-      type="password" 
-      formControlName="contrasena" 
-      id="contrasena" 
-      class="form-control"
-      [class.is-invalid]="empleadoForm.get('contrasena')?.invalid && empleadoForm.get('contrasena')?.touched">
-    <div class="invalid-feedback" *ngIf="empleadoForm.get('contrasena')?.errors?.['required'] && empleadoForm.get('contrasena')?.touched">
-      La contraseña es requerida
-    </div>
-    <div class="invalid-feedback" *ngIf="empleadoForm.get('contrasena')?.errors?.['minlength'] && empleadoForm.get('contrasena')?.touched">
-      La contraseña debe tener al menos 6 caracteres
-    </div>
-  </div>
-
-  <div class="form-group">
     <label for="nombre">Nombre:</label>
-    <input 
-      type="text" 
-      formControlName="nombre" 
-      id="nombre" 
+    <input
+      type="text"
+      formControlName="nombre"
+      id="nombre"
       class="form-control"
-      [class.is-invalid]="empleadoForm.get('nombre')?.invalid && empleadoForm.get('nombre')?.touched">
-    <div class="invalid-feedback" *ngIf="empleadoForm.get('nombre')?.errors?.['required'] && empleadoForm.get('nombre')?.touched">
-      El nombre es requerido
+      [class.is-invalid]="
+        empleadoForm.get('nombre')?.invalid &&
+        empleadoForm.get('nombre')?.touched
+      "
+    />
+    <div
+      class="invalid-feedback"
+      *ngIf="empleadoForm.get('nombre')?.errors?.['required'] && empleadoForm.get('nombre')?.touched"
+    >
+      <span>El nombre es requerido</span>
     </div>
   </div>
 
   <div class="form-group">
     <label for="apellido">Apellido:</label>
-    <input 
-      type="text" 
-      formControlName="apellido" 
-      id="apellido" 
+    <input
+      type="text"
+      formControlName="apellido"
+      id="apellido"
       class="form-control"
-      [class.is-invalid]="empleadoForm.get('apellido')?.invalid && empleadoForm.get('apellido')?.touched">
-    <div class="invalid-feedback" *ngIf="empleadoForm.get('apellido')?.errors?.['required'] && empleadoForm.get('apellido')?.touched">
-      El apellido es requerido
+      [class.is-invalid]="
+        empleadoForm.get('apellido')?.invalid &&
+        empleadoForm.get('apellido')?.touched
+      "
+    />
+    <div
+      class="invalid-feedback"
+      *ngIf="empleadoForm.get('apellido')?.errors?.['required'] && empleadoForm.get('apellido')?.touched"
+    >
+      <span>El apellido es requerido</span>
     </div>
   </div>
 
   <div class="form-group">
     <label for="dni">DNI:</label>
-    <input 
-      type="text" 
-      formControlName="dni" 
-      id="dni" 
+    <input
+      type="text"
+      formControlName="dni"
+      id="dni"
       class="form-control"
-      [class.is-invalid]="empleadoForm.get('dni')?.invalid && empleadoForm.get('dni')?.touched">
-    <div class="invalid-feedback" *ngIf="empleadoForm.get('dni')?.errors?.['required'] && empleadoForm.get('dni')?.touched">
-      El DNI es requerido
-    </div>
-    <div class="invalid-feedback" *ngIf="empleadoForm.get('dni')?.errors?.['pattern'] && empleadoForm.get('dni')?.touched">
-      El DNI debe contener solo números
+      [class.is-invalid]="
+        empleadoForm.get('dni')?.invalid && empleadoForm.get('dni')?.touched
+      "
+    />
+    <div
+      class="invalid-feedback"
+      *ngIf="empleadoForm.get('dni')?.errors?.['required'] && empleadoForm.get('dni')?.touched"
+    >
+      <span *ngIf="empleadoForm.get('dni')?.errors?.['required']"
+        >El DNI es requerido</span
+      >
+      <span *ngIf="empleadoForm.get('dni')?.errors?.['pattern']"
+        >El DNI debe contener solo números</span
+      >
+      <span
+        *ngIf="empleadoForm.get('dni')?.errors?.['minlength'] || empleadoForm.get('dni')?.errors?.['maxlength']"
+      >
+        El DNI debe tener 8 dígitos
+      </span>
     </div>
   </div>
 
   <div class="form-group">
     <label for="cuil">CUIL:</label>
-    <input 
-      type="text" 
-      formControlName="cuil" 
-      id="cuil" 
+    <input
+      type="text"
+      formControlName="cuil"
+      id="cuil"
       class="form-control"
-      [class.is-invalid]="empleadoForm.get('cuil')?.invalid && empleadoForm.get('cuil')?.touched">
-    <div class="invalid-feedback" *ngIf="empleadoForm.get('cuil')?.errors?.['required'] && empleadoForm.get('cuil')?.touched">
-      El CUIL es requerido
+      [class.is-invalid]="
+        empleadoForm.get('cuil')?.invalid && empleadoForm.get('cuil')?.touched
+      "
+    />
+    <div
+      class="invalid-feedback"
+      *ngIf="empleadoForm.get('cuil')?.errors?.['required'] && empleadoForm.get('cuil')?.touched"
+    >
+      <span>El CUIL es requerido</span>
     </div>
-    <div class="invalid-feedback" *ngIf="empleadoForm.get('cuil')?.errors?.['pattern'] && empleadoForm.get('cuil')?.touched">
-      El CUIL debe tener un formato válido (XX-XXXXXXXX-X)
+    <div
+      class="invalid-feedback"
+      *ngIf="empleadoForm.get('cuil')?.errors?.['pattern'] && empleadoForm.get('cuil')?.touched"
+    >
+      <span>El CUIL debe tener un formato válido (XX-XXXXXXXX-X)</span>
     </div>
   </div>
 
   <div class="form-group">
     <label for="tipoPerfil">Tipo de Empleado:</label>
-    <select 
-      formControlName="tipoPerfil" 
-      id="tipoPerfil" 
+    <select
+      formControlName="tipoPerfil"
+      id="tipoPerfil"
       class="form-control"
-      [class.is-invalid]="empleadoForm.get('tipoPerfil')?.invalid && empleadoForm.get('tipoPerfil')?.touched">
+      [class.is-invalid]="
+        empleadoForm.get('tipoPerfil')?.invalid &&
+        empleadoForm.get('tipoPerfil')?.touched
+      "
+    >
       <option value="Maitre">Maitre</option>
       <option value="Mozo">Mozo</option>
       <option value="Cocinero">Cocinero</option>
       <option value="Bartender">Bartender</option>
     </select>
-    <div class="invalid-feedback" *ngIf="empleadoForm.get('tipoPerfil')?.errors?.['required'] && empleadoForm.get('tipoPerfil')?.touched">
-      El tipo de empleado es requerido
+    <div
+      class="invalid-feedback"
+      *ngIf="empleadoForm.get('tipoPerfil')?.errors?.['required'] && empleadoForm.get('tipoPerfil')?.touched"
+    >
+      <span>El tipo de empleado es requerido</span>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label for="correo">Correo electrónico:</label>
+    <input
+      type="email"
+      formControlName="correo"
+      id="correo"
+      class="form-control"
+      [class.is-invalid]="
+        empleadoForm.get('correo')?.invalid &&
+        empleadoForm.get('correo')?.touched
+      "
+    />
+    <div
+      class="invalid-feedback"
+      *ngIf="empleadoForm.get('correo')?.errors?.['required'] && empleadoForm.get('correo')?.touched"
+    >
+      <span>El correo es requerido</span>
+    </div>
+    <div
+      class="invalid-feedback"
+      *ngIf="empleadoForm.get('correo')?.errors?.['email'] && empleadoForm.get('correo')?.touched"
+    >
+      <span>Ingrese un correo válido</span>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label for="contrasena">Contraseña:</label>
+    <input
+      type="password"
+      formControlName="contrasena"
+      id="contrasena"
+      class="form-control"
+      [class.is-invalid]="
+        empleadoForm.get('contrasena')?.invalid &&
+        empleadoForm.get('contrasena')?.touched
+      "
+    />
+    <div
+      class="invalid-feedback"
+      *ngIf="empleadoForm.get('contrasena')?.errors?.['required'] && empleadoForm.get('contrasena')?.touched"
+    >
+      <span>La contraseña es requerida</span>
+    </div>
+    <div
+      class="invalid-feedback"
+      *ngIf="empleadoForm.get('contrasena')?.errors?.['minlength'] && empleadoForm.get('contrasena')?.touched"
+    >
+      <span>La contraseña debe tener al menos 6 caracteres</span>
     </div>
   </div>
 
   <div class="form-group">
     <label for="foto">Foto:</label>
-    <button type="button" (click)="takePhoto()" class="btn btn-secondary">Subir Foto</button>
-    <img *ngIf="nuevoEmpleado.fotoUrl" [src]="nuevoEmpleado.fotoUrl" class="foto-preview" alt="Vista previa de la foto">
+    <button type="button" (click)="takePhoto()" class="btn btn-secondary">
+      Subir Foto
+    </button>
+    <img
+      *ngIf="nuevoEmpleado.fotoUrl"
+      [src]="nuevoEmpleado.fotoUrl"
+      class="foto-preview"
+      alt="Vista previa de la foto"
+    />
   </div>
 
-  <ion-button expand="block" color="primary" (click)="startScan()" style="--background: #e86c1c;">
-    <ion-icon slot="start" name="qr-code-outline"></ion-icon>
-    ESCANEAR DNI
+  <ion-button expand="block" color="primary" (click)="startScan()">
+    Escanear DNI
   </ion-button>
   <div class="scanner-container" *ngIf="isScanning">
     <div class="scanner-overlay">
       <div class="scanner-frame"></div>
-      <p class="scanner-instructions">Centra el código QR del DNI en el marco</p>
+      <p class="scanner-instructions">
+        Centra el código QR del DNI en el marco
+      </p>
       <button class="cancel-button" (click)="stopScan()">
         Cancelar Escaneo
       </button>
     </div>
   </div>
 
-  <button type="submit" [disabled]="empleadoForm.invalid" class="btn btn-primary">Guardar Empleado</button>
+  <button
+    type="submit"
+    [disabled]="empleadoForm.invalid"
+    class="btn btn-primary"
+  >
+    Guardar Empleado
+  </button>
 </form>

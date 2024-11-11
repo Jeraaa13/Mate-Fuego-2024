@@ -53,11 +53,21 @@
     <input id="dni" type="text" formControlName="dni" placeholder="DNI" />
     <div
       *ngIf="
-        registroForm.get('dni')?.invalid && registroForm.get('dni')?.touched
+        registroForm.get('dni')?.touched && registroForm.get('dni')?.errors
       "
       class="error-message"
     >
-      <small>El DNI es requerido y debe contener solo números</small>
+      <span *ngIf="registroForm.get('dni')?.errors?.['required']"
+        >El DNI es requerido</span
+      >
+      <span *ngIf="registroForm.get('dni')?.errors?.['pattern']"
+        >El DNI debe contener solo números</span
+      >
+      <span
+        *ngIf="registroForm.get('dni')?.errors?.['minlength'] || registroForm.get('dni')?.errors?.['maxlength']"
+      >
+        El DNI debe tener 8 dígitos
+      </span>
     </div>
 
     <label for="correo">Correo</label>
@@ -124,6 +134,5 @@
     </div>
 
     <button type="submit">Ingresar Anónimamente</button>
-    
   </form>
 </div>

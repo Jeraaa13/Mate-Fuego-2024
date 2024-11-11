@@ -20,6 +20,7 @@ import { ZXingScannerModule } from '@zxing/ngx-scanner';
 import { CameraSource, Camera, CameraResultType } from '@capacitor/camera';
 import { QRCodeModule } from 'angularx-qrcode';
 import { NgForm } from '@angular/forms';
+import { IonContent } from '@ionic/angular/standalone';
 
 interface Producto {
   id?: string;

@@ -169,7 +169,7 @@ export class LoginComponent implements OnInit {
     switch (role) {
       case 'dueño':
         this.loginForm.setValue({
-          email: 'dueno@empresa.com',
+          email: 'juanmaptorte@hotmail.com',
           password: '123456',
         });
         break;
@@ -211,8 +211,8 @@ export class LoginComponent implements OnInit {
 
       case 'registrado':
         this.loginForm.setValue({
-          email: 'registrado@empresa.com',
-          password: '123456',
+          email: 'nepokix903@anypng.com',
+          password: '123123',
         });
         break;
 

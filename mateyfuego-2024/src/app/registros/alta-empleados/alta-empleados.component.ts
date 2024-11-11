@@ -46,7 +46,15 @@ export class AltaEmpleadosComponent {
     contrasena: ['', [Validators.required, Validators.minLength(6)]],
     nombre: ['', Validators.required],
     apellido: ['', Validators.required],
-    dni: ['', [Validators.required, Validators.pattern('^[0-9]*$')]],
+    dni: [
+      '',
+      [
+        Validators.required,
+        Validators.pattern('^[0-9]*$'),
+        Validators.minLength(8),
+        Validators.maxLength(8),
+      ],
+    ],
     cuil: [
       '',
       [Validators.required, Validators.pattern('^[0-9]{2}-[0-9]{8}-[0-9]$')],
@@ -86,7 +94,15 @@ export class AltaEmpleadosComponent {
       contrasena: ['', [Validators.required, Validators.minLength(6)]],
       nombre: ['', Validators.required],
       apellido: ['', Validators.required],
-      dni: ['', [Validators.required, Validators.pattern('^[0-9]*$')]],
+      dni: [
+        '',
+        [
+          Validators.required,
+          Validators.pattern('^[0-9]*$'),
+          Validators.minLength(8),
+          Validators.maxLength(8),
+        ],
+      ],
       cuil: [
         '',
         [Validators.required, Validators.pattern('^[0-9]{2}-[0-9]{8}-[0-9]$')],

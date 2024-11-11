@@ -27,7 +27,7 @@ interface Mesa {
   tipo: string;
   fotoUrl: string[];
   qrCode?: string;
-  disponible : boolean;
+  disponible: boolean;
 }
 
 @Component({
@@ -35,11 +35,10 @@ interface Mesa {
   templateUrl: './registro-mesas.component.html',
   styleUrls: ['./registro-mesas.component.scss'],
   standalone: true,
-  imports : [CommonModule,FormsModule,ZXingScannerModule, QRCodeModule]
+  imports: [CommonModule, FormsModule, ZXingScannerModule, QRCodeModule],
 })
-export class RegistroMesasComponent  {
-
-  tiposDeMesa : string[] = ['Vip' , 'Discapacitados' , 'Estandar'];
+export class RegistroMesasComponent {
+  tiposDeMesa: string[] = ['Vip', 'Discapacitados', 'Estandar'];
   nuevaMesa: Mesa = {
     numero: '',
     cantidadComensales: '',
@@ -109,7 +108,7 @@ export class RegistroMesasComponent  {
   generateQRCode() {
     const mesainfo = {
       id: this.nuevaMesa.id,
-      numerp: this.nuevaMesa.numero,
+      numero: this.nuevaMesa.numero,
       descripcion: this.nuevaMesa.cantidadComensales,
       tiempoElaboracion: this.nuevaMesa.tipo,
     };
@@ -144,7 +143,7 @@ export class RegistroMesasComponent  {
       cantidadComensales: '',
       tipo: '',
       fotoUrl: [],
-      disponible : true,
+      disponible: true,
     };
     this.showQR = false;
     this.qrData = '';
@@ -190,5 +189,4 @@ export class RegistroMesasComponent  {
     });
     await actionSheet.present();
   }
-
 }

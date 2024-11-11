@@ -45,6 +45,10 @@ export class RegistroDuenoSupervisorComponent implements OnInit {
   registroForm: FormGroup;
   allowedFormats = [BarcodeFormat.QR_CODE];
   isScannerVisible = false;
+  slideOpts = {
+    initialSlide: 0,
+    speed: 400,
+  };
 
   constructor(
     private fb: FormBuilder,
@@ -57,11 +61,7 @@ export class RegistroDuenoSupervisorComponent implements OnInit {
     this.registroForm = this.initForm();
   }
 
-  ngOnInit() {
-    this.registroForm.valueChanges.subscribe((value) => {
-      console.log('Form values:', value);
-    });
-  }
+  ngOnInit() {}
 
   private initForm(): FormGroup {
     return this.fb.group({
@@ -123,7 +123,14 @@ export class RegistroDuenoSupervisorComponent implements OnInit {
   }
 
   async onSubmit() {
+    this.markFormGroupTouched(this.registroForm);
+
     if (this.registroForm.valid) {
+      if (!this.registroForm.get('fotoUrl')?.value) {
+        console.log('Debe capturar una foto antes de registrar.');
+        return;
+      }
+
       try {
         const { email, password } = this.registroForm.value;
         const userCredential = await createUserWithEmailAndPassword(
@@ -162,8 +169,6 @@ export class RegistroDuenoSupervisorComponent implements OnInit {
       } catch (error) {
         console.error('Error en el proceso de registro:', error);
       }
-    } else {
-      this.markFormGroupTouched(this.registroForm);
     }
   }
 

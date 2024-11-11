@@ -1,178 +1,174 @@
+// Variables
+$primary-color: #e63946;
+$secondary-color: #2a9d8f;
+$accent-color: #e9c46a;
+$dark-color: #1d3557;
+$light-color: #f1faee;
+$error-color: #e63946;
+$border-radius: 12px;
+$box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+
+// Mixins
+@mixin glass-effect {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: $box-shadow;
+}
+
+@mixin input-styles {
+  width: 100%;
+  padding: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: $border-radius;
+  background: rgba(255, 255, 255, 0.1);
+  color: $light-color;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+
+  &:focus {
+    outline: none;
+    border-color: $accent-color;
+    background: rgba(255, 255, 255, 0.15);
+  }
+
+  &::placeholder {
+    color: rgba(241, 250, 238, 0.6);
+  }
+}
+
 .registro-container {
-    max-width: 600px;
-    margin: 20px auto;
-    padding: 25px;
-    background-color: #fffaf0;
-    border-radius: 12px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
-  
-    h2 {
-      color: var(--ion-color-primary);
-      font-size: 1.8rem;
-      font-weight: 600;
-      text-align: center;
-      margin-bottom: 25px;
-      letter-spacing: 2px;
-    }
-  
-    label {
-      display: block;
-      margin: 15px 0 8px;
-      color: var(--ion-color-dark);
-      font-weight: 500;
-      font-size: 1.1rem;
-    }
-  
-    input, select {
-      width: 100%;
-      padding: 12px;
-      margin-bottom: 15px;
-      border: 1px solid #ddd;
-      border-radius: 6px;
-      font-size: 1rem;
-      background-color: white;
-      transition: border-color 0.3s ease;
-  
-      &:focus {
-        outline: none;
-        border-color: var(--ion-color-primary);
-        box-shadow: 0 0 0 2px rgba(210, 105, 30, 0.1);
-      }
-    }
-  
+  overflow-y: auto;
+  width: 100%;
+  max-width: 600px;
+  margin: 2rem auto;
+  padding: 2.5rem;
+  @include glass-effect;
+  border-radius: $border-radius;
+
+  h2 {
+    color: $light-color;
+    text-align: center;
+    margin-bottom: 2rem;
+    font-size: 2rem;
+    font-weight: 600;
+  }
+
+  // Client type selection buttons
+  div:first-of-type {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    justify-content: center;
+
     button {
-      width: 100%;
-      padding: 14px;
-      margin: 15px 0;
-      background-color: var(--ion-color-primary);
-      color: white;
+      padding: 1rem 2rem;
       border: none;
-      border-radius: 6px;
-      font-size: 1.1rem;
-      font-weight: 500;
+      border-radius: $border-radius;
+      background: linear-gradient(
+        135deg,
+        $secondary-color,
+        darken($secondary-color, 15%)
+      );
+      color: $light-color;
+      font-weight: 600;
       cursor: pointer;
-      transition: background-color 0.3s ease, box-shadow 0.3s ease;
-  
+      transition: transform 0.3s ease;
+
       &:hover {
-        background-color: var(--ion-color-primary-shade);
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
+        transform: translateY(-2px);
       }
-  
+
       &:active {
-        transform: translateY(1px);
-        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
-      }
-    }
-  
-    .foto-preview {
-      width: 100%;
-      max-width: 300px;
-      height: auto;
-      margin: 10px 0;
-      border-radius: 8px;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    }
-  
-    .qr-container {
-      text-align: center;
-      margin: 20px 0;
-      padding: 15px;
-      background-color: white;
-      border-radius: 8px;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-  
-      h3 {
-        color: var(--ion-color-primary);
-        margin-bottom: 15px;
-        font-size: 1.2rem;
-      }
-  
-      qrcode {
-        display: block;
-        margin: 0 auto;
-      }
-    }
-  
-    zxing-scanner {
-      width: 100%;
-      height: 300px;
-      margin: 15px 0;
-      border-radius: 8px;
-      overflow: hidden;
-    }
-  }
-  
-  // Responsive adjustments
-  @media (max-width: 767px) {
-    .registro-container {
-      margin: 10px;
-      padding: 15px;
-  
-      h2 {
-        font-size: 1.5rem;
-      }
-  
-      button {
-        padding: 12px;
-        font-size: 1rem;
-      }
-  
-      .foto-preview {
-        max-width: 100%;
+        transform: translateY(0);
       }
     }
   }
-  
-  // Dark mode support
-  @media (prefers-color-scheme: dark) {
-    .registro-container {
-      background-color: #1e1e1e;
-  
-      h2, h3 {
-        color: var(--ion-color-primary-tint);
-      }
-  
-      label {
-        color: #ffffff;
-      }
-  
-      input, select {
-        background-color: #2e2e2e;
-        border-color: #3e3e3e;
-        color: #ffffff;
-  
-        &:focus {
-          border-color: var(--ion-color-primary-tint);
-        }
-      }
-  
-      .qr-container {
-        background-color: #2e2e2e;
-      }
-    }
-  }
-  .error-message {
-    color: red;
-    font-size: 0.9rem;
-    margin-top: 4px;
-  }
-  .scanner-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.6);
-    color: white;
+
+  form {
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
+    gap: 1.5rem;
+
+    label {
+      color: $light-color;
+      font-weight: 500;
+      margin-bottom: 0.5rem;
+    }
+
+    input {
+      @include input-styles;
+    }
+
+    .error-message {
+      color: $error-color;
+      font-size: 0.875rem;
+      margin-top: 0.25rem;
+    }
+
+    button {
+      margin-top: 1rem;
+      padding: 1rem;
+      border: none;
+      border-radius: $border-radius;
+      background: linear-gradient(
+        135deg,
+        $primary-color,
+        darken($primary-color, 15%)
+      );
+      color: $light-color;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+
+      &[type="button"] {
+        background: linear-gradient(
+          135deg,
+          $secondary-color,
+          darken($secondary-color, 15%)
+        );
+      }
+
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+      }
+
+      &:disabled {
+        background: #ccc;
+        cursor: not-allowed;
+        transform: none;
+      }
+    }
   }
-  .scanner-active {
-    --background: transparent;
-    --ion-background-color: transparent;
-    width: 100%;
+}
+
+// Media Queries
+@media (max-width: 768px) {
+  .registro-container {
+    margin: 1rem;
+    padding: 1.5rem;
+
+    h2 {
+      font-size: 1.75rem;
+    }
   }
-  
+}
+
+@media (max-width: 480px) {
+  .registro-container {
+    padding: 1rem;
+
+    div:first-of-type {
+      flex-direction: column;
+
+      button {
+        width: 100%;
+      }
+    }
+
+    h2 {
+      font-size: 1.5rem;
+    }
+  }
+}

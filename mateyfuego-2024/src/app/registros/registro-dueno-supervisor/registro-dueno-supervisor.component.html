@@ -1,118 +1,247 @@
-<div class="registro-container">
-  <h2>Registro de Dueño / Supervisor</h2>
-
-  <form [formGroup]="registroForm" (ngSubmit)="onSubmit()">
-    <div class="form-group">
-      <label for="nombre">Nombre</label>
-      <input
-        id="nombre"
-        type="text"
-        formControlName="nombre"
-        placeholder="Nombre"
-      />
-      <div *ngIf="registroForm.get('nombre')?.touched && registroForm.get('nombre')?.errors" class="error-message">
-        <span *ngIf="registroForm.get('nombre')?.errors?.['required']">El nombre es requerido</span>
-        <span *ngIf="registroForm.get('nombre')?.errors?.['minlength']">El nombre debe tener al menos 2 caracteres</span>
-      </div>
+<ion-content class="form-page-content">
+  <div class="form-page-container">
+    <div class="background-shapes">
+      <div class="shape shape-1"></div>
+      <div class="shape shape-2"></div>
+      <div class="shape shape-3"></div>
     </div>
 
-    <div class="form-group">
-      <label for="apellido">Apellido</label>
-      <input
-        id="apellido"
-        type="text"
-        formControlName="apellido"
-        placeholder="Apellido"
-      />
-      <div *ngIf="registroForm.get('apellido')?.touched && registroForm.get('apellido')?.errors" class="error-message">
-        <span *ngIf="registroForm.get('apellido')?.errors?.['required']">El apellido es requerido</span>
-        <span *ngIf="registroForm.get('apellido')?.errors?.['minlength']">El apellido debe tener al menos 2 caracteres</span>
-      </div>
+    <div class="form-container">
+      <h1>Registro de Dueño / Supervisor</h1>
+
+      <form
+        [formGroup]="registroForm"
+        (ngSubmit)="onSubmit()"
+        class="glass-form"
+      >
+        <div class="form-group">
+          <label for="nombre">Nombre</label>
+          <div class="input-container">
+            <i class="input-icon user-icon"></i>
+            <input
+              id="nombre"
+              type="text"
+              formControlName="nombre"
+              placeholder="Ingrese su nombre"
+            />
+          </div>
+          <div
+            class="error-message"
+            *ngIf="
+              registroForm.get('nombre')?.touched &&
+              registroForm.get('nombre')?.errors
+            "
+          >
+            <span *ngIf="registroForm.get('nombre')?.errors?.['required']"
+              >El nombre es requerido</span
+            >
+            <span *ngIf="registroForm.get('nombre')?.errors?.['minlength']"
+              >El nombre debe tener al menos 2 caracteres</span
+            >
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="apellido">Apellido</label>
+          <div class="input-container">
+            <i class="input-icon user-icon"></i>
+            <input
+              id="apellido"
+              type="text"
+              formControlName="apellido"
+              placeholder="Ingrese su apellido"
+            />
+          </div>
+          <div
+            class="error-message"
+            *ngIf="
+              registroForm.get('apellido')?.touched &&
+              registroForm.get('apellido')?.errors
+            "
+          >
+            <span *ngIf="registroForm.get('apellido')?.errors?.['required']"
+              >El apellido es requerido</span
+            >
+            <span *ngIf="registroForm.get('apellido')?.errors?.['minlength']"
+              >El apellido debe tener al menos 2 caracteres</span
+            >
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="dni">DNI</label>
+            <div class="input-container">
+              <i class="input-icon id-icon"></i>
+              <input
+                id="dni"
+                type="text"
+                formControlName="dni"
+                placeholder="Ingrese su DNI"
+              />
+            </div>
+            <div
+              class="error-message"
+              *ngIf="
+                registroForm.get('dni')?.touched &&
+                registroForm.get('dni')?.errors
+              "
+            >
+              <span *ngIf="registroForm.get('dni')?.errors?.['required']"
+                >El DNI es requerido</span
+              >
+              <span *ngIf="registroForm.get('dni')?.errors?.['pattern']"
+                >El DNI debe contener solo números</span
+              >
+              <span
+                *ngIf="registroForm.get('dni')?.errors?.['minlength'] || registroForm.get('dni')?.errors?.['maxlength']"
+              >
+                El DNI debe tener 8 dígitos
+              </span>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="cuil">CUIL</label>
+            <div class="input-container">
+              <i class="input-icon id-icon"></i>
+              <input
+                id="cuil"
+                type="text"
+                formControlName="cuil"
+                placeholder="XX-XXXXXXXX-X"
+              />
+            </div>
+            <div
+              class="error-message"
+              *ngIf="
+                registroForm.get('cuil')?.touched &&
+                registroForm.get('cuil')?.errors
+              "
+            >
+              <span *ngIf="registroForm.get('cuil')?.errors?.['required']"
+                >El CUIL es requerido</span
+              >
+              <span *ngIf="registroForm.get('cuil')?.errors?.['pattern']"
+                >El CUIL debe tener el formato XX-XXXXXXXX-X</span
+              >
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="tipoPerfil">Perfil</label>
+          <div class="select-container">
+            <i class="input-icon profile-icon"></i>
+            <select id="tipoPerfil" formControlName="tipoPerfil">
+              <option value="dueno">Dueño</option>
+              <option value="supervisor">Supervisor</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="email">Correo</label>
+          <div class="input-container">
+            <i class="input-icon email-icon"></i>
+            <input
+              id="email"
+              type="email"
+              formControlName="email"
+              placeholder="correo@ejemplo.com"
+            />
+          </div>
+          <div
+            class="error-message"
+            *ngIf="
+              registroForm.get('email')?.touched &&
+              registroForm.get('email')?.errors
+            "
+          >
+            <span *ngIf="registroForm.get('email')?.errors?.['required']"
+              >El correo es requerido</span
+            >
+            <span *ngIf="registroForm.get('email')?.errors?.['email']"
+              >Debe ser un correo válido</span
+            >
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="password">Contraseña</label>
+          <div class="input-container">
+            <i class="input-icon password-icon"></i>
+            <input
+              id="password"
+              type="password"
+              formControlName="password"
+              placeholder="********"
+            />
+          </div>
+          <div
+            class="error-message"
+            *ngIf="
+              registroForm.get('password')?.touched &&
+              registroForm.get('password')?.errors
+            "
+          >
+            <span *ngIf="registroForm.get('password')?.errors?.['required']"
+              >La contraseña es requerida</span
+            >
+            <span *ngIf="registroForm.get('password')?.errors?.['minlength']"
+              >La contraseña debe tener al menos 6 caracteres</span
+            >
+          </div>
+        </div>
+
+        <div class="media-buttons">
+          <button
+            type="button"
+            class="action-button photo-button"
+            (click)="takePhoto()"
+          >
+            <i class="camera-icon"></i>
+            <span>Tomar Foto</span>
+          </button>
+
+          <button
+            type="button"
+            class="action-button scan-button"
+            (click)="toggleScanner()"
+          >
+            <i class="qr-icon"></i>
+            <span>Escanear QR del DNI</span>
+          </button>
+        </div>
+
+        <div
+          class="preview-container"
+          *ngIf="registroForm.get('fotoUrl')?.value"
+        >
+          <h3>Foto Capturada:</h3>
+          <div class="photo-preview">
+            <img
+              [src]="registroForm.get('fotoUrl')?.value"
+              alt="Foto del usuario"
+            />
+          </div>
+        </div>
+
+        <div class="scanner-container" *ngIf="isScannerVisible">
+          <zxing-scanner
+            [formats]="allowedFormats"
+            (scanSuccess)="handleQrCodeResult($event)"
+          ></zxing-scanner>
+        </div>
+
+        <button
+          type="submit"
+          class="submit-button"
+          [disabled]="!registroForm.valid"
+        >
+          <span>Guardar Dueño / Supervisor</span>
+        </button>
+      </form>
     </div>
-
-    <div class="form-group">
-      <label for="email">Email</label>
-      <input
-        id="email"
-        type="email"
-        formControlName="email"
-        placeholder="Email"
-      />
-      <div *ngIf="registroForm.get('email')?.touched && registroForm.get('email')?.errors" class="error-message">
-        <span *ngIf="registroForm.get('email')?.errors?.['required']">El email es requerido</span>
-        <span *ngIf="registroForm.get('email')?.errors?.['email']">Debe ser un email válido</span>
-      </div>
-    </div>
-
-    <div class="form-group">
-      <label for="password">Contraseña</label>
-      <input
-        id="password"
-        type="password"
-        formControlName="password"
-        placeholder="Contraseña"
-      />
-      <div *ngIf="registroForm.get('password')?.touched && registroForm.get('password')?.errors" class="error-message">
-        <span *ngIf="registroForm.get('password')?.errors?.['required']">La contraseña es requerida</span>
-        <span *ngIf="registroForm.get('password')?.errors?.['minlength']">La contraseña debe tener al menos 6 caracteres</span>
-      </div>
-    </div>
-
-    <div class="form-group">
-      <label for="dni">DNI</label>
-      <input
-        id="dni"
-        type="text"
-        formControlName="dni"
-        placeholder="DNI"
-      />
-      <div *ngIf="registroForm.get('dni')?.touched && registroForm.get('dni')?.errors" class="error-message">
-        <span *ngIf="registroForm.get('dni')?.errors?.['required']">El DNI es requerido</span>
-        <span *ngIf="registroForm.get('dni')?.errors?.['pattern']">El DNI debe contener solo números</span>
-        <span *ngIf="registroForm.get('dni')?.errors?.['minlength'] || registroForm.get('dni')?.errors?.['maxlength']">
-          El DNI debe tener 8 dígitos
-        </span>
-      </div>
-    </div>
-
-    <div class="form-group">
-      <label for="cuil">CUIL</label>
-      <input
-        id="cuil"
-        type="text"
-        formControlName="cuil"
-        placeholder="CUIL"
-      />
-      <div *ngIf="registroForm.get('cuil')?.touched && registroForm.get('cuil')?.errors" class="error-message">
-        <span *ngIf="registroForm.get('cuil')?.errors?.['required']">El CUIL es requerido</span>
-        <span *ngIf="registroForm.get('cuil')?.errors?.['pattern']">El CUIL debe tener el formato XX-XXXXXXXX-X</span>
-      </div>
-    </div>
-
-    <div class="form-group">
-      <label for="tipoPerfil">Perfil</label>
-      <select id="tipoPerfil" formControlName="tipoPerfil">
-        <option value="dueno">Dueño</option>
-        <option value="supervisor">Supervisor</option>
-      </select>
-    </div>
-
-    <button type="button" (click)="takePhoto()">Tomar Foto</button>
-
-    <div *ngIf="registroForm.get('fotoUrl')?.value">
-      <h3>Foto Capturada:</h3>
-      <img [src]="registroForm.get('fotoUrl')?.value" alt="Foto del usuario" class="foto-preview" />
-    </div>
-
-    <button type="button" (click)="toggleScanner()">Escanear QR del DNI</button>
-
-    <div *ngIf="isScannerVisible">
-      <zxing-scanner
-        [formats]="allowedFormats"
-        (scanSuccess)="handleQrCodeResult($event)"
-      ></zxing-scanner>
-    </div>
-    
-    <button type="submit" [disabled]="!registroForm.valid">Guardar Dueño / Supervisor</button>
-  </form>
-</div>
+  </div>
+</ion-content>

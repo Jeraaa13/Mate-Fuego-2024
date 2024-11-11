@@ -5,26 +5,23 @@
     id="numero"
     type="number"
     [(ngModel)]="nuevaMesa.numero"
-    placeholder="Numero"
+    placeholder="Numero de mesa"
   />
   <label for="cantidadComensales">Cantidad de Comensales</label>
   <input
     id="cantidadComensales"
     type="number"
     [(ngModel)]="nuevaMesa.cantidadComensales"
-    placeholder="cantidadComensales"
+    placeholder="Cantidad de comensales"
   />
 
   <label for="tipo">Tipo de Mesa</label>
-  <select 
-    id="tipo" 
-    [(ngModel)]="nuevaMesa.tipo">
-    <option *ngFor="let tipo of tiposDeMesa" 
-    [value]="tipo">
+  <select id="tipo" [(ngModel)]="nuevaMesa.tipo">
+    <option *ngFor="let tipo of tiposDeMesa" [value]="tipo">
       {{ tipo }}
     </option>
   </select>
-  
+
   <button (click)="takePhoto()">Tomar Foto</button>
   <div *ngIf="nuevaMesa.fotoUrl.length > 0">
     <h3>Fotos Capturadas:</h3>
@@ -33,7 +30,6 @@
     </div>
   </div>
 
-  <!-- Sección del QR -->
   <button (click)="generateQRCode()">Generar QR</button>
   <div *ngIf="showQR" class="qr-container">
     <h3>Código QR del Producto</h3>

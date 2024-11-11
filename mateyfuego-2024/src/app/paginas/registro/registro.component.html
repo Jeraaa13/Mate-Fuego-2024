@@ -1,57 +1,48 @@
-<ion-content>
-  <ion-grid>
-    <ion-row
-      class="ion-justify-content-center ion-align-items-center ion-padding-top ion-padding-bottom"
-    >
-      <ion-col size="12" size-md="6">
-        <ion-card class="ion-no-margin">
-          <ion-card-header class="ion-text-center">
-            <ion-card-title class="ion-text-uppercase"
-              >Registro de usuario</ion-card-title
-            >
-          </ion-card-header>
-          <ion-card-content>
-            <p class="ion-text-center ion-padding-bottom">
-              Bienvenido a nuestro restaurante. Por favor, selecciona una de las
-              siguientes opciones de registro:
-            </p>
-            <ion-row class="ion-justify-content-center ion-padding">
-              <ion-col size="12" size-md="6">
-                <ion-button
-                  expand="block"
-                  [routerLink]="['/alta-dueno-supervisor']"
-                >
-                  Dueño/Supervisor
-                </ion-button>
-              </ion-col>
-              <ion-col size="12" size-md="6">
-                <ion-button expand="block" [routerLink]="['/alta-empleados']">
-                  Empleados
-                </ion-button>
-              </ion-col>
-            </ion-row>
-            <ion-row class="ion-justify-content-center ion-padding">
-              <ion-col size="12" size-md="6">
-                <ion-button expand="block" [routerLink]="['/registro-clientes']">
-                  Clientes
-                </ion-button>
-              </ion-col>
-              <ion-col size="12" size-md="6">
-                <ion-button expand="block" [routerLink]="['/registro-mesas']">
-                  Mesas
-                </ion-button>
-              </ion-col>
-            </ion-row>
-            <ion-row class="ion-justify-content-center ion-padding">
-              <ion-col size="12" size-md="6">
-                <ion-button expand="block" [routerLink]="['/alta-productos']">
-                  Producto
-                </ion-button>
-              </ion-col>
-            </ion-row>
-          </ion-card-content>
-        </ion-card>
-      </ion-col>
-    </ion-row>
-  </ion-grid>
+<ion-content class="register-content">
+  <div class="register-container">
+    <div class="background-shapes">
+      <div class="shape shape-1"></div>
+      <div class="shape shape-2"></div>
+      <div class="shape shape-3"></div>
+    </div>
+
+    <div class="form-container">
+      <h1>Registro de Usuario</h1>
+
+      <p class="welcome-text">
+        Bienvenido a nuestro restaurante. Por favor, selecciona una de las
+        siguientes opciones de registro:
+      </p>
+
+      <div class="options-grid">
+        <button class="option-button" [routerLink]="['/alta-dueno-supervisor']">
+          <img
+            src="../../assets/accesos-rapidos/dueno.png"
+            alt="Dueño/Supervisor"
+          />
+          <span>Dueño/Supervisor</span>
+        </button>
+
+        <button class="option-button" [routerLink]="['/alta-empleados']">
+          <img src="../../assets/accesos-rapidos/mozo.png" alt="Empleados" />
+          <span>Empleados</span>
+        </button>
+
+        <button class="option-button" [routerLink]="['/registro-clientes']">
+          <img src="../../assets/accesos-rapidos/cliente.png" alt="Clientes" />
+          <span>Clientes</span>
+        </button>
+
+        <button class="option-button" [routerLink]="['/registro-mesas']">
+          <img src="../../assets/accesos-rapidos/mesa.png" alt="Mesas" />
+          <span>Mesas</span>
+        </button>
+
+        <button class="option-button" [routerLink]="['/alta-productos']">
+          <img src="../../assets/accesos-rapidos/producto.png" alt="Producto" />
+          <span>Producto</span>
+        </button>
+      </div>
+    </div>
+  </div>
 </ion-content>

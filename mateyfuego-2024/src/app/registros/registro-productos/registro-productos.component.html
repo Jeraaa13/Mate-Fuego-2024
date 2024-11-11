@@ -1,7 +1,7 @@
 <div class="registro-container">
   <h2>Registro de Productos</h2>
 
-  <label for="nombre">Nombre *</label>
+  <label for="nombre">Nombre</label>
   <input
     id="nombre"
     type="text"
@@ -80,7 +80,9 @@
     <div *ngFor="let foto of nuevoProducto.fotosUrl">
       <img [src]="foto" alt="Foto del producto" class="foto-preview" />
     </div>
-    <span *ngIf="nuevoProducto.fotosUrl.length < 3">Deben ser 3 fotos</span>
+    <span *ngIf="nuevoProducto.fotosUrl.length < 3" style="color: #e63946"
+      >Deben ser 3 fotos</span
+    >
   </div>
 
   <div *ngIf="showQR" class="qr-container">

@@ -4,14 +4,9 @@ import { QrService } from '../../services/qr.service';
 import { Router } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { MailService } from 'src/app/services/mail.service';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
-import firebase from 'firebase/compat/app'; // Importa firebase de compat
 import { Firestore, doc, getDoc, setDoc } from '@angular/fire/firestore';
-
-
-
 
 @Component({
   selector: 'app-home',
@@ -20,15 +15,17 @@ import { Firestore, doc, getDoc, setDoc } from '@angular/fire/firestore';
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
 })
-export class HomeComponent implements OnInit{
+export class HomeComponent implements OnInit {
   isScannerVisible = false;
   currentUser: any | null = null;
   currentUserDetails: any | null = null;
 
-  constructor(private qrService: QrService, private router: Router,
-    private firestore : Firestore,
+  constructor(
+    private qrService: QrService,
+    private router: Router,
+    private firestore: Firestore,
     private mailService: MailService,
-    private afAuth: AngularFireAuth,
+    private afAuth: AngularFireAuth
   ) {}
 
   ngOnInit(): void {
@@ -37,7 +34,11 @@ export class HomeComponent implements OnInit{
         this.currentUser = user;
         console.log('Usuario logueado:', this.currentUser);
 
-        const usuarioDoc = doc(this.firestore, 'clientes', this.currentUser.uid);
+        const usuarioDoc = doc(
+          this.firestore,
+          'clientes',
+          this.currentUser.uid
+        );
         const docSnap = await getDoc(usuarioDoc);
 
         if (docSnap.exists()) {
@@ -59,14 +60,17 @@ export class HomeComponent implements OnInit{
 
     if (resultado === 'encuesta:12345') {
       const usuarioEnEspera = {
-        mesaAsignada: false ,
-        uid : this.currentUser.uid
+        mesaAsignada: false,
+        uid: this.currentUser.uid,
       };
-      const datoslista = doc(this.firestore, 'lista-espera', usuarioEnEspera.uid);
-      await setDoc(datoslista , usuarioEnEspera)
-      
+      const datoslista = doc(
+        this.firestore,
+        'lista-espera',
+        usuarioEnEspera.uid
+      );
+      await setDoc(datoslista, usuarioEnEspera);
+
       this.router.navigate(['/cliente-home']);
-      
     } else {
       this.qrService.onScanSuccess(resultado);
     }
@@ -74,18 +78,21 @@ export class HomeComponent implements OnInit{
     this.toggleScanner();
   }
 
-  async navegarhome(){
-    if (this.currentUser)
-      {
-        const usuarioEnEspera = {
-          mesaAsignada: false ,
-          uid : this.currentUser.uid,
-          nombre : this.currentUserDetails.nombre,
-          fotourl : this.currentUserDetails.fotoUrl
-        };
-        const datoslista = doc(this.firestore, 'lista-espera', usuarioEnEspera.uid);
-        await setDoc(datoslista , usuarioEnEspera)
-        this.router.navigate(['/cliente-home']);
+  async navegarhome() {
+    if (this.currentUser) {
+      const usuarioEnEspera = {
+        mesaAsignada: false,
+        uid: this.currentUser.uid,
+        nombre: this.currentUserDetails.nombre,
+        fotourl: this.currentUserDetails.fotoUrl,
+      };
+      const datoslista = doc(
+        this.firestore,
+        'lista-espera',
+        usuarioEnEspera.uid
+      );
+      await setDoc(datoslista, usuarioEnEspera);
+      this.router.navigate(['/cliente-home']);
     }
   }
 }
