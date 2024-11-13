@@ -1,4 +1,5 @@
 <ion-content>
+  <!-- Productos -->
   <div class="product-container">
     <ion-card class="product-card" *ngFor="let product of products">
       <div class="category-info">
@@ -11,33 +12,62 @@
       </div>
 
       <div class="carousel-container">
-        <div class="nav-arrow left" (click)="previousImage(product.id)" 
-             *ngIf="hasMultipleImages(product)">
+        <div class="nav-arrow left" (click)="previousImage(product.id)" *ngIf="hasMultipleImages(product)">
           <ion-icon name="chevron-back-outline"></ion-icon>
         </div>
-        
+
         <div class="image-container" *ngIf="hasFotosUrl(product)">
-          <ion-img [src]="product.fotosUrl[currentImageIndexes[product.id] || 0]"
-                   [alt]="getCurrentImageName(product)">
-          </ion-img>
+          <ion-img
+            [src]="product.fotosUrl[currentImageIndexes[product.id] || 0]"
+            [alt]="getCurrentImageName(product)"
+          ></ion-img>
           <div class="product-name">
             {{ getCurrentImageName(product) }}
           </div>
         </div>
 
-        <div class="nav-arrow right" (click)="nextImage(product.id)"
-             *ngIf="hasMultipleImages(product)">
+        <div class="nav-arrow right" (click)="nextImage(product.id)" *ngIf="hasMultipleImages(product)">
           <ion-icon name="chevron-forward-outline"></ion-icon>
         </div>
       </div>
 
       <ion-card-content>
         <h2>{{ product.nombre }}</h2>
-        <p class="price">Precio: ${{ product.precio }}</p>
-        <ion-button expand="block" color="success">
-          AGREGAR AL PEDIDO
-        </ion-button>
+        <p class="price" style="color: green;">Precio: ${{ product.precio }}</p>
+
+        <!-- Botones de + y - para modificar la cantidad en el carrito -->
+        <div class="quantity-controls">
+          <ion-button (click)="decreaseQuantity(product)" color="danger" size="small">-</ion-button>
+          <span>{{ cart[product.id]?.quantity || 0 }}</span>
+          <ion-button (click)="increaseQuantity(product)" color="primary" size="small">+</ion-button>
+        </div>
       </ion-card-content>
     </ion-card>
+  </div>
+
+  <!-- Resumen del pedido en la parte inferior -->
+  <div class="cart-summary fixed-summary" [class.expanded]="isExpanded" (click)="toggleExpand()">
+    <div class="total-summary">
+      <p class="total-text">Total: {{ totalPrice | currency:'$' }}</p>
+      <p class="time-text">Tiempo: {{ maxTime }} min</p>
+    </div>
+
+    <table *ngIf="isExpanded">
+      <thead>
+        <tr>
+          <th>Precio</th>
+          <th>Tiempo</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of (cart | keyvalue)">
+          <td>{{ item.value.product.precio * item.value.quantity | currency:'$' }}</td>
+          <td>{{ item.value.product.tiempoElaboracion }} min</td>
+        </tr>
+      </tbody>
+    </table>
+    <ion-button expand="block" color="success" (click)="confirmOrder()" style="margin: 16px;">
+      Solicitar Pedido
+    </ion-button>
   </div>
 </ion-content>

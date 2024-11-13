@@ -25,6 +25,7 @@ import { Camera } from '@ionic-native/camera/ngx';
 import { getStorage, provideStorage } from '@angular/fire/storage';
 import { PushNotificationService } from './app/services/push-notifications.service';
 import { provideHttpClient } from '@angular/common/http';
+import { IonicModule } from '@ionic/angular';
 bootstrapApplication(AppComponent, {
   providers: [
     {
@@ -39,6 +40,7 @@ bootstrapApplication(AppComponent, {
     provideFirestore(() => getFirestore()),
     provideStorage(() => getStorage()),
     Camera,
+    IonicModule,
     PushNotificationService,
     provideHttpClient(),
   ],

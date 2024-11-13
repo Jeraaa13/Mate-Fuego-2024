@@ -128,3 +128,117 @@ h2 {
 ion-button {
   margin-top: 10px;
 }
+.cart-summary {
+  background-color: #000000;
+  padding: 16px;
+  border-top: 1px solid #ddd;
+
+  h2 {
+    margin-top: 0;
+    margin-bottom: 16px;
+    font-size: 18px;
+    font-weight: bold;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+
+    th, td {
+      padding: 8px;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+  }
+
+  .total {
+    display: flex;
+    justify-content: space-between;
+    font-size: 16px;
+    font-weight: bold;
+    margin-top: 16px;
+  }
+}
+.quantity-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  ion-button {
+    width: 36px;
+    height: 36px;
+    padding: 0;
+  }
+  
+  span {
+    font-weight: bold;
+    font-size: 1.2rem;
+  }
+}
+.fixed-summary {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  background-color: #000;
+  color: #fff;
+  padding: 10px;
+  z-index: 1000;
+  transition: max-height 0.3s ease;
+  overflow: hidden;
+  max-height: 60px; /* Altura predeterminada */
+
+  &.expanded {
+    max-height: 300px; /* Altura expandida */
+  }
+
+  .toggle-button {
+    font-size: 1.5rem;
+    cursor: pointer;
+    position: absolute;
+    right: 10px;
+    top: 10px;
+  }
+
+  .total {
+    font-weight: bold;
+    display: flex;
+    justify-content: space-between;
+  }
+}
+
+.product-container {
+  margin-top: 80px; /* Para que el contenido de productos no se superponga al resumen */
+}
+.cart-summary {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  background-color: #000;
+  color: #fff;
+  padding: 10px;
+  z-index: 1000;
+  transition: max-height 0.3s ease;
+  overflow: hidden;
+  max-height: 60px;
+  cursor: pointer;
+
+  &.expanded {
+    max-height: 300px;
+  }
+
+  .total-summary {
+    display: flex;
+    justify-content: space-between;
+    font-weight: bold;
+    align-items: center;
+  }
+
+  .total-text {
+    margin-left: 10px; /* Ajusta la separación de los bordes */
+  }
+
+  .time-text {
+    margin-right: 10px;
+  }
+}
