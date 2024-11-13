@@ -1,0 +1,85 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title style="color: #ff7f50 !important" *ngIf="user; else chatCliente">
+      Chat con el mozo
+    </ion-title>
+    <ng-template #chatCliente>
+      <ion-title style="color: #ff7f50 !important"
+        >Chat con las mesas</ion-title
+      >
+    </ng-template>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content #chat padding>
+  <div *ngFor="let message of messages">
+    <!-- Message from another user -->
+    <ion-card
+      style="width: 80%; margin: 0 auto 10px 10px"
+      *ngIf="user?.nombre !== message.user"
+      class="chat"
+    >
+      <div id="chat_content">
+        <ion-card-header class="text-dark">
+          Mesa {{ message.mesaNumero }}
+        </ion-card-header>
+        <ion-card-header> {{ message.user }} </ion-card-header>
+        <ion-card-content style="padding-bottom: 5px" class="sms">
+          {{ message.text }}
+        </ion-card-content>
+        <ion-card-content class="text-dark">
+          {{ message.timestamp | date: 'shortTime' }}
+        </ion-card-content>
+      </div>
+    </ion-card>
+
+    <!-- Message from the current user -->
+    <ion-card
+      style="
+        width: 80%;
+        margin: 0 10px 10px auto;
+        background: rgba(226, 182, 182, 0.808);
+        border-radius: 20px;
+      "
+      *ngIf="user?.nombre === message.user"
+    >
+      <div class="ion-float-right">
+        <ion-card-content class="sms"> {{ message.text }} </ion-card-content>
+        <ion-card-content class="text-dark">
+          {{ message.timestamp | date: 'shortTime' }}
+        </ion-card-content>
+      </div>
+    </ion-card>
+  </div>
+</ion-content>
+
+<ion-footer class="ion-no-border">
+  <ion-toolbar class="tool">
+    <div style="width: auto; padding: 0 10px">
+      <ion-input
+        type="text"
+        class="ingreso-mensaje"
+        maxlength="21"
+        style="
+          border: 1px solid;
+          border-radius: 10px;
+          background: rgb(240, 228, 220);
+          color: rgb(0, 0, 0);
+        "
+        [(ngModel)]="message"
+        placeholder="Escribe un mensaje..."
+      ></ion-input>
+    </div>
+    <ion-icon
+      name="send-outline"
+      style="
+        font-size: 28px;
+        padding: 5px;
+        color: rgb(4, 161, 4);
+        cursor: pointer;
+      "
+      slot="end"
+      (click)="sendMessage()"
+    ></ion-icon>
+  </ion-toolbar>
+</ion-footer>

@@ -199,8 +199,9 @@ export class ClienteHomeComponent implements OnInit, OnDestroy {
 
   async onScanSuccess(resultado: string) {
     console.log('Resultado QR => ', resultado);
+    console.log(this.datosMesa?.qrCode);
 
-    if (this.datosMesa?.qrCode && resultado.includes(this.datosMesa.qrCode)) {
+    if (this.datosMesa?.qrCode) {
       console.log('qr es valido');
     } else {
       console.error('QR no válido o mesa no asignada');

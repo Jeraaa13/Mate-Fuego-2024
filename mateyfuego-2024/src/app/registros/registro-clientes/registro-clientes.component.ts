@@ -1,6 +1,15 @@
 import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
-import { Firestore, doc, getDoc, setDoc } from '@angular/fire/firestore';
+import {
+  Firestore,
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  query,
+  setDoc,
+  where,
+} from '@angular/fire/firestore';
 import { Auth, createUserWithEmailAndPassword, user } from '@angular/fire/auth';
 import {
   Storage,
@@ -261,23 +270,35 @@ export class RegistroClientesComponent {
       return;
     }
 
+    const baseName = 'Anonimo_';
+    const userEnteredName = this.registroAnonimoForm.value.nombre;
     const datosCliente = {
-      nombre: this.registroAnonimoForm.value.nombre,
+      nombre: userEnteredName, // Store the user-entered name
       tipoPerfil: 'anonimo',
       estadoVerificacion: true,
     };
 
     try {
-      const idAnonimo = `Anonimo_${++this.contadorAnonimos}`;
+      const anonimosSnapshot = await getDocs(
+        query(
+          collection(this.firestore, 'clientes'),
+          where('nombre', '>=', baseName),
+          where('nombre', '<', `${baseName}\uf8ff`)
+        )
+      );
+
+      const contador = anonimosSnapshot.size + 1;
+      const idAnonimo = `${baseName}${contador}`;
+
       const clienteRef = doc(this.firestore, 'clientes', idAnonimo);
       await setDoc(clienteRef, datosCliente);
+
       console.log('Cliente anónimo guardado en Firestore:', datosCliente);
       this.router.navigate(['/home-clientes'], {
         queryParams: { skipVerification: true, idAnonimo },
       });
 
       this.auth.signOut();
-
       this.resetForm();
     } catch (error) {
       console.error('Error al guardar cliente anónimo:', error);

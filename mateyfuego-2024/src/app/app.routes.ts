@@ -102,7 +102,7 @@ export const routes: Routes = [
   {
     path: 'cliente-home',
     loadComponent: () =>
-      import('./cliente-home/cliente-home.component').then(
+      import('./lista-espera/cliente-home.component').then(
         (m) => m.ClienteHomeComponent
       ),
   },
@@ -119,5 +119,9 @@ export const routes: Routes = [
       import('./productos/pagina/pagina.component').then(
         (m) => m.PaginaComponent
       ),
+  },
+  {
+    path: 'chat',
+    loadComponent: () => import('./chat/chat.page').then((m) => m.ChatPage),
   },
 ];

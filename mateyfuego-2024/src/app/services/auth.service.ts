@@ -5,7 +5,7 @@ import { Auth, signOut, User } from '@angular/fire/auth';
   providedIn: 'root',
 })
 export class AuthService {
-  private user: User | null = null;
+  user: User | null = null;
 
   constructor(private auth: Auth) {
     this.auth.onAuthStateChanged((user) => {
