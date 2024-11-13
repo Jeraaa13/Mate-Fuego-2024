@@ -6,7 +6,7 @@
 
   <div class="chat-ventana" *ngIf="chatAbierto">
     <div class="chat-header">
-      <h3>Chat en línea</h3>
+      <h3>Consulta al mozo</h3>
       <div *ngIf="usuario" class="usuario-actual">
         {{ usuario.name }}
       </div>
@@ -21,9 +21,9 @@
         <div class="mensaje-contenido">
           <div class="mensaje-info">
             <span class="usuario">{{ mensaje.usuario }}</span>
-            <span class="hora">{{
-              mensaje.fecha.toDate() | date : "short"
-            }}</span>
+            <span class="hora">
+              {{ mensaje.fecha.toDate() | date: 'short' }}
+            </span>
           </div>
           <div class="texto">{{ mensaje.texto }}</div>
         </div>

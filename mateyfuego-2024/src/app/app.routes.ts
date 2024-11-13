@@ -121,6 +121,6 @@ export const routes: Routes = [
   },
   {
     path: 'chat',
-    loadComponent: () => import('./chat/chat.page').then((m) => m.ChatPage),
+    loadComponent: () => import('./productos/pagina/chat/chat.component').then((m) => m.ChatComponent),
   },
 ];
