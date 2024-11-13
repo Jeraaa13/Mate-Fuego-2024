@@ -152,23 +152,52 @@ export class PushNotificationService {
     }
   }
 
+  async obtenerTokenMaitres(): Promise<string[]> {
+    const tokens: string[] = [];
+    try {
+      const collections = ['empleados'];
+
+      for (const collectionName of collections) {
+        const q = query(
+          collection(this.firestore, collectionName),
+          where('tipoPerfil', '==', 'Maitre')
+        );
+
+        const snapshot = await getDocs(q);
+
+        snapshot.forEach((doc) => {
+          console.log('doc => ', doc);
+          const data = doc.data();
+          console.log('datatoken => ', data['token']);
+          if (data['token']) {
+            tokens.push(data['token']);
+          }
+          console.log('TOKENS =>', tokens);
+        });
+      }
+    } catch (error) {
+      console.error('Error getting supervisor and owner tokens:', error);
+    }
+    return tokens;
+  }
+
   async obtenerTokensSupervisoresYDueno(): Promise<string[]> {
     const tokens: string[] = [];
     try {
       const collections = ['duenosSupervisores'];
 
       for (const collectionName of collections) {
-        const q = query(
-          collection(this.firestore, collectionName),
-          where('tipoPerfil', 'in', ['supervisor', 'dueno'])
-        );
+        const q = query(collection(this.firestore, collectionName));
 
         const snapshot = await getDocs(q);
         snapshot.forEach((doc) => {
+          console.log('doc => ', doc);
           const data = doc.data();
+          console.log('datatoken => ', data['token']);
           if (data['token']) {
             tokens.push(data['token']);
           }
+          console.log('TOKENS =>', tokens);
         });
       }
     } catch (error) {
@@ -199,6 +228,24 @@ export class PushNotificationService {
       console.log(`Notifications sent to ${tokens.length} recipients`);
     } catch (error) {
       console.error('Error sending notifications:', error);
+    }
+  }
+
+  async notificarClienteListaDeEspera(nombreCliente: string) {
+    try {
+      const tokens = await this.obtenerTokenMaitres();
+
+      if (tokens.length > 0) {
+        await this.enviarNotificacionAMultiplesDestinatarios(
+          tokens,
+          `Nuevo cliente en la lista de espera: ${nombreCliente}`,
+          'Cliente en lista de espera'
+        );
+      } else {
+        console.log('No se encontraron destinatarios para la notificación');
+      }
+    } catch (error) {
+      console.error('Error notifying new client:', error);
     }
   }
 

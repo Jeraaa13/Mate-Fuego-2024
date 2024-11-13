@@ -273,8 +273,11 @@ export class RegistroClientesComponent {
       await setDoc(clienteRef, datosCliente);
       console.log('Cliente anónimo guardado en Firestore:', datosCliente);
       this.router.navigate(['/home-clientes'], {
-        queryParams: { skipVerification: true },
+        queryParams: { skipVerification: true, idAnonimo },
       });
+
+      this.auth.signOut();
+
       this.resetForm();
     } catch (error) {
       console.error('Error al guardar cliente anónimo:', error);

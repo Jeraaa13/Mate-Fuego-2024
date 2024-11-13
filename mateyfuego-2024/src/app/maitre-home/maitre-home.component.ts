@@ -4,15 +4,16 @@ import { Component, OnInit } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { ReactiveFormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
+import { PushNotificationService } from '../services/push-notifications.service';
 
 interface Mesas {
-  cantidadComensales: number,
-  disponible: boolean,
-  fotourl: string,
-  id: string,
-  numero: number,
-  qrCode: string,
-  tipo: string
+  cantidadComensales: number;
+  disponible: boolean;
+  fotourl: string;
+  id: string;
+  numero: number;
+  qrCode: string;
+  tipo: string;
 }
 
 interface UsuarioListado {
@@ -21,7 +22,7 @@ interface UsuarioListado {
   fotourl: string;
   nombre: string;
   id?: string;
-  mesaSeleccionada?: string; 
+  mesaSeleccionada?: string;
 }
 
 @Component({
@@ -37,33 +38,32 @@ export class MaitreHomeComponent implements OnInit {
   mostrarMesas: boolean = false;
   usuarioSeleccionado: UsuarioListado | null = null;
 
-  constructor(private firestore: AngularFirestore) {}
+  constructor(
+    private firestore: AngularFirestore,
+    private pushService: PushNotificationService
+  ) {}
 
   ngOnInit() {
-    // Llama a los métodos que cargan y suscriben a los cambios en Firestore
     this.cargarListaEspera();
     this.CargarMesas();
   }
 
-  // Este método se suscribe a la colección 'lista-espera' en Firestore
   cargarListaEspera(): void {
     this.firestore
       .collection('lista-espera')
-      .snapshotChanges() // Escucha cambios en tiempo real
+      .snapshotChanges()
       .subscribe((data) => {
         this.listaDeEspera = data.map((e) => {
           const clienteData = e.payload.doc.data() as UsuarioListado;
+          this.pushService.inicializarNotificaciones(clienteData.uid, 'Maitre');
           return { ...clienteData, id: e.payload.doc.id };
         });
       });
   }
 
-  // Este método se suscribe a la colección 'mesas' en Firestore para obtener solo mesas disponibles
   CargarMesas(): void {
     this.firestore
-      .collection('mesas', (ref) =>
-        ref.where('disponible', '==', true)
-      )
+      .collection('mesas', (ref) => ref.where('disponible', '==', true))
       .snapshotChanges()
       .subscribe((data) => {
         this.mesasDisponibles = data.map((e) => {
@@ -88,18 +88,15 @@ export class MaitreHomeComponent implements OnInit {
   async asignarMesaEspecifica(usuario: UsuarioListado, mesa: Mesas) {
     if (usuario.id) {
       try {
-        // Actualizar el estado de la mesa a no disponible
         await this.firestore.collection('mesas').doc(mesa.id).update({
-          disponible: false
+          disponible: false,
         });
 
-        // Actualizar el estado del usuario en la lista de espera
         await this.firestore.collection('lista-espera').doc(usuario.id).update({
           mesaAsignada: true,
-          mesaSeleccionada: mesa.id
+          mesaSeleccionada: mesa.id,
         });
 
-        // Cierra el modal y limpia la selección
         this.mostrarMesas = false;
         this.usuarioSeleccionado = null;
 

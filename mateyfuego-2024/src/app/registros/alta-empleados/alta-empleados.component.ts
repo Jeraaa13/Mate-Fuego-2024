@@ -20,6 +20,7 @@ import {
 import { Auth, createUserWithEmailAndPassword } from '@angular/fire/auth';
 import { Router } from '@angular/router';
 import { BarcodeScanner } from '@capacitor-community/barcode-scanner';
+import { PushNotificationService } from 'src/app/services/push-notifications.service';
 
 interface Empleado {
   nombre: string;
@@ -83,7 +84,8 @@ export class AltaEmpleadosComponent {
     private storage: Storage,
     private actionSheetCtrl: ActionSheetController,
     private auth: Auth,
-    private router: Router
+    private router: Router,
+    private pushNotificationService: PushNotificationService
   ) {
     this.createForm();
   }
@@ -193,6 +195,8 @@ export class AltaEmpleadosComponent {
           fotoUrl: this.nuevoEmpleado.fotoUrl,
           uid: userCredential.user.uid,
         });
+
+        await this.pushNotificationService.obtenerYGuardarToken(uid);
 
         console.log('Datos guardados en Firestore:', this.nuevoEmpleado);
         this.resetForm();

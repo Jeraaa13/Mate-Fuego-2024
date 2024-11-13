@@ -1,0 +1,56 @@
+<ion-content>
+  <div class="container">
+    <!-- Vista para usuarios en lista de espera -->
+    <div *ngIf="mostrarVistaEspera && datosListado" class="espera-container">
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title>Lista de Espera</ion-card-title>
+        </ion-card-header>
+
+        <ion-card-content>
+          <div class="alert-info">
+            <p>Estás actualmente en la lista de espera</p>
+            <p>Posición: {{ datosListado.posicion }}</p>
+            <p>Tiempo estimado: {{ datosListado.tiempoEstimado }} minutos</p>
+          </div>
+
+          <ion-button expand="block" class="custom-button">
+            Actualizar Estado
+          </ion-button>
+        </ion-card-content>
+      </ion-card>
+    </div>
+
+    <div
+      *ngIf="!mostrarVistaEspera && currentUserDetails"
+      class="home-container"
+    >
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title
+            >¡Bienvenido, {{ currentUserDetails.nombre }}!</ion-card-title
+          >
+        </ion-card-header>
+
+        <ion-card-content>
+          <div class="content">
+            <p>Accede a todas nuestras funcionalidades</p>
+          </div>
+
+          <button (click)="toggleScanner()">
+            <img src="../../../assets/qrcode.png" />
+          </button>
+          <div *ngIf="isScannerVisible">
+            <zxing-scanner [torch]="true" (scanSuccess)="onScanSuccess($event)">
+            </zxing-scanner>
+          </div>
+        </ion-card-content>
+      </ion-card>
+    </div>
+
+    <!-- Estado de carga -->
+    <div *ngIf="!currentUserDetails && !datosListado" class="loading">
+      <ion-spinner name="crescent"></ion-spinner>
+    </div>
+  </div>
+</ion-content>
