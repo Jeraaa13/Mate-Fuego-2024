@@ -104,16 +104,23 @@ export class HomeComponent implements OnInit {
 
     if (resultadoScaneo.includes('restaurante:12345')) {
       if (this.isAnonymousUser) {
-        const nombreUsuario = this.userId;
-
-        const usuarioEnEspera: UsuarioEnEspera = {
-          mesaAsignada: false,
-          uid: this.userId,
-          nombre: nombreUsuario,
-          fotourl: this.currentUserDetails?.fotoUrl || '',
-        };
-
         try {
+          const clienteDocRef = doc(this.firestore, 'clientes', this.userId);
+          const clienteDoc = await getDoc(clienteDocRef);
+
+          let nombreUsuario = this.userId;
+
+          if (clienteDoc.exists()) {
+            const clienteData = clienteDoc.data();
+            nombreUsuario = clienteData['nombre'] || this.userId;
+          }
+
+          const usuarioEnEspera: UsuarioEnEspera = {
+            mesaAsignada: false,
+            uid: this.userId,
+            nombre: nombreUsuario,
+            fotourl: this.currentUserDetails?.fotoUrl || '',
+          };
           const listaEsperaRef = collection(this.firestore, 'lista-espera');
           const nuevoDocRef = doc(listaEsperaRef, this.userId);
           await setDoc(nuevoDocRef, usuarioEnEspera);
@@ -159,37 +166,6 @@ export class HomeComponent implements OnInit {
         } else {
           console.error('No hay un usuario logueado');
         }
-      }
-    } else if (result === 'encuesta:12345' && this.userId) {
-      const nombreUsuario = this.isAnonymousUser
-        ? this.userId
-        : this.currentUserDetails?.nombre || '';
-
-      const usuarioEnEspera: UsuarioEnEspera = {
-        mesaAsignada: false,
-        uid: this.userId,
-        nombre: nombreUsuario,
-        fotourl: this.currentUserDetails?.fotoUrl || '',
-      };
-
-      try {
-        const listaEsperaRef = collection(this.firestore, 'lista-espera');
-        const nuevoDocRef = doc(listaEsperaRef, this.userId);
-        await setDoc(nuevoDocRef, usuarioEnEspera);
-
-        if (this.isAnonymousUser) {
-          this.router.navigate(['/cliente-home'], {
-            queryParams: {
-              skipVerification: true,
-              idAnonimo: this.userId,
-              nombreAnonimo: nombreUsuario,
-            },
-          });
-        } else {
-          this.router.navigate(['/cliente-home']);
-        }
-      } catch (error) {
-        console.error('Error al guardar en lista de espera:', error);
       }
     } else {
       this.qrService.onScanSuccess(result);
