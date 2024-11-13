@@ -1,0 +1,43 @@
+<ion-content>
+  <div class="product-container">
+    <ion-card class="product-card" *ngFor="let product of products">
+      <div class="category-info">
+        <h3>{{ product.categoria }}</h3>
+        <p class="description">{{ getCategoryDescription(product) }}</p>
+        <p class="prep-time">
+          <ion-icon name="time-outline"></ion-icon>
+          Tiempo de elaboración: {{ product.tiempoElaboracion }} minutos
+        </p>
+      </div>
+
+      <div class="carousel-container">
+        <div class="nav-arrow left" (click)="previousImage(product.id)" 
+             *ngIf="hasMultipleImages(product)">
+          <ion-icon name="chevron-back-outline"></ion-icon>
+        </div>
+        
+        <div class="image-container" *ngIf="hasFotosUrl(product)">
+          <ion-img [src]="product.fotosUrl[currentImageIndexes[product.id] || 0]"
+                   [alt]="getCurrentImageName(product)">
+          </ion-img>
+          <div class="product-name">
+            {{ getCurrentImageName(product) }}
+          </div>
+        </div>
+
+        <div class="nav-arrow right" (click)="nextImage(product.id)"
+             *ngIf="hasMultipleImages(product)">
+          <ion-icon name="chevron-forward-outline"></ion-icon>
+        </div>
+      </div>
+
+      <ion-card-content>
+        <h2>{{ product.nombre }}</h2>
+        <p class="price">Precio: ${{ product.precio }}</p>
+        <ion-button expand="block" color="success">
+          AGREGAR AL PEDIDO
+        </ion-button>
+      </ion-card-content>
+    </ion-card>
+  </div>
+</ion-content>

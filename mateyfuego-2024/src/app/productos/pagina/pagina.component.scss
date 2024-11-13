@@ -1,0 +1,130 @@
+.product-container {
+  padding: 10px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 16px;
+}
+
+.product-card {
+  margin: 0;
+  overflow: hidden;
+}
+
+.category-info {
+  padding: 16px;
+  background-color: var(--ion-color-light);
+  border-bottom: 1px solid var(--ion-color-light-shade);
+
+  h3 {
+    margin: 0 0 8px 0;
+    color: var(--ion-color-primary);
+    font-size: 18px;
+    font-weight: bold;
+  }
+
+  .description {
+    margin: 0 0 8px 0;
+    font-size: 18px;
+    color: var(--ion-color-medium);
+  }
+
+  .prep-time {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+    font-size: 40;
+    color: var(--ion-color-medium);
+
+    ion-icon {
+      color: var(--ion-color-primary);
+    }
+  }
+}
+.category-info{
+  min-height: 150px;
+}
+.description{
+  font-size: 160px;
+}
+.carousel-container {
+  position: relative;
+  height: 220px; /* Set a fixed height for uniformity */
+  display: flex;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.image-container {
+  width: 100%;
+  height: 100%; /* Ensures the image container takes the fixed height of carousel */
+  position: relative;
+}
+
+ion-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain; /* Ensures images scale proportionally within the fixed height */
+  padding: 10px;
+}
+
+.nav-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: rgba(0, 0, 0, 0.5);
+  color: white;
+  padding: 10px;
+  cursor: pointer;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  transition: background-color 0.3s;
+
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.7);
+  }
+
+  &.left {
+    left: 10px;
+  }
+
+  &.right {
+    right: 10px;
+  }
+}
+
+.product-name {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  color: white;
+  padding: 8px;
+  text-align: center;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+h2 {
+  font-size: 18px;
+  font-weight: bold;
+  margin: 10px 0;
+  text-align: center;
+}
+
+.price {
+  color: var(--ion-color-success);
+  font-size: 16px;
+  text-align: center;
+  margin: 10px 0;
+}
+
+ion-button {
+  margin-top: 10px;
+}

@@ -113,4 +113,11 @@ export const routes: Routes = [
         (m) => m.MaitreHomeComponent
       ),
   },
+  {
+    path: 'productos/pagina',
+    loadComponent: () =>
+      import('./productos/pagina/pagina.component').then(
+        (m) => m.PaginaComponent
+      ),
+  },
 ];
