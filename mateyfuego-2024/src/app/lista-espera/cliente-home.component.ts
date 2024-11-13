@@ -16,32 +16,14 @@ import {
   Unsubscribe,
 } from '@angular/fire/firestore';
 import { Router, ActivatedRoute } from '@angular/router';
-import {
-  IonSpinner,
-  IonButton,
-  IonContent,
-  IonCard,
-  IonCardHeader,
-  IonCardTitle,
-  IonCardContent,
-} from '@ionic/angular/standalone';
+import { IonicModule } from '@ionic/angular';
 
 @Component({
-  selector: 'app-lista-espera',
-  templateUrl: './lista-espera.component.html',
-  styleUrls: ['./lista-espera.component.scss'],
+  selector: 'app-cliente-home',
+  templateUrl: './cliente-home.component.html',
+  styleUrls: ['./cliente-home.component.scss'],
   standalone: true,
-  imports: [
-    IonCardContent,
-    IonCardTitle,
-    IonCardHeader,
-    IonCard,
-    IonContent,
-    IonButton,
-    IonSpinner,
-    ZXingScannerModule,
-    CommonModule,
-  ],
+  imports: [IonicModule, ZXingScannerModule, CommonModule],
 })
 export class ClienteHomeComponent implements OnInit, OnDestroy {
   currentUser: any | null = null;
@@ -64,13 +46,15 @@ export class ClienteHomeComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    // Primero verificamos los parámetros de la ruta
     this.route.queryParams.subscribe((params) => {
       const skipVerification = params['skipVerification'] === 'true';
       const idAnonimo = params['idAnonimo'];
       const nombreAnonimo = params['nombreAnonimo'];
 
+      console.log(skipVerification, idAnonimo);
+
       if (skipVerification && idAnonimo) {
+        console.log(skipVerification);
         this.isAnonymousUser = true;
         this.userId = idAnonimo;
         this.nombreUsuario = nombreAnonimo;

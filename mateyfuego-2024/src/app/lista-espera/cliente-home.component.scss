@@ -1,0 +1,139 @@
+$primary-color: #e63946;
+$secondary-color: #2a9d8f;
+$accent-color: #e9c46a;
+$dark-color: #1d3557;
+$light-color: #f1faee;
+$gradient-primary: linear-gradient(
+  135deg,
+  $primary-color,
+  darken($primary-color, 15%)
+);
+$gradient-secondary: linear-gradient(
+  135deg,
+  $secondary-color,
+  darken($secondary-color, 15%)
+);
+$border-radius: 12px;
+$box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+@mixin glass-effect {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: $box-shadow;
+}
+body {
+  background: $dark-color;
+  font-family: "Poppins", sans-serif;
+  color: $light-color;
+  margin: 0;
+  padding: 0;
+}
+.container {
+  @include flex-center;
+  flex-direction: column;
+  padding: 2rem;
+  min-height: 100vh;
+  position: relative;
+  z-index: 1;
+}
+.espera-container,
+.home-container {
+  width: 100%;
+  max-width: 450px;
+}
+.espera-container {
+  ion-card {
+    @include glass-effect;
+    color: $light-color;
+  }
+  .alert-info {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: $border-radius;
+    padding: 2rem;
+    text-align: center;
+    margin-bottom: 1.5rem;
+    font-size: 1.5rem;
+    line-height: 1.8;
+    width: 90%;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+  .custom-button {
+    --background: #{$gradient-primary};
+    --border-radius: #{$border-radius};
+    --box-shadow: #{$box-shadow};
+    font-weight: 600;
+    &:hover {
+      --background: #{darken($primary-color, 5%)};
+    }
+  }
+}
+.home-container {
+  ion-card {
+    @include glass-effect;
+    color: $light-color;
+  }
+  .content {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: $border-radius;
+    padding: 1rem;
+    text-align: center;
+    margin-bottom: 1rem;
+  }
+  button {
+    @include flex-center;
+    background: $gradient-primary;
+    color: $light-color;
+    border: none;
+    border-radius: $border-radius;
+    padding: 1rem;
+    font-size: 1.7rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: 120px;
+    img {
+      width: 36px;
+      height: 36px;
+    }
+    &:hover {
+      background: darken($primary-color, 5%);
+    }
+  }
+}
+.loading {
+  @include flex-center;
+  margin-top: 2rem;
+  ion-spinner {
+    color: $light-color;
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 1.5rem;
+  }
+  .espera-container,
+  .home-container {
+    max-width: 100%;
+  }
+  .home-container {
+    button {
+      width: 100%;
+    }
+  }
+
+  ion-card-title {
+    font-size: 2rem;
+  }
+
+  p {
+    font-size: 1.5rem;
+  }
+}
