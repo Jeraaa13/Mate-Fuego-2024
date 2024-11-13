@@ -27,9 +27,9 @@ import {
 } from '@ionic/angular/standalone';
 
 @Component({
-  selector: 'app-cliente-home',
-  templateUrl: './cliente-home.component.html',
-  styleUrls: ['./cliente-home.component.scss'],
+  selector: 'app-lista-espera',
+  templateUrl: './lista-espera.component.html',
+  styleUrls: ['./lista-espera.component.scss'],
   standalone: true,
   imports: [
     IonCardContent,

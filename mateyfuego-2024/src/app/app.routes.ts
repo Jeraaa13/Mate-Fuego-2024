@@ -102,7 +102,7 @@ export const routes: Routes = [
   {
     path: 'cliente-home',
     loadComponent: () =>
-      import('./lista-espera/cliente-home.component').then(
+      import('./lista-espera/lista-espera.component').then(
         (m) => m.ClienteHomeComponent
       ),
   },

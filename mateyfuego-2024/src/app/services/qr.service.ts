@@ -64,16 +64,12 @@ export class QrService {
 
         if (clienteDoc.exists()) {
           const clienteData = clienteDoc.data();
-
           const nombreCompleto = `${clienteData['nombre']} ${clienteData['apellido']}`;
-
-          const listaEsperaRef = collection(this.firestore, 'lista-de-espera');
+          const listaEsperaRef = collection(this.firestore, 'lista-espera');
           await addDoc(listaEsperaRef, {
             clienteId,
             timestamp: new Date(),
           });
-
-          console.log('aca toy');
           console.log(clienteData);
 
           await this.pushNotificationService.notificarClienteListaDeEspera(
