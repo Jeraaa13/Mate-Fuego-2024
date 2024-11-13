@@ -11,9 +11,11 @@ import {
   doc,
   getDoc,
   setDoc,
-  DocumentReference,
   collection,
+  addDoc,
 } from '@angular/fire/firestore';
+import { PushNotificationService } from 'src/app/services/push-notifications.service';
+import { AuthService } from 'src/app/services/auth.service';
 
 interface UsuarioEnEspera {
   mesaAsignada: boolean;
@@ -39,7 +41,7 @@ export class HomeComponent implements OnInit {
   currentUser: any | null = null;
   currentUserDetails: any | null = null;
   isAnonymousUser = false;
-  userId: string | null = null;
+  userId: string = '';
 
   constructor(
     private qrService: QrService,
@@ -47,7 +49,9 @@ export class HomeComponent implements OnInit {
     private route: ActivatedRoute,
     private firestore: Firestore,
     private mailService: MailService,
-    private afAuth: AngularFireAuth
+    private afAuth: AngularFireAuth,
+    private authService: AuthService,
+    private pushNotificationService: PushNotificationService
   ) {}
 
   ngOnInit(): void {
@@ -95,10 +99,68 @@ export class HomeComponent implements OnInit {
     this.isScannerVisible = !this.isScannerVisible;
   }
 
-  async onScanSuccess(resultado: string) {
-    console.log('Resultado QR => ', resultado);
+  async onScanSuccess(result: string) {
+    const resultadoScaneo = result;
 
-    if (resultado === 'encuesta:12345' && this.userId) {
+    if (resultadoScaneo.includes('restaurante:12345')) {
+      if (this.isAnonymousUser) {
+        const nombreUsuario = this.userId;
+
+        const usuarioEnEspera: UsuarioEnEspera = {
+          mesaAsignada: false,
+          uid: this.userId,
+          nombre: nombreUsuario,
+          fotourl: this.currentUserDetails?.fotoUrl || '',
+        };
+
+        try {
+          const listaEsperaRef = collection(this.firestore, 'lista-espera');
+          const nuevoDocRef = doc(listaEsperaRef, this.userId);
+          await setDoc(nuevoDocRef, usuarioEnEspera);
+
+          this.router.navigate(['/cliente-home'], {
+            queryParams: {
+              skipVerification: true,
+              idAnonimo: this.userId,
+              nombreAnonimo: nombreUsuario,
+            },
+          });
+        } catch (error) {
+          console.error(
+            'Error al guardar en lista de espera (usuario anónimo):',
+            error
+          );
+        }
+      } else {
+        const currentUser = await this.authService.getCurrentUser();
+
+        if (currentUser) {
+          const clienteId = currentUser.uid;
+          const clienteDocRef = doc(this.firestore, 'clientes', clienteId);
+          const clienteDoc = await getDoc(clienteDocRef);
+
+          if (clienteDoc.exists()) {
+            const clienteData = clienteDoc.data();
+            const nombreCompleto = `${clienteData['nombre']} ${clienteData['apellido']}`;
+            const listaEsperaRef = collection(this.firestore, 'lista-espera');
+
+            await addDoc(listaEsperaRef, {
+              clienteId,
+              timestamp: new Date(),
+            });
+
+            console.log('aca toy');
+            console.log(clienteData);
+
+            await this.pushNotificationService.notificarClienteListaDeEspera(
+              nombreCompleto
+            );
+          }
+        } else {
+          console.error('No hay un usuario logueado');
+        }
+      }
+    } else if (result === 'encuesta:12345' && this.userId) {
       const nombreUsuario = this.isAnonymousUser
         ? this.userId
         : this.currentUserDetails?.nombre || '';
@@ -130,13 +192,15 @@ export class HomeComponent implements OnInit {
         console.error('Error al guardar en lista de espera:', error);
       }
     } else {
-      this.qrService.onScanSuccess(resultado);
+      this.qrService.onScanSuccess(result);
     }
 
     this.toggleScanner();
   }
 
   async navegarhome() {
+    this.qrService.onScanSuccess('restaurante:12345');
+
     if (this.userId && this.currentUserDetails) {
       const usuarioEnEspera: UsuarioEnEspera = {
         mesaAsignada: false,
