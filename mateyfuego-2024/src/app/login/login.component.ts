@@ -190,8 +190,8 @@ export class LoginComponent implements OnInit {
 
       case 'mozo':
         this.loginForm.setValue({
-          email: 'mozo@empresa.com',
-          password: '123456',
+          email: 'bager87957@edectus.com',
+          password: '123123',
         });
         break;
 

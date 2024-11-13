@@ -125,7 +125,7 @@ export class HomeComponent implements OnInit {
           const nuevoDocRef = doc(listaEsperaRef, this.userId);
           await setDoc(nuevoDocRef, usuarioEnEspera);
 
-          this.router.navigate(['/cliente-home'], {
+          this.router.navigate(['/lista-espera'], {
             queryParams: {
               skipVerification: true,
               idAnonimo: this.userId,
@@ -175,7 +175,7 @@ export class HomeComponent implements OnInit {
   }
 
   async navegarhome() {
-    this.qrService.onScanSuccess('restaurante:12345');
+    this.onScanSuccess('restaurante:12345');
 
     if (this.userId && this.currentUserDetails) {
       const usuarioEnEspera: UsuarioEnEspera = {
@@ -189,7 +189,7 @@ export class HomeComponent implements OnInit {
         const listaEsperaRef = collection(this.firestore, 'lista-espera');
         const nuevoDocRef = doc(listaEsperaRef, this.userId);
         await setDoc(nuevoDocRef, usuarioEnEspera);
-        this.router.navigate(['/cliente-home']);
+        this.router.navigate(['/lista-espera']);
       } catch (error) {
         console.error('Error al guardar en lista de espera:', error);
       }

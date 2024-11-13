@@ -273,7 +273,7 @@ export class RegistroClientesComponent {
     const baseName = 'Anonimo_';
     const userEnteredName = this.registroAnonimoForm.value.nombre;
     const datosCliente = {
-      nombre: userEnteredName, // Store the user-entered name
+      nombre: userEnteredName,
       tipoPerfil: 'anonimo',
       estadoVerificacion: true,
     };

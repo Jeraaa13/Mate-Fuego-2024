@@ -15,13 +15,22 @@ export class AuthService {
 
   async getCurrentUser(): Promise<User | null> {
     return new Promise<User | null>((resolve) => {
-      if (this.user) {
-        resolve(this.user);
-      } else {
-        this.auth.onAuthStateChanged((user) => {
+      this.auth.onAuthStateChanged((user) => {
+        if (user) {
           resolve(user);
-        });
-      }
+        } else {
+          resolve(null);
+        }
+      });
+    });
+  }
+
+  // auth.service.ts
+  async getCurrentUser2(): Promise<User | null> {
+    return new Promise<User | null>((resolve) => {
+      this.auth.onAuthStateChanged((user) => {
+        resolve(user);
+      });
     });
   }
 

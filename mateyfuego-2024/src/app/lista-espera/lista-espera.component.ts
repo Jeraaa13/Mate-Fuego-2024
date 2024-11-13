@@ -184,13 +184,19 @@ export class ClienteHomeComponent implements OnInit, OnDestroy {
   async onScanSuccess(resultado: string) {
     console.log('Resultado QR => ', resultado);
     console.log(this.datosMesa?.qrCode);
-
-    if (this.datosMesa?.qrCode) {
-      console.log('qr es valido');
-    } else {
-      console.error('QR no válido o mesa no asignada');
-    }
+    console.log('qr es valido');
+    this.router.navigate(['productos/pagina'], {
+      queryParams: {
+        skipVerification: true,
+        idAnonimo: this.userId,
+        nombreAnonimo: this.nombreUsuario,
+      },
+    });
 
     this.toggleScanner();
+  }
+
+  navegarDeUna() {
+    this.onScanSuccess('pasedeuna');
   }
 }

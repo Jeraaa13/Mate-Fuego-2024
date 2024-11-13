@@ -1,0 +1,43 @@
+<div class="chat-flotante-container">
+  <button class="chat-toggle-btn" (click)="toggleChat()">
+    <span *ngIf="!chatAbierto">💬</span>
+    <span *ngIf="chatAbierto">✕</span>
+  </button>
+
+  <div class="chat-ventana" *ngIf="chatAbierto">
+    <div class="chat-header">
+      <h3>Chat en línea</h3>
+      <div *ngIf="usuario" class="usuario-actual">
+        {{ usuario.name }}
+      </div>
+    </div>
+
+    <div class="chat-mensajes">
+      <div
+        *ngFor="let mensaje of mensajes"
+        class="mensaje"
+        [class.mensaje-propio]="usuario && mensaje.usuario === usuario.email"
+      >
+        <div class="mensaje-contenido">
+          <div class="mensaje-info">
+            <span class="usuario">{{ mensaje.usuario }}</span>
+            <span class="hora">{{
+              mensaje.fecha.toDate() | date : "short"
+            }}</span>
+          </div>
+          <div class="texto">{{ mensaje.texto }}</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="chat-input">
+      <input
+        type="text"
+        [(ngModel)]="nuevoMensaje"
+        (keyup.enter)="enviarMensaje()"
+        placeholder="Escribe un mensaje..."
+      />
+      <button (click)="enviarMensaje()">↑</button>
+    </div>
+  </div>
+</div>

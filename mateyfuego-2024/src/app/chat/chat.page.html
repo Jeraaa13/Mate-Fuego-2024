@@ -13,7 +13,6 @@
 
 <ion-content #chat padding>
   <div *ngFor="let message of messages">
-    <!-- Message from another user -->
     <ion-card
       style="width: 80%; margin: 0 auto 10px 10px"
       *ngIf="user?.nombre !== message.user"
@@ -28,12 +27,11 @@
           {{ message.text }}
         </ion-card-content>
         <ion-card-content class="text-dark">
-          {{ message.timestamp | date: 'shortTime' }}
+          {{ message.timestamp.toDate() | date: 'shortTime' }}
         </ion-card-content>
       </div>
     </ion-card>
 
-    <!-- Message from the current user -->
     <ion-card
       style="
         width: 80%;

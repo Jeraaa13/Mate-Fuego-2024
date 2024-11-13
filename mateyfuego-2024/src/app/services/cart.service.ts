@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { Product } from '../productos/pagina/pagina.component';
+import { AuthService } from './auth.service';
 
 interface CartItem {
   product: Product;
@@ -8,7 +9,7 @@ interface CartItem {
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class CartService {
   private cart: { [key: string]: CartItem } = {};
@@ -59,30 +60,37 @@ export class CartService {
   }
 
   saveOrder(mesaNumero: number) {
-    const maxTiempoElaboracion = Object.values(this.cart).reduce((max, item) => {
-      return Math.max(max, item.product.tiempoElaboracion);
-    }, 0);
-  
+    const maxTiempoElaboracion = Object.values(this.cart).reduce(
+      (max, item) => {
+        return Math.max(max, item.product.tiempoElaboracion);
+      },
+      0
+    );
+
     const orderData = {
       EstadoDePedido: 'solicitado',
-      TiempoEspera: maxTiempoElaboracion, 
+      TiempoEspera: maxTiempoElaboracion,
       Precio: this.totalPrice,
       Mesa: mesaNumero,
-      items: Object.values(this.cart).map(item => ({
+      items: Object.values(this.cart).map((item) => ({
         productId: item.product.id,
         nombre: item.product.nombre,
         cantidad: item.quantity,
         precioUnitario: item.product.precio,
         tiempoElaboracion: item.product.tiempoElaboracion,
-      }))
+      })),
     };
-  
-    return this.firestore.collection('pedidos').add(orderData).then(() => {
-      console.log("Pedido guardado exitosamente.");
-      this.clearCart();
-    }).catch(error => {
-      console.error("Error al guardar el pedido:", error);
-    });
+
+    return this.firestore
+      .collection('pedidos')
+      .add(orderData)
+      .then(() => {
+        console.log('Pedido guardado exitosamente.');
+        this.clearCart();
+      })
+      .catch((error) => {
+        console.error('Error al guardar el pedido:', error);
+      });
   }
 
   private clearCart() {

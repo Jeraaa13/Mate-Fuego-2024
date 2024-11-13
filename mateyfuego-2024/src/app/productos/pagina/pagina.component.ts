@@ -4,6 +4,10 @@ import { map } from 'rxjs/operators';
 import { CartService } from '../../services/cart.service';
 import { IonicModule } from '@ionic/angular';
 import { CommonModule } from '@angular/common';
+import { ActivatedRoute } from '@angular/router';
+import { Router } from '@angular/router';
+import { ChatComponent } from './chat/chat.component';
+
 export interface Product {
   id: string;
   nombre: string;
@@ -30,9 +34,9 @@ interface Mesa {
   selector: 'app-pagina',
   templateUrl: './pagina.component.html',
   styleUrls: ['./pagina.component.scss'],
-  imports: [CommonModule, IonicModule], 
-  standalone:true,
-  schemas: [CUSTOM_ELEMENTS_SCHEMA]
+  imports: [CommonModule, IonicModule, ChatComponent],
+  standalone: true,
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class PaginaComponent implements OnInit {
   products: Product[] = [];
@@ -44,19 +48,29 @@ export class PaginaComponent implements OnInit {
   maxTime = 0;
   mesaId: string | null = null;
   mesaNumero: number | null = null;
+  idAnonimo: string | null = null;
+  nombreAnonimo: string | null = null;
 
   constructor(
     private firestore: AngularFirestore,
-    private cartService: CartService
+    private cartService: CartService,
+    private route: ActivatedRoute,
+    private router: Router
   ) {}
 
   ngOnInit() {
+    this.route.queryParams.subscribe((params) => {
+      this.idAnonimo = params['idAnonimo'];
+      this.nombreAnonimo = params['nombreAnonimo'];
+    });
+
     this.getProducts().subscribe((data) => {
       this.products = data;
-      this.products.forEach(product => {
+      this.products.forEach((product) => {
         this.currentImageIndexes[product.id] = 0;
       });
     });
+
     this.loadMesa();
   }
 
@@ -65,31 +79,38 @@ export class PaginaComponent implements OnInit {
   }
 
   loadMesa() {
-    this.firestore.collection('mesas').get().subscribe((querySnapshot) => {
-      const mesaData = querySnapshot.docs[0].data() as Mesa;
-      this.mesaId = querySnapshot.docs[0].id;
-      this.mesaNumero = mesaData.numero;
-    });
+    this.firestore
+      .collection('mesas')
+      .get()
+      .subscribe((querySnapshot) => {
+        const mesaData = querySnapshot.docs[0].data() as Mesa;
+        this.mesaId = querySnapshot.docs[0].id;
+        this.mesaNumero = mesaData.numero;
+      });
   }
 
-  confirmOrder() {
+  async confirmOrder() {
     if (this.mesaId && this.mesaNumero !== null) {
-      this.cartService.saveOrder(this.mesaNumero);
+      await this.cartService.saveOrder(this.mesaNumero);
+      this.router.navigate(['chat']);
     } else {
-      console.error("Mesa no seleccionada");
+      console.error('Mesa no seleccionada');
     }
   }
-  
+
   getProducts() {
-    return this.firestore.collection<Product>('productos').snapshotChanges().pipe(
-      map(actions =>
-        actions.map(a => {
-          const data = a.payload.doc.data() as Product;
-          const id = a.payload.doc.id;
-          return { ...data, id };
-        })
-      )
-    );
+    return this.firestore
+      .collection<Product>('productos')
+      .snapshotChanges()
+      .pipe(
+        map((actions) =>
+          actions.map((a) => {
+            const data = a.payload.doc.data() as Product;
+            const id = a.payload.doc.id;
+            return { ...data, id };
+          })
+        )
+      );
   }
 
   getCategoryDescription(product: Product): string {
@@ -97,18 +118,18 @@ export class PaginaComponent implements OnInit {
   }
 
   nextImage(productId: string) {
-    const product = this.products.find(p => p.id === productId);
+    const product = this.products.find((p) => p.id === productId);
     if (product && product.fotosUrl && product.fotosUrl.length > 0) {
-      this.currentImageIndexes[productId] = 
+      this.currentImageIndexes[productId] =
         (this.currentImageIndexes[productId] + 1) % product.fotosUrl.length;
     }
   }
 
   previousImage(productId: string) {
-    const product = this.products.find(p => p.id === productId);
+    const product = this.products.find((p) => p.id === productId);
     if (product && product.fotosUrl && product.fotosUrl.length > 0) {
-      this.currentImageIndexes[productId] = 
-        (this.currentImageIndexes[productId] - 1 + product.fotosUrl.length) % 
+      this.currentImageIndexes[productId] =
+        (this.currentImageIndexes[productId] - 1 + product.fotosUrl.length) %
         product.fotosUrl.length;
     }
   }
@@ -134,7 +155,7 @@ export class PaginaComponent implements OnInit {
     }
     this.updateTotals();
   }
-  
+
   removeFromCart(productId: string) {
     if (this.cart[productId]) {
       if (this.cart[productId].quantity > 1) {
@@ -145,7 +166,7 @@ export class PaginaComponent implements OnInit {
       this.updateTotals();
     }
   }
-  
+
   private updateTotals() {
     this.totalPrice = 0;
     this.totalTime = 0;
@@ -159,18 +180,20 @@ export class PaginaComponent implements OnInit {
     this.cartService.addToCart(product);
     this.updateCart();
   }
-  
+
   decreaseQuantity(product: Product) {
     this.cartService.removeFromCart(product.id);
     this.updateCart();
   }
-  
+
   private updateCart() {
     this.cart = this.cartService.getCart();
     this.totalPrice = this.cartService.getTotalPrice();
     this.totalTime = this.cartService.getTotalTime();
 
-    this.maxTime = Object.values(this.cart)
-      .reduce((max, item) => Math.max(max, item.product.tiempoElaboracion), 0);
+    this.maxTime = Object.values(this.cart).reduce(
+      (max, item) => Math.max(max, item.product.tiempoElaboracion),
+      0
+    );
   }
 }

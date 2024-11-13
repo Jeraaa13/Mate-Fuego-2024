@@ -31,8 +31,11 @@
             <img src="../../../assets/qrcode.png" />
           </button>
           <div *ngIf="isScannerVisible">
-            <zxing-scanner [torch]="true" (scanSuccess)="onScanSuccess($event)">
-            </zxing-scanner>
+            <!-- <zxing-scanner [torch]="true" (scanSuccess)="onScanSuccess($event)">
+            </zxing-scanner> -->
+            <button (click)="navegarDeUna()">
+              <img src="../../assets/accesos-rapidos/supervisor.png" />
+            </button>
           </div>
         </ion-card-content>
       </ion-card>
