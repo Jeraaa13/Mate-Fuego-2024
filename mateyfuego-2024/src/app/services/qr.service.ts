@@ -58,7 +58,6 @@ export class QrService {
 
       if (currentUser) {
         const clienteId = currentUser.uid;
-
         const clienteDocRef = doc(this.firestore, 'clientes', clienteId);
         const clienteDoc = await getDoc(clienteDocRef);
 
@@ -73,7 +72,6 @@ export class QrService {
             timestamp: new Date(),
           });
 
-          console.log('aca toy');
           console.log(clienteData);
 
           await this.pushNotificationService.notificarClienteListaDeEspera(
