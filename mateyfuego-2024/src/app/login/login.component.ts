@@ -156,6 +156,10 @@ export class LoginComponent implements OnInit {
           this.router.navigate(['/home-cocinero']);
           break;
 
+          case 'Bartender':
+            this.router.navigate(['/home-bartender']);
+            break;
+
       default:
         this.router.navigate(['/home-empleados']);
         break;
@@ -219,7 +223,7 @@ export class LoginComponent implements OnInit {
 
       case 'bartender':
         this.loginForm.setValue({
-          email: 'bartender@empresa.com',
+          email: 'gesey55944@gianes.com',
           password: '123456',
         });
         break;

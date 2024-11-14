@@ -12,7 +12,8 @@ import {
   getDocs,
   onSnapshot,
   Unsubscribe,
-  updateDoc
+  updateDoc,
+  QuerySnapshot
 } from '@angular/fire/firestore';
 import { ZXingScannerModule } from '@zxing/ngx-scanner';
 import { IonicModule } from '@ionic/angular';
@@ -54,21 +55,24 @@ export class MozoHomeComponent implements OnInit {
 
  
   
-  private async loadOrders() {
+  private loadOrders() {
     const ordersRef = collection(this.firestore, 'pedidos');
-    const ordersSnapshot = await getDocs(ordersRef);
-  
-    this.orders = ordersSnapshot.docs.map((doc) => {
-      const data = doc.data() as Order;
-      return {
-        orderId: doc.id,
-        EstadoDePedido: data.EstadoDePedido,
-        TiempoEspera: data.TiempoEspera,
-        Precio: data.Precio,
-        Mesa: data.Mesa,
-        items: data.items,
-        uidUsuario: data.uidUsuario
-      };
+
+    // Suscribirse a los cambios en la colección 'pedidos'
+    onSnapshot(ordersRef, (ordersSnapshot: QuerySnapshot) => {
+      this.orders = ordersSnapshot.docs.map((doc) => {
+        const data = doc.data() as Order;
+        return {
+          orderId: doc.id,
+          EstadoDePedido: data.EstadoDePedido,
+          TiempoEspera: data.TiempoEspera,
+          Precio: data.Precio,
+          Mesa: data.Mesa,
+          items: data.items,
+          uidUsuario: data.uidUsuario
+        };
+      });
+      console.log(this.orders); 
     });
   }
   

@@ -99,6 +99,13 @@ export const routes: Routes = [
       ),
   },
   {
+    path: 'home-bartender',
+    loadComponent: () =>
+      import('./barteneder-home/barteneder-home.component').then(
+        (m) => m.BartenederHomeComponent
+      ),
+  },
+  {
     path: 'encuestas-clientes',
     loadComponent: () =>
       import('./encuestas/clientes/clientes.component').then(

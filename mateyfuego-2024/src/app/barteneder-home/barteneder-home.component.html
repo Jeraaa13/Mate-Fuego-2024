@@ -1,6 +1,6 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>Pedidos de Comida en Preparación</ion-title>
+    <ion-title>Pedidos de Bebida en Preparación</ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -8,9 +8,9 @@
   <ion-list *ngIf="orders.length > 0; else noOrders">
     <ion-item-group *ngFor="let order of orders">
       <ion-item *ngFor="let item of order.items" detail="false">
-        <ng-container *ngIf="item.tipo === 'comida' && item.estado === 'preparacion'">
+        <ng-container *ngIf="item.tipo === 'bebida' && item.estado === 'preparacion'">
           <ion-item-divider>
-            <ion-label>Mesa: {{ order.Mesa }} - Pedido ID: {{ order.orderId }}</ion-label>
+            <ion-label >Mesa: {{ order.Mesa }} - Pedido ID: {{ order.orderId }}</ion-label>
           </ion-item-divider>
           <ion-label>
             <h2>{{ item.nombre }}</h2>
@@ -29,10 +29,10 @@
   <ng-template #noOrders>
     <ion-card>
       <ion-card-header>
-        <ion-card-title>Sin pedidos de comida en preparación</ion-card-title>
+        <ion-card-title>Sin pedidos de bebida en preparación</ion-card-title>
       </ion-card-header>
       <ion-card-content>
-        Actualmente no hay pedidos de comida en preparación.
+        Actualmente no hay pedidos de bebidaen preparación.
       </ion-card-content>
     </ion-card>
   </ng-template>
