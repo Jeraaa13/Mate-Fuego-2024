@@ -145,11 +145,19 @@ export class ChatComponent implements OnInit {
         await addDoc(mensajesCollection, mensaje);
         this.nuevoMensaje = '';
 
-        this.pushNotificationService.notificarMozos(this.usuario.name, 'Mozos');
+        await this.manejarMozosNotificacion(this.usuario.name, mensaje.texto);
       } catch (error) {
         console.error('Error al enviar el mensaje:', error);
       }
     }
+  }
+
+  async manejarMozosNotificacion(clientName: string, mensaje: string) {
+    await this.pushNotificationService.notificarMozos(
+      clientName,
+      'Mozo',
+      mensaje
+    );
   }
 
   cargarMensajes() {

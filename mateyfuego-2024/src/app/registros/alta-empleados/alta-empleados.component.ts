@@ -190,12 +190,8 @@ export class AltaEmpleadosComponent {
           ...this.empleadoForm.value,
           fotoUrl: this.nuevoEmpleado.fotoUrl,
           uid: userCredential.user.uid,
+          token: this.nuevoEmpleado.token,
         });
-
-        await this.pushNotificationService.guardarTokenEnFirestore(
-          uid,
-          this.nuevoEmpleado.token
-        );
 
         console.log('Datos guardados en Firestore:', this.nuevoEmpleado);
         this.resetForm();

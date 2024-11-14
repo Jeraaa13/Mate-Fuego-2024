@@ -18,6 +18,7 @@ import {
 import { ZXingScannerModule } from '@zxing/ngx-scanner';
 import { IonicModule } from '@ionic/angular';
 import { PushNotificationService } from '../services/push-notifications.service';
+import { AuthService } from '../services/auth.service';
 
 interface Order {
   orderId: string;
@@ -35,6 +36,7 @@ interface Order {
     estado: string;
   }[];
   uidUsuario: string;
+  nombreCliente?: string;
 }
 
 @Component({
@@ -49,10 +51,18 @@ export class MozoHomeComponent implements OnInit {
 
   constructor(
     private firestore: Firestore,
-    private pushNotificationService: PushNotificationService
+    private pushNotificationService: PushNotificationService,
+    private authService: AuthService
   ) {}
 
   async ngOnInit() {
+    this.authService.getCurrentUser().then((user) => {
+      if (user) {
+        this.pushNotificationService.inicializarNotificaciones(user.uid);
+      } else {
+        console.error('Usuario no autenticado');
+      }
+    });
     await this.loadOrders();
     console.log(this.orders);
   }
@@ -60,21 +70,35 @@ export class MozoHomeComponent implements OnInit {
   private loadOrders() {
     const ordersRef = collection(this.firestore, 'pedidos');
 
-    onSnapshot(ordersRef, (ordersSnapshot: QuerySnapshot) => {
-      this.orders = ordersSnapshot.docs.map((doc) => {
-        const data = doc.data() as Order;
-        return {
-          orderId: doc.id,
-          EstadoDePedido: data.EstadoDePedido,
-          TiempoEspera: data.TiempoEspera,
-          Precio: data.Precio,
-          Mesa: data.Mesa,
-          items: data.items,
-          uidUsuario: data.uidUsuario,
-        };
-      });
-      console.log(this.orders);
+    onSnapshot(ordersRef, async (ordersSnapshot: QuerySnapshot) => {
+      const ordersData = await Promise.all(
+        ordersSnapshot.docs.map(async (doc) => {
+          const data = doc.data() as Order;
+          const nombreCliente = await this.getClientName(data.uidUsuario);
+          return {
+            orderId: doc.id,
+            EstadoDePedido: data.EstadoDePedido,
+            TiempoEspera: data.TiempoEspera,
+            Precio: data.Precio,
+            Mesa: data.Mesa,
+            items: data.items,
+            uidUsuario: data.uidUsuario,
+            nombreCliente,
+          };
+        })
+      );
+      this.orders = ordersData;
     });
+  }
+
+  private async getClientName(uid: string): Promise<string> {
+    const clienteRef = doc(this.firestore, 'clientes', uid);
+    const clienteSnap = await getDoc(clienteRef);
+    if (clienteSnap.exists()) {
+      const clienteData = clienteSnap.data();
+      return clienteData['nombre'] || 'Desconocido';
+    }
+    return 'Desconocido';
   }
 
   async acceptOrder(order: Order) {
@@ -82,15 +106,17 @@ export class MozoHomeComponent implements OnInit {
     await updateDoc(orderRef, { EstadoDePedido: 'preparacion' });
     order.EstadoDePedido = 'preparacion';
 
-    this.pushNotificationService.notificarSectores(
-      order.uidUsuario,
-      'Cocinero'
-    );
+    if (order.nombreCliente) {
+      this.pushNotificationService.notificarSectores(
+        order.nombreCliente,
+        'Cocinero'
+      );
 
-    this.pushNotificationService.notificarSectores(
-      order.uidUsuario,
-      'Bartender'
-    );
+      this.pushNotificationService.notificarSectores(
+        order.nombreCliente,
+        'Bartender'
+      );
+    }
   }
 
   async rejectOrder(order: Order) {

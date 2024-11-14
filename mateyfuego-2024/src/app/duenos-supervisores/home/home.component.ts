@@ -4,8 +4,8 @@ import { AuthService } from 'src/app/services/auth.service';
 import { IonicModule } from '@ionic/angular';
 import { CommonModule } from '@angular/common';
 import { MailService } from 'src/app/services/mail.service';
-import { PushNotificationService } from 'src/app/services/push-notifications.service';
 import { NotificationService } from 'src/app/services/notification.service';
+import { PushNotificationService } from 'src/app/services/push-notifications.service';
 
 interface Cliente {
   id: string;
@@ -29,11 +29,20 @@ export class HomeComponent implements OnInit {
     private firestore: AngularFirestore,
     private mailService: MailService,
     private authService: AuthService,
-    private NotificationService: NotificationService
+    private NotificationService: NotificationService,
+    private pushNotificationService: PushNotificationService
   ) {}
 
   ngOnInit(): void {
-    this.cargarClientesPendientes();
+    this.authService.getCurrentUser().then((user) => {
+      if (user) {
+        this.userCredential = user;
+        this.pushNotificationService.inicializarNotificaciones(user.uid);
+      } else {
+        console.error('Usuario no autenticado');
+      }
+      this.cargarClientesPendientes();
+    });
   }
 
   cargarClientesPendientes(): void {

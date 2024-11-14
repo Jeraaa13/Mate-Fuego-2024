@@ -17,7 +17,7 @@ export interface Product {
   categoria: string;
   nombreProductos?: string[];
   descripcionCategoria?: string;
-  tipo : string;
+  tipo: string;
 }
 
 interface Mesa {

@@ -43,7 +43,7 @@ export class MaitreHomeComponent implements OnInit {
 
   constructor(
     private firestore: AngularFirestore,
-    private pushService: PushNotificationService,
+    private pushNotificationService: PushNotificationService,
     private notificationService: NotificationService,
     private authService: AuthService
   ) {}
@@ -52,6 +52,7 @@ export class MaitreHomeComponent implements OnInit {
     this.authService.getCurrentUser().then((user) => {
       if (user) {
         this.userCredential = user;
+        this.pushNotificationService.inicializarNotificaciones(user.uid);
       } else {
         console.error('Usuario no autenticado');
       }

@@ -3,6 +3,7 @@ import {
   Firestore,
   collection,
   doc,
+  getDoc,
   getDocs,
   query,
   updateDoc,
@@ -10,6 +11,8 @@ import {
 } from '@angular/fire/firestore';
 import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
+import { Platform } from '@ionic/angular';
+import { PushNotifications, Token } from '@capacitor/push-notifications';
 
 @Injectable({
   providedIn: 'root',
@@ -17,16 +20,76 @@ import { environment } from 'src/environments/environment';
 export class PushNotificationService {
   private readonly NOTIFICATION_SERVER_URL = environment.notificationServerUrl;
 
-  constructor(private firestore: Firestore, private http: HttpClient) {}
+  constructor(
+    private firestore: Firestore,
+    private http: HttpClient,
+    private platform: Platform
+  ) {}
+
+  async inicializarNotificaciones(userId: string) {
+    try {
+      await this.platform.ready();
+
+      if (this.platform.is('android') || this.platform.is('ios')) {
+        const permResult = await PushNotifications.requestPermissions();
+
+        if (permResult.receive === 'granted') {
+          await PushNotifications.register();
+
+          PushNotifications.addListener(
+            'registration',
+            async (token: Token) => {
+              console.log('Token FCM:', token.value);
+              await this.guardarTokenEnFirestore(userId, token.value);
+            }
+          );
+
+          PushNotifications.addListener(
+            'pushNotificationReceived',
+            (notification) => {
+              console.log('Notification received:', notification);
+            }
+          );
+
+          PushNotifications.addListener(
+            'pushNotificationActionPerformed',
+            (action) => {
+              console.log('Notification action performed:', action);
+            }
+          );
+
+          console.log('Notificaciones inicializadas');
+        } else {
+          console.error('Push notification permission not granted');
+        }
+      }
+    } catch (error) {
+      console.error('Error initializing notifications:', error);
+    }
+  }
 
   async guardarTokenEnFirestore(userId: string, token: string) {
+    console.log('userId => ', userId);
+
     try {
-      const usuarioRef = doc(this.firestore, 'duenosSupervisores', userId);
-      await updateDoc(usuarioRef, {
+      const collections = ['duenosSupervisores', 'empleados', 'clientes'];
+      const tokenData = {
         token: token,
         tokenLastUpdated: new Date().toISOString(),
-      });
-      console.log('Token guardado correctamente:', token);
+      };
+
+      for (const collection of collections) {
+        console.log('Buscando en coleccion', collection);
+        const usuarioRef = doc(this.firestore, collection, userId);
+        const docSnap = await getDoc(usuarioRef);
+
+        if (docSnap.exists()) {
+          await updateDoc(usuarioRef, tokenData);
+          console.log(`Token guardado correctamente en ${collection}:`, token);
+          return;
+        }
+      }
+      console.error('Usuario no encontrado en ninguna colección.');
     } catch (error) {
       console.error('Error al guardar el token en Firestore:', error);
     }
@@ -66,12 +129,16 @@ export class PushNotificationService {
     );
   }
 
-  async notificarMozos(nombreCliente: string, tipoPerfil: string) {
+  async notificarMozos(
+    nombreCliente: string,
+    tipoPerfil: string,
+    mensaje: string
+  ) {
     const tokensMozos = await this.obtenerTokensEmpleados(tipoPerfil);
     await this.enviarNotificacionAMultiplesDestinatarios(
       tokensMozos,
-      'Nueva consulta',
-      `Del cliente: ${nombreCliente}`
+      `Nueva consulta del cliente: ${nombreCliente}`,
+      `Mensaje: ${mensaje}`
     );
   }
 
@@ -113,17 +180,20 @@ export class PushNotificationService {
   }
 
   private async obtenerTokensEmpleados(tipoPerfil: string): Promise<string[]> {
-    const tokensMozos: string[] = [];
+    const tokensEmpleados: string[] = [];
+    console.log('tipo perfil tokens: ', tipoPerfil);
     try {
       const q = query(
         collection(this.firestore, 'empleados'),
         where('tipoPerfil', '==', tipoPerfil)
       );
+      console.log(q);
       const snapshot = await getDocs(q);
       snapshot.forEach((doc) => {
         const data = doc.data();
+        console.log(data['token']);
         if (data['token']) {
-          tokensMozos.push(data['token']);
+          tokensEmpleados.push(data['token']);
         }
       });
     } catch (error) {
@@ -132,7 +202,7 @@ export class PushNotificationService {
         error
       );
     }
-    return tokensMozos;
+    return tokensEmpleados;
   }
 
   private async obtenerTokensDuenosYSupervisores(): Promise<string[]> {

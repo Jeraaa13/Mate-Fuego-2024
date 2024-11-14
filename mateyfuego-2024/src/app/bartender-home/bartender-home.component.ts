@@ -14,6 +14,7 @@ import {
 } from '@angular/fire/firestore';
 import { IonicModule } from '@ionic/angular';
 import { PushNotificationService } from '../services/push-notifications.service';
+import { AuthService } from '../services/auth.service';
 
 interface Order {
   orderId: string;
@@ -56,10 +57,19 @@ export class BartenderHomeComponent implements OnInit {
 
   constructor(
     private firestore: Firestore,
-    private pushNotificationService: PushNotificationService
+    private pushNotificationService: PushNotificationService,
+    private authService: AuthService
   ) {}
 
   ngOnInit() {
+    this.authService.getCurrentUser().then((user) => {
+      if (user) {
+        user;
+        this.pushNotificationService.inicializarNotificaciones(user.uid);
+      } else {
+        console.error('Usuario no autenticado');
+      }
+    });
     this.loadOrders();
   }
 

@@ -14,6 +14,7 @@ import {
 } from '@angular/fire/firestore';
 import { IonicModule } from '@ionic/angular';
 import { PushNotificationService } from '../services/push-notifications.service';
+import { AuthService } from '../services/auth.service';
 
 interface Order {
   orderId: string;
@@ -56,10 +57,19 @@ export class CocineroHomeComponent implements OnInit {
 
   constructor(
     private firestore: Firestore,
-    private pushNotificationService: PushNotificationService
+    private pushNotificationService: PushNotificationService,
+    private authService: AuthService
   ) {}
 
   ngOnInit() {
+    this.authService.getCurrentUser().then((user) => {
+      if (user) {
+        user;
+        this.pushNotificationService.inicializarNotificaciones(user.uid);
+      } else {
+        console.error('Usuario no autenticado');
+      }
+    });
     this.loadOrders();
   }
 
@@ -111,7 +121,7 @@ export class CocineroHomeComponent implements OnInit {
       await updateDoc(orderRef, { items: updatedItems });
 
       this.pushNotificationService.notificarMozoDeCocina('Mozo');
-      
+
       console.log(
         `Item ${item.productId} de la orden ${order.orderId} marcado como 'realizado'.`
       );

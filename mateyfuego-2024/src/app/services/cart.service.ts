@@ -9,7 +9,7 @@ import {
   getDoc,
   getDocs,
   query,
-  where
+  where,
 } from '@angular/fire/firestore';
 
 interface CartItem {
@@ -33,7 +33,6 @@ export class CartService {
   async ngOnInit() {
     this.usuario = await this.authService.getCurrentUser2();
 
-    console.log('ACA TOY EL CART => ', this.usuario);
     console.log(this.usuario.uid);
     if (this.usuario && this.usuario.uid) {
       await this.getUserDetails(this.usuario.uid);
@@ -58,7 +57,6 @@ export class CartService {
             name: userData['nombre'] || 'Nombre desconocido',
             surname: userData['apellido'] || 'Apellido desconocido',
             email: userData['email'] || 'Correo desconocido',
-            
           };
           break;
         }
@@ -134,16 +132,19 @@ export class CartService {
         cantidad: item.quantity,
         precioUnitario: item.product.precio,
         tiempoElaboracion: item.product.tiempoElaboracion,
-        tipo : item.product.tipo,
-        estado : "preparacion"
+        tipo: item.product.tipo,
+        estado: 'preparacion',
       })),
       uidUsuario: this.usuario.id,
     };
 
     const pedidosRef = collection(this.firestore, 'pedidos');
     return addDoc(pedidosRef, orderData)
-      .then(() => {
+      .then(async () => {
         console.log('Pedido guardado exitosamente.');
+
+        console.log('mozo uid =>', this.usuario.uid);
+
         this.clearCart();
       })
       .catch((error) => {
@@ -160,19 +161,19 @@ export class CartService {
     const pedidosRef = collection(this.firestore, 'pedidos');
     const q = query(pedidosRef, where('EstadoDePedido', '==', 'preparacion'));
     const ordersSnapshot = await getDocs(pedidosRef);
-  
+
     const ordersByType: { [key: string]: any[] } = {};
-  
+
     ordersSnapshot.forEach((doc) => {
       const orderData = doc.data();
       orderData['items'].forEach((item: any) => {
         const productType = item.tipo;
-        
+
         // Si el tipo de producto no existe aún en el objeto, lo creamos como un array vacío
         if (!ordersByType[productType]) {
           ordersByType[productType] = [];
         }
-        
+
         // Agregamos el producto al array correspondiente a su tipo
         ordersByType[productType].push({
           orderId: doc.id,
@@ -180,12 +181,8 @@ export class CartService {
         });
       });
     });
-  
-    console.log("Pedidos separados por tipo de producto:", ordersByType);
+
+    console.log('Pedidos separados por tipo de producto:', ordersByType);
     return ordersByType;
   }
-
-
 }
-
-

@@ -227,7 +227,11 @@ export class RegistroClientesComponent {
           uid: uid,
         });
 
-        this.handleDuenoSupervisorQuery(this.nuevoCliente.nombre);
+        console.log(
+          'Nombre del cliente del dueno: ',
+          this.registroForm.get('nombre')?.value
+        );
+        this.handleDuenoSupervisorQuery(this.registroForm.get('nombre')?.value);
 
         this.router.navigate(['/login']);
       }
@@ -237,9 +241,7 @@ export class RegistroClientesComponent {
   }
 
   async handleDuenoSupervisorQuery(clientName: string) {
-    await this.pushNotificationService.notificarDuenosYSupervisores(
-      `Se registro el cliente ${clientName}`
-    );
+    await this.pushNotificationService.notificarDuenosYSupervisores(clientName);
   }
 
   signInAnonymously(userName: string) {
