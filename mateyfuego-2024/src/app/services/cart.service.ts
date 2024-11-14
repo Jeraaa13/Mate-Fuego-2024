@@ -7,7 +7,9 @@ import {
   doc,
   Firestore,
   getDoc,
-  getDocs
+  getDocs,
+  query,
+  where
 } from '@angular/fire/firestore';
 
 interface CartItem {
@@ -156,6 +158,7 @@ export class CartService {
 
   async getOrdersByProductType(): Promise<{ [key: string]: any[] }> {
     const pedidosRef = collection(this.firestore, 'pedidos');
+    const q = query(pedidosRef, where('EstadoDePedido', '==', 'preparacion'));
     const ordersSnapshot = await getDocs(pedidosRef);
   
     const ordersByType: { [key: string]: any[] } = {};

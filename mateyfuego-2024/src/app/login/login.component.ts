@@ -212,8 +212,8 @@ export class LoginComponent implements OnInit {
 
       case 'cocinero':
         this.loginForm.setValue({
-          email: 'cocinero@empresa.com',
-          password: '123456',
+          email: 'empleadovich@mail.om',
+          password: '123123',
         });
         break;
 

@@ -52,6 +52,8 @@ export class MozoHomeComponent implements OnInit {
     console.log(this.orders);
   }
 
+ 
+  
   private async loadOrders() {
     const ordersRef = collection(this.firestore, 'pedidos');
     const ordersSnapshot = await getDocs(ordersRef);

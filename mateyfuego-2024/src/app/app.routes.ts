@@ -92,6 +92,13 @@ export const routes: Routes = [
       ),
   },
   {
+    path: 'home-cocinero',
+    loadComponent: () =>
+      import('.//cocinero-home/cocinero-home.component').then(
+        (m) => m.CocineroHomeComponent
+      ),
+  },
+  {
     path: 'encuestas-clientes',
     loadComponent: () =>
       import('./encuestas/clientes/clientes.component').then(
