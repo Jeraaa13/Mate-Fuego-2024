@@ -59,7 +59,7 @@ export class RegistroClientesComponent {
     tipoPerfil: 'cliente',
     estadoVerificacion: false,
   };
-  isScanning = false; // Controls QR scanning visibility
+  isScanning = false; 
   isScannerVisible = false;
   tipoCliente: string = '';
 

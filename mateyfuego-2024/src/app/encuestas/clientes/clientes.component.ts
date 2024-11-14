@@ -6,15 +6,16 @@ import { AngularFireStorage } from '@angular/fire/compat/storage';
 import { Firestore, addDoc, collection, collectionData } from '@angular/fire/firestore';
 import { Chart, registerables } from 'chart.js';
 import { lastValueFrom, Observable } from 'rxjs';
+import { NotificationService } from 'src/app/services/notification.service';
 
 interface EncuestaCliente {
-  satisfaccionGeneral: number;      // range
-  nombre: string;                   // input
-  recomendaria: boolean;           // radio
-  serviciosUtilizados: string[];   // checkbox
-  tipoCliente: string;             // select
-  comentarios: string;             // textarea
-  fotosUrls: string[];             // multiple photos
+  satisfaccionGeneral: number;      
+  nombre: string;                   
+  recomendaria: boolean;           
+  serviciosUtilizados: string[];   
+  tipoCliente: string;             
+  comentarios: string;             
+  fotosUrls: string[];             
   fechaCreacion: Date;
 }
 
@@ -37,22 +38,18 @@ export class ClientesComponent implements OnInit {
     fotosUrls: [],
     fechaCreacion: new Date()
   };
-
-  // Charts
   satisfaccionChart: Chart | null = null;
   recomendacionChart: Chart | null = null;
   serviciosChart: Chart | null = null;
-  
   loading = false;
-  
-  // Checkboxes para servicios
   servicioRestaurante: boolean = false;
   servicioBar: boolean = false;
   servicioDelivery: boolean = false;
 
   constructor(
     private storage: AngularFireStorage,
-    private firestore: Firestore
+    private firestore: Firestore,
+    private notificationService : NotificationService
   ) {
     Chart.register(...registerables);
   }
@@ -100,22 +97,34 @@ export class ClientesComponent implements OnInit {
     
     try {
       if (!this.validarEncuesta()) {
-        throw new Error('Por favor complete todos los campos requeridos');
+        this.notificationService.showError(
+          'Por favor complete todos los campos requeridos',
+          'Campos Incompletos'
+        );
+        return; 
       }
-
+  
       this.loading = true;
       const encuestaToSave = {
         ...this.encuesta,
         fechaCreacion: new Date()
       };
-
+  
       const encuestasCollection = collection(this.firestore, 'encuestas_clientes');
       await addDoc(encuestasCollection, encuestaToSave);
       
-      alert('Encuesta enviada con éxito');
+      this.notificationService.showSuccess(
+        'La encuesta ha sido enviada con éxito.',
+        'Encuesta Enviada'
+      );
+      
       this.resetForm();
     } catch (error) {
       console.error('Error al enviar la encuesta:', error);
+      this.notificationService.showError(
+        'Hubo un problema al enviar la encuesta. Intente nuevamente.',
+        'Error al Enviar Encuesta'
+      );
     } finally {
       this.loading = false;
     }

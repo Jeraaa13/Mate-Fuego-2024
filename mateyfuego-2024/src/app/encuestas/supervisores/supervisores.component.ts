@@ -6,7 +6,7 @@ import { AngularFireStorage } from '@angular/fire/compat/storage';
 import { Firestore, Timestamp, addDoc, collection, collectionData, query, where } from '@angular/fire/firestore';
 import { Chart, registerables } from 'chart.js';
 import { Observable } from 'rxjs';
-import { NotificationService } from '../../services/notification.service'; // Asegúrate de importar el servicio
+import { NotificationService } from '../../services/notification.service';
 
 interface Usuario {
   id: string;
@@ -63,7 +63,7 @@ export class SupervisorComponent implements OnInit {
 
   constructor(
     private firestore: Firestore,
-    private notificationService: NotificationService // Inyecta NotificationService
+    private notificationService: NotificationService,
   ) {
     Chart.register(...registerables);
     this.cargarUsuarios();

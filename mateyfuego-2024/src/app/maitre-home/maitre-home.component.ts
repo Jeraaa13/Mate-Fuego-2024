@@ -5,6 +5,7 @@ import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { ReactiveFormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 import { PushNotificationService } from '../services/push-notifications.service';
+import { NotificationService } from '../services/notification.service';
 
 interface Mesas {
   cantidadComensales: number;
@@ -40,7 +41,8 @@ export class MaitreHomeComponent implements OnInit {
 
   constructor(
     private firestore: AngularFirestore,
-    private pushService: PushNotificationService
+    private pushService: PushNotificationService,
+    private notificationService: NotificationService
   ) {}
 
   ngOnInit() {
@@ -91,18 +93,23 @@ export class MaitreHomeComponent implements OnInit {
         await this.firestore.collection('mesas').doc(mesa.id).update({
           disponible: false,
         });
-
+  
         await this.firestore.collection('lista-espera').doc(usuario.id).update({
           mesaAsignada: true,
           mesaSeleccionada: mesa.id,
         });
-
         this.mostrarMesas = false;
         this.usuarioSeleccionado = null;
-
-        console.log('Mesa asignada exitosamente');
+        this.notificationService.showSuccess(
+          'La mesa ha sido asignada exitosamente.',
+          'Mesa Asignada'
+        );
       } catch (error) {
         console.error('Error al asignar mesa:', error);
+        this.notificationService.showError(
+          'Hubo un problema al asignar la mesa. Intente nuevamente.',
+          'Error al Asignar Mesa'
+        );
       }
     }
   }

@@ -5,6 +5,7 @@ import { IonicModule } from '@ionic/angular';
 import { CommonModule } from '@angular/common';
 import { MailService } from 'src/app/services/mail.service';
 import { PushNotificationService } from 'src/app/services/push-notifications.service';
+import { NotificationService } from 'src/app/services/notification.service';
 
 interface Cliente {
   id: string;
@@ -28,7 +29,8 @@ export class HomeComponent implements OnInit {
     private firestore: AngularFirestore,
     private mailService: MailService,
     private pushService: PushNotificationService,
-    private authService: AuthService
+    private authService: AuthService,
+    private NotificationService : NotificationService
   ) {}
 
   ngOnInit(): void {
@@ -76,25 +78,39 @@ export class HomeComponent implements OnInit {
       .then((docSnapshot) => {
         if (docSnapshot?.exists) {
           const cliente = docSnapshot?.data() as Cliente;
+  
           this.firestore
             .collection('clientes')
             .doc(clienteId)
             .update({ estadoVerificacion: true })
             .then(() => {
               this.mailService.enviarConfirmacionHabilitado(cliente);
-              console.log(
-                'Cliente aprobado exitosamente, enviando mail con datos del cliente...'
+              this.NotificationService.showSuccess(
+                'El cliente ha sido aprobado exitosamente y se envió un correo de confirmación.',
+                'Cliente Aprobado'
               );
             })
             .catch((error) => {
               console.error('Error al aprobar cliente: ', error);
+              this.NotificationService.showError(
+                'No se pudo aprobar al cliente. Intente nuevamente.',
+                'Error al Aprobar Cliente'
+              );
             });
         } else {
           console.error('Cliente no encontrado');
+          this.NotificationService.showError(
+            'No se encontró al cliente en la base de datos.',
+            'Cliente No Encontrado'
+          );
         }
       })
       .catch((error) => {
         console.error('Error al obtener datos del cliente: ', error);
+        this.NotificationService.showError(
+          'Hubo un error al obtener los datos del cliente.',
+          'Error de Consulta'
+        );
       });
   }
 
@@ -107,25 +123,40 @@ export class HomeComponent implements OnInit {
       .then((docSnapshot) => {
         if (docSnapshot?.exists) {
           const cliente = docSnapshot?.data() as Cliente;
-
+  
           this.mailService.enviarConfirmacionDeshabilitado(cliente);
-
+  
           this.firestore
             .collection('clientes')
             .doc(clienteId)
             .delete()
             .then(() => {
-              alert('Cliente rechazado y eliminado');
+              this.NotificationService.showSuccess(
+                'El cliente ha sido rechazado y eliminado correctamente.',
+                'Cliente Rechazado'
+              );
             })
             .catch((error) => {
               console.error('Error al rechazar cliente: ', error);
+              this.NotificationService.showError(
+                'No se pudo eliminar al cliente. Intente nuevamente.',
+                'Error al Rechazar Cliente'
+              );
             });
         } else {
           console.error('Cliente no encontrado');
+          this.NotificationService.showError(
+            'No se encontró al cliente en la base de datos.',
+            'Cliente No Encontrado'
+          );
         }
       })
       .catch((error) => {
         console.error('Error al obtener datos del cliente: ', error);
+        this.NotificationService.showError(
+          'Hubo un error al obtener los datos del cliente.',
+          'Error de Consulta'
+        );
       });
   }
 }

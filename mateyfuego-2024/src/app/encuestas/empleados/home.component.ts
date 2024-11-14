@@ -6,6 +6,7 @@ import { AngularFireStorage } from '@angular/fire/compat/storage';
 import { Firestore, addDoc, collection, collectionData } from '@angular/fire/firestore';
 import { Chart, registerables } from 'chart.js';
 import { lastValueFrom, Observable } from 'rxjs';
+import { NotificationService } from 'src/app/services/notification.service';
 
 interface EncuestaEmpleado {
   limpieza: number;
@@ -44,7 +45,8 @@ export class HomeComponent implements OnInit {
   
   constructor(
     private storage: AngularFireStorage, 
-    private firestore: Firestore
+    private firestore: Firestore,
+    private notificationService : NotificationService
   ) {
     Chart.register(...registerables);
   }
@@ -85,27 +87,38 @@ export class HomeComponent implements OnInit {
     
     try {
       if (!this.validarEncuesta()) {
-        throw new Error('Por favor complete todos los campos requeridos');
+        this.notificationService.showError(
+          'Por favor complete todos los campos requeridos',
+          'Campos Incompletos'
+        );
+        return; // Evita continuar si la validación falla
       }
-
+  
       this.loading = true;
       const encuestaToSave = {
         ...this.encuesta,
         fechaCreacion: new Date()
       };
-
+  
       const encuestasCollection = collection(this.firestore, 'encuestas_empleados');
       await addDoc(encuestasCollection, encuestaToSave);
-      
-      alert('Encuesta enviada con éxito');
+    
+      this.notificationService.showSuccess(
+        'La encuesta ha sido enviada con éxito.',
+        'Encuesta Enviada'
+      );
+  
       this.resetForm();
     } catch (error) {
       console.error('Error al enviar la encuesta:', error);
+      this.notificationService.showError(
+        'Hubo un problema al enviar la encuesta. Intente nuevamente.',
+        'Error al Enviar Encuesta'
+      );
     } finally {
       this.loading = false;
     }
   }
-
   private validarEncuesta(): boolean {
     return (
       this.encuesta.limpieza >= 0 &&

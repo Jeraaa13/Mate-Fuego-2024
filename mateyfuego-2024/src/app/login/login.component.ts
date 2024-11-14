@@ -49,8 +49,10 @@ export class LoginComponent implements OnInit {
   ngOnInit(): void {
     this.route.queryParams.subscribe((params) => {
       if (params['noVerified']) {
-        this.errorMessage =
-          'Tu cuenta aún no ha sido verificada por un administrador.';
+        this.notificationService.showError(
+          'Tu cuenta aún no ha sido verificada por un administrador.',
+          'Cuenta No Verificada'
+        );
       }
     });
   }
@@ -85,8 +87,11 @@ export class LoginComponent implements OnInit {
         'dueno'
       );
     } catch (error) {
-      this.errorMessage = 'Error al iniciar sesión. Verifica tus credenciales.';
       console.error('Error during login: ', error);
+      this.notificationService.showError(
+        'Error al iniciar sesión. Verifica tus credenciales.',
+        'Error de Inicio de Sesión'
+      );
     }
   }
 
@@ -119,8 +124,10 @@ export class LoginComponent implements OnInit {
     }
 
     if (!found) {
-      this.errorMessage =
-        'No se encontró información del usuario en las colecciones.';
+      this.notificationService.showError(
+        'No se encontró información del usuario en las colecciones.',
+        'Usuario No Encontrado'
+      );
     }
   }
   navigateToTipoPerfil(tipoPerfil: string) {
@@ -227,20 +234,5 @@ export class LoginComponent implements OnInit {
         console.warn(`Rol ${role} no reconocido`);
         break;
     }
-  }
-
-  BotonPrueba() {
-    this.notificationService.showSuccess(
-      'El pedido se ha guardado correctamente.',
-      'Éxito',
-      {
-        position: 'top',
-        customClass: {
-          popup: 'high-priority-alert', // Clase CSS personalizada
-        },
-        timer: 4000,
-        backdrop: true,
-      }
-    );
   }
 }
