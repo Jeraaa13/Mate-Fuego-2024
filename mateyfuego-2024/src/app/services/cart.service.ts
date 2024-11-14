@@ -1,7 +1,13 @@
-import { Injectable } from '@angular/core';
-import { AngularFirestore } from '@angular/fire/compat/firestore';
+import { Injectable, OnInit } from '@angular/core';
 import { Product } from '../productos/pagina/pagina.component';
 import { AuthService } from './auth.service';
+import {
+  addDoc,
+  collection,
+  doc,
+  Firestore,
+  getDoc,
+} from '@angular/fire/firestore';
 
 interface CartItem {
   product: Product;
@@ -15,8 +21,52 @@ export class CartService {
   private cart: { [key: string]: CartItem } = {};
   private totalPrice: number = 0;
   private totalTime: number = 0;
+  private usuario: any;
 
-  constructor(private firestore: AngularFirestore) {}
+  constructor(private firestore: Firestore, private authService: AuthService) {
+    this.ngOnInit();
+  }
+
+  async ngOnInit() {
+    this.usuario = await this.authService.getCurrentUser2();
+
+    console.log('ACA TOY EL CART => ', this.usuario);
+    console.log(this.usuario.uid);
+    if (this.usuario && this.usuario.uid) {
+      await this.getUserDetails(this.usuario.uid);
+    } else {
+      console.error('Usuario no autenticado.');
+    }
+  }
+
+  async getUserDetails(uid: string): Promise<void> {
+    const collections = ['duenosSupervisores', 'empleados', 'clientes'];
+
+    try {
+      for (const collectionName of collections) {
+        const userRef = collection(this.firestore, collectionName);
+        const userDoc = doc(userRef, uid);
+        const docSnapshot = await getDoc(userDoc);
+
+        if (docSnapshot.exists()) {
+          const userData = docSnapshot.data();
+          this.usuario = {
+            id: uid,
+            name: userData['nombre'] || 'Nombre desconocido',
+            surname: userData['apellido'] || 'Apellido desconocido',
+            email: userData['email'] || 'Correo desconocido',
+          };
+          break;
+        }
+      }
+
+      if (!this.usuario) {
+        console.error('Datos de usuario no encontrados en ninguna colección.');
+      }
+    } catch (error) {
+      console.error('Error al obtener datos del usuario:', error);
+    }
+  }
 
   addToCart(product: Product) {
     if (this.cart[product.id]) {
@@ -67,6 +117,8 @@ export class CartService {
       0
     );
 
+    console.log();
+
     const orderData = {
       EstadoDePedido: 'solicitado',
       TiempoEspera: maxTiempoElaboracion,
@@ -79,11 +131,11 @@ export class CartService {
         precioUnitario: item.product.precio,
         tiempoElaboracion: item.product.tiempoElaboracion,
       })),
+      uidUsuario: this.usuario.id,
     };
 
-    return this.firestore
-      .collection('pedidos')
-      .add(orderData)
+    const pedidosRef = collection(this.firestore, 'pedidos');
+    return addDoc(pedidosRef, orderData)
       .then(() => {
         console.log('Pedido guardado exitosamente.');
         this.clearCart();

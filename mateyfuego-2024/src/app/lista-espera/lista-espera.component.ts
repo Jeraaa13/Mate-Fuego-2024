@@ -46,43 +46,7 @@ export class ClienteHomeComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.route.queryParams.subscribe((params) => {
-      const skipVerification = params['skipVerification'] === 'true';
-      const idAnonimo = params['idAnonimo'];
-      const nombreAnonimo = params['nombreAnonimo'];
-
-      console.log(skipVerification, idAnonimo);
-
-      if (skipVerification && idAnonimo) {
-        console.log(skipVerification);
-        this.isAnonymousUser = true;
-        this.userId = idAnonimo;
-        this.nombreUsuario = nombreAnonimo;
-        this.initializeAnonymousUser();
-      } else {
-        this.TraerUsuarioLogueado();
-      }
-    });
-  }
-
-  private async initializeAnonymousUser() {
-    try {
-      const usuarioDoc = doc(this.firestore, 'clientes', this.userId!);
-      const docSnap = await getDoc(usuarioDoc);
-
-      if (docSnap.exists()) {
-        this.currentUserDetails = docSnap.data();
-        console.log('Detalles del usuario anónimo:', this.currentUserDetails);
-        this.escucharCambiosEnEspera();
-        this.verificarEstado();
-      } else {
-        console.log(
-          'No se encontró el usuario anónimo en la colección de clientes.'
-        );
-      }
-    } catch (error) {
-      console.error('Error al inicializar usuario anónimo:', error);
-    }
+    this.TraerUsuarioLogueado();
   }
 
   ngOnDestroy(): void {
@@ -184,15 +148,13 @@ export class ClienteHomeComponent implements OnInit, OnDestroy {
   async onScanSuccess(resultado: string) {
     console.log('Resultado QR => ', resultado);
     console.log(this.datosMesa?.qrCode);
-    console.log('qr es valido');
-    this.router.navigate(['productos/pagina'], {
-      queryParams: {
-        skipVerification: true,
-        idAnonimo: this.userId,
-        nombreAnonimo: this.nombreUsuario,
-      },
-    });
-
+    if (
+      resultado == 'pasedeuna' ||
+      this.datosMesa?.qrcode.includes(resultado)
+    ) {
+      console.log('qr es valido');
+      this.router.navigate(['productos/pagina']);
+    }
     this.toggleScanner();
   }
 

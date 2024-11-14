@@ -24,11 +24,6 @@ interface UsuarioEnEspera {
   fotourl: string;
 }
 
-interface AnonimoEnEspera {
-  mesaAsignada: boolean;
-  nombre: string;
-}
-
 @Component({
   selector: 'app-home',
   standalone: true,
@@ -40,7 +35,6 @@ export class HomeComponent implements OnInit {
   isScannerVisible = false;
   currentUser: any | null = null;
   currentUserDetails: any | null = null;
-  isAnonymousUser = false;
   userId: string = '';
 
   constructor(
@@ -55,26 +49,14 @@ export class HomeComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.route.queryParams.subscribe(async (params) => {
-      const skipVerification = params['skipVerification'] === 'true';
-      const idAnonimo = params['idAnonimo'];
-
-      if (skipVerification && idAnonimo) {
-        this.isAnonymousUser = true;
-        this.userId = idAnonimo;
-        console.log('Usuario anonimo:', this.userId);
-        await this.fetchUserDetails(idAnonimo);
+    this.afAuth.authState.subscribe(async (user) => {
+      if (user) {
+        this.currentUser = user;
+        this.userId = user.uid;
+        console.log('Usuario logueado:', this.currentUser);
+        await this.fetchUserDetails(user.uid);
       } else {
-        this.afAuth.authState.subscribe(async (user) => {
-          if (user) {
-            this.currentUser = user;
-            this.userId = user.uid;
-            console.log('Usuario logueado:', this.currentUser);
-            await this.fetchUserDetails(user.uid);
-          } else {
-            console.log('No hay usuario autenticado');
-          }
-        });
+        console.log('No hay usuario autenticado');
       }
     });
   }
@@ -103,69 +85,31 @@ export class HomeComponent implements OnInit {
     const resultadoScaneo = result;
 
     if (resultadoScaneo.includes('restaurante:12345')) {
-      if (this.isAnonymousUser) {
-        try {
-          const clienteDocRef = doc(this.firestore, 'clientes', this.userId);
-          const clienteDoc = await getDoc(clienteDocRef);
+      const currentUser = await this.authService.getCurrentUser();
 
-          let nombreUsuario = this.userId;
+      if (currentUser) {
+        const clienteId = currentUser.uid;
+        const clienteDocRef = doc(this.firestore, 'clientes', clienteId);
+        const clienteDoc = await getDoc(clienteDocRef);
 
-          if (clienteDoc.exists()) {
-            const clienteData = clienteDoc.data();
-            nombreUsuario = clienteData['nombre'] || this.userId;
-          }
-
-          const usuarioEnEspera: UsuarioEnEspera = {
-            mesaAsignada: false,
-            uid: this.userId,
-            nombre: nombreUsuario,
-            fotourl: this.currentUserDetails?.fotoUrl || '',
-          };
+        if (clienteDoc.exists()) {
+          const clienteData = clienteDoc.data();
+          const nombreCompleto = `${clienteData['nombre']} ${clienteData['apellido']}`;
           const listaEsperaRef = collection(this.firestore, 'lista-espera');
-          const nuevoDocRef = doc(listaEsperaRef, this.userId);
-          await setDoc(nuevoDocRef, usuarioEnEspera);
 
-          this.router.navigate(['/lista-espera'], {
-            queryParams: {
-              skipVerification: true,
-              idAnonimo: this.userId,
-              nombreAnonimo: nombreUsuario,
-            },
+          await addDoc(listaEsperaRef, {
+            clienteId,
+            timestamp: new Date(),
           });
-        } catch (error) {
-          console.error(
-            'Error al guardar en lista de espera (usuario anónimo):',
-            error
+
+          console.log('Detalles del cliente:', clienteData);
+
+          await this.pushNotificationService.notificarClienteListaDeEspera(
+            nombreCompleto
           );
         }
       } else {
-        const currentUser = await this.authService.getCurrentUser();
-
-        if (currentUser) {
-          const clienteId = currentUser.uid;
-          const clienteDocRef = doc(this.firestore, 'clientes', clienteId);
-          const clienteDoc = await getDoc(clienteDocRef);
-
-          if (clienteDoc.exists()) {
-            const clienteData = clienteDoc.data();
-            const nombreCompleto = `${clienteData['nombre']} ${clienteData['apellido']}`;
-            const listaEsperaRef = collection(this.firestore, 'lista-espera');
-
-            await addDoc(listaEsperaRef, {
-              clienteId,
-              timestamp: new Date(),
-            });
-
-            console.log('aca toy');
-            console.log(clienteData);
-
-            await this.pushNotificationService.notificarClienteListaDeEspera(
-              nombreCompleto
-            );
-          }
-        } else {
-          console.error('No hay un usuario logueado');
-        }
+        console.error('No hay un usuario logueado');
       }
     } else {
       this.qrService.onScanSuccess(result);

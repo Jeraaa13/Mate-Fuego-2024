@@ -5,12 +5,9 @@ import {
   collection,
   doc,
   getDoc,
-  getDocs,
-  query,
   setDoc,
-  where,
 } from '@angular/fire/firestore';
-import { Auth, createUserWithEmailAndPassword, user } from '@angular/fire/auth';
+import { Auth, createUserWithEmailAndPassword } from '@angular/fire/auth';
 import {
   Storage,
   ref,
@@ -27,10 +24,8 @@ import {
   FormsModule,
   ReactiveFormsModule,
 } from '@angular/forms';
-import { BarcodeFormat } from '@zxing/library';
-import { MailService } from 'src/app/services/mail.service';
-import { PushNotificationService } from 'src/app/services/push-notifications.service';
 import { Router } from '@angular/router';
+import { AngularFireAuth } from '@angular/fire/compat/auth';
 
 interface Cliente {
   nombre: string;
@@ -64,20 +59,17 @@ export class RegistroClientesComponent {
     tipoPerfil: 'cliente',
     estadoVerificacion: false,
   };
-  contadorAnonimos = 0;
   isScanning = false; // Controls QR scanning visibility
   isScannerVisible = false;
-  allowedFormats = [BarcodeFormat.QR_CODE];
   tipoCliente: string = '';
 
   constructor(
     private firestore: Firestore,
     private auth: Auth,
+    private afAuth: AngularFireAuth,
     private storage: Storage,
     private actionSheetCtrl: ActionSheetController,
     private fb: FormBuilder,
-    private mailService: MailService,
-    private pushNotificationService: PushNotificationService,
     private router: Router
   ) {
     this.registroForm = this.fb.group({
@@ -168,18 +160,6 @@ export class RegistroClientesComponent {
     console.log('Form fields updated with parsed QR data:', info);
   }
 
-  validateCUIL() {
-    const dni = this.registroForm.get('dni')?.value;
-    const cuil = this.registroForm.get('cuil')?.value;
-
-    if (dni && cuil && dni.length === 8) {
-      const dniPart = cuil.substring(2, 10);
-      if (dniPart !== dni) {
-        this.registroForm.get('cuil')?.setErrors({ invalidCuil: true });
-      }
-    }
-  }
-
   async capturePhoto(source: CameraSource) {
     try {
       const photo = await Camera.getPhoto({
@@ -245,23 +225,34 @@ export class RegistroClientesComponent {
           uid: uid,
         });
 
-        await this.pushNotificationService.notificarNuevoCliente(
-          `${this.registroForm.value.nombre} ${this.registroForm.value.apellido}`
-        );
-
-        await this.mailService.enviarAviso({
-          email_cliente: this.registroForm.value.correo,
-          to_name: this.registroForm.value.nombre,
-          message:
-            'Para acceder a la aplicación debe aguardar a que su cuenta sea activada',
-          from_name: 'Mate y Fuego',
-        });
-
         this.router.navigate(['/login']);
       }
     } catch (error) {
       console.error('Error al registrar usuario:', error);
     }
+  }
+
+  signInAnonymously(userName: string) {
+    return this.afAuth
+      .signInAnonymously()
+      .then((userCredential) => {
+        const uid = userCredential.user?.uid;
+
+        if (uid) {
+          const usuarioRef = doc(this.firestore, 'clientes', uid);
+          return setDoc(usuarioRef, {
+            uid: uid,
+            nombre: userName,
+            tipoPerfil: 'anonimo',
+            estadoVerificacion: true,
+          });
+        } else {
+          throw new Error('No se pudo obtener el UID del usuario.');
+        }
+      })
+      .catch((error) => {
+        console.error('Error en el inicio de sesión anónimo:', error);
+      });
   }
 
   async guardarClienteAnonimo() {
@@ -270,45 +261,31 @@ export class RegistroClientesComponent {
       return;
     }
 
-    const baseName = 'Anonimo_';
-    const userEnteredName = this.registroAnonimoForm.value.nombre;
-    const datosCliente = {
-      nombre: userEnteredName,
-      tipoPerfil: 'anonimo',
-      estadoVerificacion: true,
-    };
+    this.signInAnonymously(this.registroAnonimoForm.value.nombre);
 
-    try {
-      const anonimosSnapshot = await getDocs(
-        query(
-          collection(this.firestore, 'clientes'),
-          where('nombre', '>=', baseName),
-          where('nombre', '<', `${baseName}\uf8ff`)
-        )
-      );
-
-      const contador = anonimosSnapshot.size + 1;
-      const idAnonimo = `${baseName}${contador}`;
-
-      const clienteRef = doc(this.firestore, 'clientes', idAnonimo);
-      await setDoc(clienteRef, datosCliente);
-
-      console.log('Cliente anónimo guardado en Firestore:', datosCliente);
-      this.router.navigate(['/home-clientes'], {
-        queryParams: { skipVerification: true, idAnonimo },
-      });
-
-      this.auth.signOut();
-      this.resetForm();
-    } catch (error) {
-      console.error('Error al guardar cliente anónimo:', error);
-    }
+    this.router.navigate(['/home-clientes'], {
+      queryParams: {
+        skipVerification: true,
+      },
+    });
   }
 
   resetForm() {
     this.registroForm.reset();
     this.registroAnonimoForm.reset();
     this.tipoCliente = '';
+  }
+
+  validateCUIL() {
+    const dni = this.registroForm.get('dni')?.value;
+    const cuil = this.registroForm.get('cuil')?.value;
+
+    if (dni && cuil && dni.length === 8) {
+      const dniPart = cuil.substring(2, 10);
+      if (dniPart !== dni) {
+        this.registroForm.get('cuil')?.setErrors({ invalidCuil: true });
+      }
+    }
   }
 
   handleQrCodeResult(event: any) {

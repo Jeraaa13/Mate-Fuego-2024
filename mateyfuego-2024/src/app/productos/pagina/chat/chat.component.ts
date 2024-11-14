@@ -12,6 +12,8 @@ import {
   onSnapshot,
   doc,
   getDoc,
+  getDocs,
+  where,
 } from '@angular/fire/firestore';
 
 interface Mensaje {
@@ -19,6 +21,7 @@ interface Mensaje {
   usuario: string;
   fecha: any;
   idUsuario: string | null;
+  mesaNumero: number | null;
 }
 
 interface Usuario {
@@ -36,36 +39,26 @@ interface Usuario {
   styleUrls: ['./chat.component.scss'],
 })
 export class ChatComponent implements OnInit {
-  @Input() idAnonimo: string | null = null;
-  @Input() nombreAnonimo: string | null = null;
-
   mensajes: Mensaje[] = [];
   nuevoMensaje: string = '';
   chatAbierto: boolean = false;
   usuario: Usuario | null = null;
   loading: boolean = true;
+  mesaNumero: number | null = 0;
 
   constructor(public authService: AuthService, private firestore: Firestore) {}
 
   async ngOnInit() {
     try {
-      // Si es usuario anónimo
-      if (this.idAnonimo && this.nombreAnonimo) {
-        this.usuario = {
-          id: this.idAnonimo,
-          name: this.nombreAnonimo,
-        };
-        this.loading = false;
-      } else {
-        // Si es usuario autenticado
-        const currentUser = await this.authService.getCurrentUser2();
+      this.loading = false;
+      const currentUser = await this.authService.getCurrentUser2();
 
-        if (currentUser && currentUser.uid) {
-          await this.getUserDetails(currentUser.uid);
-        } else {
-          console.error('Usuario no autenticado.');
-          this.loading = false;
-        }
+      if (currentUser && currentUser.uid) {
+        await this.getUserDetails(currentUser.uid);
+        this.mesaNumero = await this.getMesaNumero(currentUser.uid);
+      } else {
+        console.error('Usuario no autenticado.');
+        this.loading = false;
       }
 
       this.cargarMensajes();
@@ -106,6 +99,27 @@ export class ChatComponent implements OnInit {
     }
   }
 
+  async getMesaNumero(uid: string): Promise<number | null> {
+    try {
+      const pedidosRef = collection(this.firestore, 'pedidos');
+      const q = query(pedidosRef, where('uidUsuario', '==', uid));
+
+      const querySnapshot = await getDocs(q);
+
+      if (!querySnapshot.empty) {
+        const pedidoDoc = querySnapshot.docs[0];
+        const pedidoData = pedidoDoc.data();
+        return pedidoData['Mesa'] || null;
+      } else {
+        console.log('No se encontraron pedidos para este usuario.');
+        return null;
+      }
+    } catch (error) {
+      console.error('Error al obtener el número de mesa:', error);
+      return null;
+    }
+  }
+
   async enviarMensaje() {
     if (!this.usuario) {
       console.error('No hay usuario definido');
@@ -118,6 +132,7 @@ export class ChatComponent implements OnInit {
         usuario: this.usuario.name || 'Anónimo',
         idUsuario: this.usuario.id,
         fecha: new Date(),
+        mesaNumero: this.mesaNumero,
       };
 
       try {

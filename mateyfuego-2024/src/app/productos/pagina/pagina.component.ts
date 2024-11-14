@@ -4,7 +4,6 @@ import { map } from 'rxjs/operators';
 import { CartService } from '../../services/cart.service';
 import { IonicModule } from '@ionic/angular';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute } from '@angular/router';
 import { Router } from '@angular/router';
 import { ChatComponent } from './chat/chat.component';
 
@@ -48,22 +47,14 @@ export class PaginaComponent implements OnInit {
   maxTime = 0;
   mesaId: string | null = null;
   mesaNumero: number | null = null;
-  idAnonimo: string | null = null;
-  nombreAnonimo: string | null = null;
 
   constructor(
     private firestore: AngularFirestore,
     private cartService: CartService,
-    private route: ActivatedRoute,
     private router: Router
   ) {}
 
   ngOnInit() {
-    this.route.queryParams.subscribe((params) => {
-      this.idAnonimo = params['idAnonimo'];
-      this.nombreAnonimo = params['nombreAnonimo'];
-    });
-
     this.getProducts().subscribe((data) => {
       this.products = data;
       this.products.forEach((product) => {
@@ -92,7 +83,6 @@ export class PaginaComponent implements OnInit {
   async confirmOrder() {
     if (this.mesaId && this.mesaNumero !== null) {
       await this.cartService.saveOrder(this.mesaNumero);
-      this.router.navigate(['chat']);
     } else {
       console.error('Mesa no seleccionada');
     }
