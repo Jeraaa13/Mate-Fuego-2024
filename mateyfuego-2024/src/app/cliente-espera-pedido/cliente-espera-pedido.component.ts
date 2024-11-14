@@ -13,11 +13,12 @@ import {
   doc,
   getDoc,
   getDocs,
+  updateDoc,
   where,
 } from '@angular/fire/firestore';
 import { QrService } from '../services/qr.service';
 import { ZXingScannerModule } from '@zxing/ngx-scanner';
-
+import { Router } from '@angular/router';
 @Component({
   selector: 'app-cliente-espera-pedido',
   standalone: true,
@@ -34,7 +35,8 @@ export class ClienteEsperaPedidoComponent implements OnInit {
   constructor(
     private authService: AuthService,
     private firestore: Firestore,
-    private qrService: QrService
+    private qrService: QrService,
+    private router: Router
   ) {}
 
   async ngOnInit() {
@@ -49,21 +51,20 @@ export class ClienteEsperaPedidoComponent implements OnInit {
       await this.getQrCode(this.pedido.Mesa);
     }
   }
-
+  navigateTo(path: string) {
+    this.router.navigate([path]);
+  }
   async getPedido() {
     try {
       const collectionName = 'pedidos';
-
       const pedidosRef = collection(this.firestore, collectionName);
       const q = query(pedidosRef, where('uidUsuario', '==', this.usuario.uid));
       const querySnapshot = await getDocs(q);
-
+  
       if (!querySnapshot.empty) {
         const pedidoDoc = querySnapshot.docs[0];
         this.pedido = pedidoDoc.data();
-
-        console.log(this.pedido);
-        console.log(this.pedido.EstadoDePedido);
+        this.pedido.id = pedidoDoc.id; 
       } else {
         console.log('No se encontraron pedidos para este usuario.');
       }

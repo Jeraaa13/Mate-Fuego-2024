@@ -1,44 +1,42 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>Espere a su pedido</ion-title>
+    <ion-title>Tu mesa</ion-title>
     <ion-buttons slot="end">
-      <ion-menu-button menu="first" style="font-size: 14px"
-        >Menu</ion-menu-button
-      >
+      <ion-menu-button menu="first" style="font-size: 14px">Menu</ion-menu-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
   <div class="container mt-3">
-    <div
-      class="row flex-lg-row-reverse align-items-center justify-content-center g-5"
-    >
+    <div class="row align-items-center justify-content-center g-5">
       <div class="col-lg-12 text-center bg">
-        <p class="fs-4">
-          Escanee el código QR de su mesa para poder acceder a diferentes
-          opciones.
-        </p>
-        <button (click)="toggleScanner()">
-          <img src="../../assets/qrcode.png" />
+        <!--  <img src="../../assets/restaurant-icon.png" alt="Restaurant" style="width: 100px; height: auto; margin-bottom: 15px;">-->
+        
+        <p class="fs-4">Estado de su pedido:</p>
+        <div class="status-display">
+          <span class="badge badge-primary fs-4">{{ pedido?.EstadoDePedido || 'pendiente' }}</span>
+        </div>
+
+        <button (click)="toggleScanner()" style="border: none; background: none; margin-top: 20px;">
+          <img src="../../assets/qrcode.png" alt="Scan QR" style="width: 80px; height: auto;">
         </button>
 
-        <div *ngIf="isScannerVisible">
-          <zxing-scanner [torch]="true" (scanSuccess)="onScanSuccess($event)">
-          </zxing-scanner>
+        <div *ngIf="isScannerVisible" style="margin-top: 20px;">
+          <zxing-scanner [torch]="true" (scanSuccess)="onScanSuccess($event)"></zxing-scanner>
         </div>
       </div>
-      <div
-        *ngIf="pedido.EstadoDePedido != 'recibido'"
-        class="col-12 text-center"
-      >
-        <ion-button
-          size="large"
-          [disabled]="pedido.EstadoDePedido != 'entregado'"
-          color="success"
-          (click)="Recibir()"
-          >Recibí el pedido</ion-button
-        >
+
+      <div class="col-12 text-center" style="margin-top: 30px;">
+        <ion-button expand="block" color="primary" (click)="navigateTo('/encuestas-clientes')">
+          Encuesta
+        </ion-button>
+        <ion-button expand="block" color="success" (click)="navigateTo('/cliente-pedido-cuenta')" style="margin-top: 10px;">
+          Pedir Cuenta
+        </ion-button>
+        <ion-button expand="block" color="warning" (click)="navigateTo('/juegos')" style="margin-top: 10px;">
+          Juegos
+        </ion-button>
       </div>
     </div>
   </div>

@@ -1,0 +1,83 @@
+.ahorcado-container {
+  max-width: 600px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.palabra {
+  font-size: 2em;
+  margin: 20px 0;
+  letter-spacing: 5px;
+}
+
+.intentos,
+.mensaje {
+  margin: 10px 0;
+  font-size: 1.2em;
+}
+
+.teclado {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.teclado button {
+  margin: 5px;
+  padding: 10px 15px;
+  font-size: 1em;
+  cursor: pointer;
+}
+
+.teclado button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.reiniciar {
+  margin-top: 20px;
+  padding: 10px 20px;
+  font-size: 1em;
+  cursor: pointer;
+}
+
+img {
+  max-width: 250px;
+}
+
+.volver-home {
+  font-size: 1.2em;
+  padding: 10px 20px;
+  margin: 0 10px;
+  cursor: pointer;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  transition: background-color 0.3s;
+}
+
+img .mayor-menor {
+  height: 100px;
+}
+
+.modal {
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  padding: 20px;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+.modal.show {
+  display: block;
+}
+
+.modal-content h2 {
+  margin-top: 0;
+}

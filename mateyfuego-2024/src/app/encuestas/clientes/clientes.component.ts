@@ -7,7 +7,7 @@ import { Firestore, addDoc, collection, collectionData } from '@angular/fire/fir
 import { Chart, registerables } from 'chart.js';
 import { lastValueFrom, Observable } from 'rxjs';
 import { NotificationService } from 'src/app/services/notification.service';
-
+import { ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 interface EncuestaCliente {
   satisfaccionGeneral: number;      
   nombre: string;                   
@@ -38,6 +38,8 @@ export class ClientesComponent implements OnInit {
     fotosUrls: [],
     fechaCreacion: new Date()
   };
+  @ViewChild('satisfactionChart') satisfactionChartRef!: ElementRef;
+  @ViewChild('servicesChart') servicesChartRef!: ElementRef;
   satisfaccionChart: Chart | null = null;
   recomendacionChart: Chart | null = null;
   serviciosChart: Chart | null = null;
@@ -182,6 +184,12 @@ export class ClientesComponent implements OnInit {
   }
 
   private generarGraficos(data: EncuestaCliente[]) {
+    // Check if the canvas elements are available
+    if (!this.satisfactionChartRef || !this.servicesChartRef) {
+      console.error('Canvas elements are not available');
+      return;
+    }
+
     // Gráfico de satisfacción general
     const satisfaccionPromedio = data.reduce((acc, curr) => acc + curr.satisfaccionGeneral, 0) / data.length;
 
@@ -189,8 +197,8 @@ export class ClientesComponent implements OnInit {
       this.satisfaccionChart.destroy();
     }
 
-    this.satisfaccionChart = new Chart('satisfaccionChart', {
-      type: 'bar',
+    this.satisfaccionChart = new Chart(this.satisfactionChartRef.nativeElement, {
+      type: 'line',
       data: {
         labels: ['Promedio de Satisfacción'],
         datasets: [{
@@ -212,36 +220,6 @@ export class ClientesComponent implements OnInit {
       }
     });
 
-    // Gráfico de recomendación
-    const recomendarian = data.filter(e => e.recomendaria).length;
-    const noRecomendarian = data.length - recomendarian;
-
-    if (this.recomendacionChart) {
-      this.recomendacionChart.destroy();
-    }
-
-    this.recomendacionChart = new Chart('recomendacionChart', {
-      type: 'bar',
-      data: {
-        labels: ['Recomendarían', 'No Recomendarían'],
-        datasets: [{
-          data: [recomendarian, noRecomendarian],
-          backgroundColor: [
-            'rgba(75, 192, 192, 0.5)',
-            'rgba(255, 99, 132, 0.5)'
-          ],
-          borderColor: [
-            'rgb(75, 192, 192)',
-            'rgb(255, 99, 132)'
-          ],
-          borderWidth: 1
-        }]
-      },
-      options: {
-        responsive: true
-      }
-    });
-
     // Gráfico de servicios utilizados
     const servicios = ['Restaurante', 'Bar', 'Delivery'];
     const serviciosCount = servicios.map(servicio => 
@@ -252,7 +230,7 @@ export class ClientesComponent implements OnInit {
       this.serviciosChart.destroy();
     }
 
-    this.serviciosChart = new Chart('serviciosChart', {
+    this.serviciosChart = new Chart(this.servicesChartRef.nativeElement, {
       type: 'bar',
       data: {
         labels: servicios,

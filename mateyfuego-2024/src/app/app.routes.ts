@@ -154,4 +154,18 @@ export const routes: Routes = [
         (m) => m.ClienteEsperaPedidoComponent
       ),
   },
+  {
+    path: 'cliente-pedido-cuenta',
+    loadComponent: () =>
+      import('./cliente/pedido-cuenta/pedido-cuenta.component').then(
+        (m) => m.PedidoCuentaComponent
+      ),
+  },
+  {
+    path: 'juegos',
+    loadComponent: () =>
+      import('./juegos/ahorcado/ahorcado.component').then(
+        (m) => m.AhorcadoComponent
+      ),
+  },
 ];

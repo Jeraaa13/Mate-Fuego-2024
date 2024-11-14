@@ -18,9 +18,21 @@ export class NotificationService {
       ...config,
     });
   }
-
+  showSuccess2(message: string, title: string, config?: any) {
+    return Swal.fire({
+      title: title,
+      text: message,
+      icon: 'success',
+      confirmButtonText: 'Aceptar',
+      timer: config?.timeOut || 4000,
+      timerProgressBar: true,
+      position: 'center',
+      heightAuto: false,
+      ...config,
+    });
+  }
   showError(message: string, title: string, config?: any) {
-    Swal.fire({
+    return Swal.fire({
       title: title,
       text: message,
       icon: 'error',

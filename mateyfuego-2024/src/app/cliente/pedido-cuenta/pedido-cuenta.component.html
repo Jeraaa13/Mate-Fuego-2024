@@ -1,0 +1,37 @@
+<ion-content class="ion-padding">
+  <div class="header">
+    <span>Cuenta</span>
+    <span>Menu</span>
+  </div>
+
+  <div *ngFor="let pedido of pedidos" class="order-list">
+    <div *ngFor="let item of pedido.items" class="order-item">
+      <div class="item-details">
+        <div class="item-name">{{ item.nombre }}</div>
+        <div class="item-price">{{ item.precioUnitario | currency:'USD':'symbol':'1.0-0' }} x {{ item.cantidad }}</div>
+      </div>
+    </div>
+
+    <div class="order-summary">
+      <div class="subtotal">
+        <span>SubTotal</span>
+        <span>{{ pedido.subtotal | currency:'USD':'symbol':'1.0-0' }}</span>
+      </div>
+
+      <div class="discount" *ngIf="pedido.descuento">
+        <span>Descuento (10% Juego Ganado!)</span>
+        <span>-{{ pedido.descuento | currency:'USD':'symbol':'1.0-0' }}</span>
+      </div>
+
+      <div class="total">
+        <span>Total con Descuento</span>
+        <span>{{ pedido.totalConDescuento | currency:'USD':'symbol':'1.0-0' }}</span>
+      </div>
+    </div>
+  </div>
+
+  <ion-button expand="block" class="pay-button" (click)="Pago()">
+    <ion-icon name="cash-outline"></ion-icon> 
+    PAGAR
+  </ion-button>
+</ion-content>

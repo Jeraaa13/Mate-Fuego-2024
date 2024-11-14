@@ -1,0 +1,24 @@
+<div class="ahorcado-container">
+  <h2>Juego del Ahorcado</h2>
+  <div class="imagen-ahorcado">
+    <img [src]="imagenActual" alt="Estado del ahorcado" />
+  </div>
+  <div class="palabra">
+    <span *ngFor="let letra of palabraActual.split('')">
+      {{ mostrarLetra(letra) }}
+    </span>
+  </div>
+  <div class="intentos">Intentos restantes: {{ intentosRestantes }}</div>
+  <div class="mensaje">{{ mensaje }}</div>
+  <div class="teclado">
+    <button
+      *ngFor="let letra of letras"
+      (click)="adivinarLetra(letra)"
+      [disabled]="
+        letrasAdivinadas.has(letra) || intentosRestantes === 0 || mensaje
+      "
+    >
+      {{ letra }}
+    </button>
+  </div>
+</div>
