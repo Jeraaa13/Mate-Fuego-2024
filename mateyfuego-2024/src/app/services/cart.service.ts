@@ -7,6 +7,7 @@ import {
   doc,
   Firestore,
   getDoc,
+  getDocs
 } from '@angular/fire/firestore';
 
 interface CartItem {
@@ -55,6 +56,7 @@ export class CartService {
             name: userData['nombre'] || 'Nombre desconocido',
             surname: userData['apellido'] || 'Apellido desconocido',
             email: userData['email'] || 'Correo desconocido',
+            
           };
           break;
         }
@@ -130,6 +132,8 @@ export class CartService {
         cantidad: item.quantity,
         precioUnitario: item.product.precio,
         tiempoElaboracion: item.product.tiempoElaboracion,
+        tipo : item.product.tipo,
+        estado : "preparacion"
       })),
       uidUsuario: this.usuario.id,
     };
@@ -149,4 +153,36 @@ export class CartService {
     this.cart = {};
     this.updateTotals();
   }
+
+  async getOrdersByProductType(): Promise<{ [key: string]: any[] }> {
+    const pedidosRef = collection(this.firestore, 'pedidos');
+    const ordersSnapshot = await getDocs(pedidosRef);
+  
+    const ordersByType: { [key: string]: any[] } = {};
+  
+    ordersSnapshot.forEach((doc) => {
+      const orderData = doc.data();
+      orderData['items'].forEach((item: any) => {
+        const productType = item.tipo;
+        
+        // Si el tipo de producto no existe aún en el objeto, lo creamos como un array vacío
+        if (!ordersByType[productType]) {
+          ordersByType[productType] = [];
+        }
+        
+        // Agregamos el producto al array correspondiente a su tipo
+        ordersByType[productType].push({
+          orderId: doc.id,
+          ...item,
+        });
+      });
+    });
+  
+    console.log("Pedidos separados por tipo de producto:", ordersByType);
+    return ordersByType;
+  }
+
+
 }
+
+

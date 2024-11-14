@@ -17,6 +17,7 @@ export interface Product {
   categoria: string;
   nombreProductos?: string[];
   descripcionCategoria?: string;
+  tipo : string;
 }
 
 interface Mesa {
@@ -83,7 +84,7 @@ export class PaginaComponent implements OnInit {
   async confirmOrder() {
     if (this.mesaId && this.mesaNumero !== null) {
       await this.cartService.saveOrder(this.mesaNumero);
-      this.router.navigate(['cliente-espera-pedido']);
+      this.router.navigate(['lista-espera']);
     } else {
       console.error('Mesa no seleccionada');
     }

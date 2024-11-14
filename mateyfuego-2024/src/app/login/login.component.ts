@@ -148,6 +148,14 @@ export class LoginComponent implements OnInit {
         this.router.navigate(['/home-maitre']);
         break;
 
+        case 'Mozo':
+        this.router.navigate(['/home-mozo']);
+        break;
+
+        case 'Cocinero':
+          this.router.navigate(['/home-cocinero']);
+          break;
+
       default:
         this.router.navigate(['/home-empleados']);
         break;
