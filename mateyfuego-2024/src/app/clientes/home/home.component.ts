@@ -96,12 +96,6 @@ export class HomeComponent implements OnInit {
           const clienteData = clienteDoc.data();
           const nombreCompleto = `${clienteData['nombre']} ${clienteData['apellido']}`;
           const listaEsperaRef = collection(this.firestore, 'lista-espera');
-
-          await addDoc(listaEsperaRef, {
-            clienteId,
-            timestamp: new Date(),
-          });
-
           console.log('Detalles del cliente:', clienteData);
 
           await this.manejarMaitreNotificacion(clienteData['nombre']);
