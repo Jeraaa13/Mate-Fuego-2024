@@ -12,15 +12,14 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import {
   getFirestore,
-  doc,
-  getDoc,
   collection,
   query,
   where,
   getDocs,
 } from 'firebase/firestore';
 import { PushNotificationService } from '../services/push-notifications.service';
-import { uid } from 'chart.js/dist/helpers/helpers.core';
+import Swal from 'sweetalert2';
+import { NotificationService } from '../services/notification.service';
 
 @Component({
   selector: 'app-login',
@@ -38,7 +37,8 @@ export class LoginComponent implements OnInit {
     private auth: Auth,
     private router: Router,
     private route: ActivatedRoute,
-    private pushService: PushNotificationService
+    private pushService: PushNotificationService,
+    private notificationService: NotificationService
   ) {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
@@ -227,5 +227,20 @@ export class LoginComponent implements OnInit {
         console.warn(`Rol ${role} no reconocido`);
         break;
     }
+  }
+
+  BotonPrueba() {
+    this.notificationService.showSuccess(
+      'El pedido se ha guardado correctamente.',
+      'Éxito',
+      {
+        position: 'top',
+        customClass: {
+          popup: 'high-priority-alert', // Clase CSS personalizada
+        },
+        timer: 4000,
+        backdrop: true,
+      }
+    );
   }
 }

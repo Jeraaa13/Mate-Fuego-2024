@@ -14,9 +14,10 @@ export class NotificationService {
       timer: config?.timeOut || 4000,
       timerProgressBar: true,
       position: 'center',
+      heightAuto: false,
       ...config,
     });
-  } 
+  }
 
   showError(message: string, title: string, config?: any) {
     Swal.fire({
@@ -27,9 +28,10 @@ export class NotificationService {
       timer: config?.timeOut || 4000,
       timerProgressBar: true,
       position: 'center',
+      heightAuto: false,
       ...config,
     });
-  } 
+  }
 
   showInfo(message: string, title: string, config?: any) {
     Swal.fire({
@@ -40,9 +42,10 @@ export class NotificationService {
       timer: config?.timeOut || 4000,
       timerProgressBar: true,
       position: 'center',
+      heightAuto: false,
       ...config,
     });
-  } 
+  }
 
   showWarning(message: string, title: string, config?: any) {
     Swal.fire({
@@ -53,9 +56,10 @@ export class NotificationService {
       timer: config?.timeOut || 4000,
       timerProgressBar: true,
       position: 'center',
+      heightAuto: false,
       ...config,
     });
-  } 
+  }
   async showConfirm(message: string, title: string, config?: any) {
     return Swal.fire({
       title: title,
@@ -66,6 +70,7 @@ export class NotificationService {
       cancelButtonText: 'Cancelar',
       confirmButtonColor: '#3085d6',
       cancelButtonColor: '#d33',
+      heightAuto: false,
       ...config,
     });
   }
@@ -79,6 +84,7 @@ export class NotificationService {
       cancelButtonText: 'Cancelar',
       confirmButtonColor: '#3085d6',
       cancelButtonColor: '#d33',
+      heightAuto: false,
       ...config,
     });
   }

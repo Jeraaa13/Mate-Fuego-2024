@@ -260,3 +260,9 @@ $box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
     padding: 0.75rem;
   }
 }
+
+.high-priority-alert {
+  z-index: 9999;
+  font-size: 1.2em;
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.3);
+}

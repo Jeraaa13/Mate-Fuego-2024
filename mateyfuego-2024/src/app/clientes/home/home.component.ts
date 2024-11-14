@@ -107,6 +107,8 @@ export class HomeComponent implements OnInit {
           await this.pushNotificationService.notificarClienteListaDeEspera(
             nombreCompleto
           );
+
+          this.router.navigate(['lista-espera']);
         }
       } else {
         console.error('No hay un usuario logueado');

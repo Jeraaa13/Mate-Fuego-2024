@@ -83,6 +83,7 @@ export class PaginaComponent implements OnInit {
   async confirmOrder() {
     if (this.mesaId && this.mesaNumero !== null) {
       await this.cartService.saveOrder(this.mesaNumero);
+      this.router.navigate(['cliente-espera-pedido']);
     } else {
       console.error('Mesa no seleccionada');
     }

@@ -121,6 +121,16 @@ export const routes: Routes = [
   },
   {
     path: 'chat',
-    loadComponent: () => import('./productos/pagina/chat/chat.component').then((m) => m.ChatComponent),
+    loadComponent: () =>
+      import('./productos/pagina/chat/chat.component').then(
+        (m) => m.ChatComponent
+      ),
+  },
+  {
+    path: 'cliente-espera-pedido',
+    loadComponent: () =>
+      import('./cliente-espera-pedido/cliente-espera-pedido.component').then(
+        (m) => m.ClienteEsperaPedidoComponent
+      ),
   },
 ];
