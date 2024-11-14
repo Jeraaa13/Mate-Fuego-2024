@@ -6,24 +6,28 @@
 
 <ion-content>
   <ion-list *ngIf="orders.length > 0; else noOrders">
-    <ion-item-group *ngFor="let order of orders">
-      <ion-item *ngFor="let item of order.items" detail="false">
-        <ng-container *ngIf="item.tipo === 'comida' && item.estado === 'preparacion'">
-          <ion-item-divider>
-            <ion-label>Mesa: {{ order.Mesa }} - Pedido ID: {{ order.orderId }}</ion-label>
-          </ion-item-divider>
-          <ion-label>
-            <h2>{{ item.nombre }}</h2>
-            <p>Cantidad: {{ item.cantidad }}</p>
-            <p>Precio Unitario: ${{ item.precioUnitario }}</p>
-            <p>Tiempo de Elaboración: {{ item.tiempoElaboracion }} mins</p>
-          </ion-label>
-          <ion-button color="success" (click)="RealizarOrden(order, item)">
-            Marcar como Realizado
-          </ion-button>
+    <div class="order-item" *ngFor="let order of orders">
+      <div class="order-item-content">
+        <ng-container *ngFor="let item of order.items">
+          <ng-container *ngIf="item.tipo === 'comida' && item.estado === 'preparacion'">
+            <div class="order-item-header">
+              <h3>Mesa {{ order.Mesa }} - Pedido {{ order.orderId }}</h3>
+            </div>
+            <div>
+              <h4>{{ item.nombre }}</h4>
+              <p>Cantidad: {{ item.cantidad }}</p>
+              <p>Precio Unitario: ${{ item.precioUnitario }}</p>
+              <p>Tiempo de Elaboración: {{ item.tiempoElaboracion }} mins</p>
+            </div>
+            <div class="order-item-actions">
+              <ion-button color="success" (click)="RealizarOrden(order, item)">
+                Marcar como Realizado
+              </ion-button>
+            </div>
+          </ng-container>
         </ng-container>
-      </ion-item>
-    </ion-item-group>
+      </div>
+    </div>
   </ion-list>
 
   <ng-template #noOrders>

@@ -111,7 +111,7 @@ export class CocineroHomeComponent implements OnInit {
       await updateDoc(orderRef, { items: updatedItems });
 
       this.pushNotificationService.notificarMozoDeCocina('Mozo');
-
+      
       console.log(
         `Item ${item.productId} de la orden ${order.orderId} marcado como 'realizado'.`
       );

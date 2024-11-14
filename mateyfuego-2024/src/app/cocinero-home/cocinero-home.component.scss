@@ -1,0 +1,37 @@
+.order-item {
+    border-bottom: 1px solid #ddd;
+    padding: 1.2rem 0;
+  }
+
+  .order-item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.7rem;
+  }
+
+  .order-item-header h3 {
+    margin: 0;
+    font-size: 1.2rem;
+  }
+
+  .order-item-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-gap: 1.2rem;
+  }
+
+  .order-item-content p {
+    margin: 0.3rem 0;
+    font-size: 1rem;
+  }
+
+  .order-item-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 1.2rem;
+  }
+
+  .order-item-actions ion-button {
+    font-size: 1rem;
+  }

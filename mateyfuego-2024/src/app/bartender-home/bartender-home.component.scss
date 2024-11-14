@@ -1,82 +1,37 @@
-$primary-color: #e63946;
-$secondary-color: #2a9d8f;
-$accent-color: #e9c46a;
-$dark-color: #1d3557;
-$light-color: #f1faee;
-$gradient-primary: linear-gradient(135deg, $primary-color, darken($primary-color, 15%));
-$gradient-secondary: linear-gradient(135deg, $secondary-color, darken($secondary-color, 15%));
-$border-radius: 12px;
-$box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-
-.ion-header {
- ion-toolbar {
-   background: $gradient-primary;
-
-   ion-title {
-     color: $light-color;
-     font-weight: 600;
-   }
- }
+.order-item {
+  border-bottom: 1px solid #ddd;
+  padding: 1.2rem 0;
 }
 
-.ion-content {
- --background: $light-color;
+.order-item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.7rem;
+}
 
- ion-list {
-   ion-item-group {
-     border-bottom: 1px solid rgba($dark-color, 0.1);
-     
-     ion-item {
-       --background: transparent;
-       --color: $dark-color;
-       
-       ion-item-divider {
-         --background: rgba($accent-color, 0.2);
-         --color: $dark-color;
-         font-weight: 500;
-       }
+.order-item-header h3 {
+  margin: 0;
+  font-size: 1.2rem;
+}
 
-       ion-label {
-         h2 {
-           color: $primary-color;
-           font-weight: 600;
-         }
-         
-         p {
-           color: rgba($dark-color, 0.8);
-           font-size: 0.9rem;
-         }
-       }
+.order-item-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-gap: 1.2rem;
+}
 
-       ion-button {
-         --background: $gradient-secondary;
-         --color: $light-color;
-         --border-radius: $border-radius;
-         --box-shadow: $box-shadow;
+.order-item-content p {
+  margin: 0.3rem 0;
+  font-size: 1rem;
+}
 
-         &:hover {
-           --background: darken($secondary-color, 5%);
-         }
-       }
-     }
-   }
- }
+.order-item-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 1.2rem;
+}
 
- ion-card {
-   --background: $dark-color;
-   --color: $light-color;
-   border-radius: $border-radius;
-   box-shadow: $box-shadow;
-
-   ion-card-header {
-     ion-card-title {
-       color: $accent-color;
-       font-weight: 600;
-     }
-   }
-
-   ion-card-content {
-     color: rgba($light-color, 0.8);
-   }
- }
+.order-item-actions ion-button {
+  font-size: 1rem;
 }

@@ -8,33 +8,29 @@
           </ion-card-header>
           <ion-card-content>
             <ion-list>
-              <ion-item *ngFor="let order of orders">
-                <ion-grid>
-                  <ion-row>
-                    <ion-col size="3">
-                      <strong>Mesa:</strong> {{ order.Mesa }}
-                    </ion-col>
-                    <ion-col size="3">
-                      <strong>Order ID:</strong> {{ order.orderId }}
-                    </ion-col>
-                    <ion-col size="3">
-                      <strong>Estado de Pedido:</strong> {{ order.EstadoDePedido }}
-                    </ion-col>
-                    <ion-col size="3">
-                      <strong>Tiempo de Espera:</strong> {{ order.TiempoEspera }} minutes
-                    </ion-col>
-                  </ion-row>
-                  <ion-row>
-                    <ion-col size="3">
-                      <strong>Precio:</strong> $ {{ order.Precio }}
-                    </ion-col>
-                    <ion-col size="9">
-                      <ion-button *ngIf="order.EstadoDePedido === 'solicitado'" (click)="acceptOrder(order)" fill="solid" color="success">Aceptar</ion-button>
-                      <ion-button *ngIf="order.EstadoDePedido === 'solicitado'" (click)="rejectOrder(order)" fill="solid" color="danger">Rechazar</ion-button>
-                    </ion-col>
-                  </ion-row>
-                </ion-grid>
-              </ion-item>
+              <div class="order-item" *ngFor="let order of orders">
+                <div class="order-item-header">
+                  <h3>Mesa {{ order.Mesa }} - Pedido {{ order.orderId }}</h3>
+                  <p>{{ order.EstadoDePedido }}</p>
+                </div>
+                <div class="order-item-content">
+                  <div>
+                    <p><strong>Tiempo de Espera:</strong> {{ order.TiempoEspera }} minutes</p>
+                    <p><strong>Precio:</strong> ${{ order.Precio }}</p>
+                  </div>
+                  <div *ngFor="let item of order.items">
+                    <h4>{{ item.nombre }}</h4>
+                    <p>Cantidad: {{ item.cantidad }}</p>
+                    <p>Precio Unitario: ${{ item.precioUnitario }}</p>
+                    <p>Tiempo de Elaboración: {{ item.tiempoElaboracion }} minutos</p>
+                    <p *ngIf="order.EstadoDePedido === 'preparacion'">Estado: {{ item.estado }}</p>
+                  </div>
+                </div>
+                <div class="order-item-actions">
+                  <ion-button *ngIf="order.EstadoDePedido === 'solicitado'" (click)="acceptOrder(order)" fill="solid" color="success">Aceptar</ion-button>
+                  <ion-button *ngIf="order.EstadoDePedido === 'solicitado'" (click)="rejectOrder(order)" fill="solid" color="danger">Rechazar</ion-button>
+                </div>
+              </div>
             </ion-list>
           </ion-card-content>
         </ion-card>
