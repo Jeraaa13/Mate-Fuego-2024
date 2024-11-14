@@ -77,16 +77,12 @@ export class CocineroHomeComponent implements OnInit {
     const pedidosRef = collection(this.firestore, 'pedidos');
     const q = query(pedidosRef, where('EstadoDePedido', '==', 'preparacion'));
 
-    // Suscripción a los cambios en tiempo real
     this.unsubscribeOrders = onSnapshot(q, (ordersSnapshot) => {
-      // Limpiar la lista de órdenes para evitar datos previos
       this.orders = [];
 
-      // Iterar sobre los documentos y agregarlos a la lista de órdenes
       ordersSnapshot.forEach((doc) => {
         const orderData = doc.data();
 
-        // Agregar el documento completo con sus items
         this.orders.push({
           orderId: doc.id,
           Mesa: orderData['Mesa'],
@@ -109,7 +105,6 @@ export class CocineroHomeComponent implements OnInit {
     if (orderDoc.exists()) {
       const orderData = orderDoc.data() as Order;
 
-      // Actualizamos solo el item específico a 'realizado'
       const updatedItems = orderData.items.map((currentItem) => {
         if (currentItem.productId === item.productId) {
           return { ...currentItem, estado: 'realizado' };
@@ -117,7 +112,6 @@ export class CocineroHomeComponent implements OnInit {
         return currentItem;
       });
 
-      // Actualizamos el documento con los items modificados
       await updateDoc(orderRef, { items: updatedItems });
 
       this.pushNotificationService.notificarMozoDeCocina('Mozo');

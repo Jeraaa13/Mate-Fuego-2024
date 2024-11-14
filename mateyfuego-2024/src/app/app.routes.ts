@@ -87,14 +87,14 @@ export const routes: Routes = [
   {
     path: 'home-mozo',
     loadComponent: () =>
-      import('.//mozo-home/mozo-home.component').then(
+      import('./mozo-home/mozo-home.component').then(
         (m) => m.MozoHomeComponent
       ),
   },
   {
     path: 'home-cocinero',
     loadComponent: () =>
-      import('.//cocinero-home/cocinero-home.component').then(
+      import('./cocinero-home/cocinero-home.component').then(
         (m) => m.CocineroHomeComponent
       ),
   },

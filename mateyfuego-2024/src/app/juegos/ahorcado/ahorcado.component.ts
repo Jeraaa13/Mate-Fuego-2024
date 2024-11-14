@@ -2,7 +2,15 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { NotificationService } from 'src/app/services/notification.service';
-import { Firestore, doc, updateDoc, collection, query, where, getDocs } from '@angular/fire/firestore';
+import {
+  Firestore,
+  doc,
+  updateDoc,
+  collection,
+  query,
+  where,
+  getDocs,
+} from '@angular/fire/firestore';
 import { AuthService } from 'src/app/services/auth.service';
 
 @Component({
@@ -56,20 +64,19 @@ export class AhorcadoComponent implements OnInit {
 
   adivinarLetra(letra: string) {
     if (this.letrasAdivinadas.has(letra)) return;
-  
+
     this.letrasAdivinadas.add(letra);
-  
+
     if (!this.palabraActual.includes(letra)) {
       this.intentosRestantes--;
       this.actualizarImagen();
-  
+
       if (this.intentosRestantes === 0) {
-        this.notificationService.showError(
-          'Perdiste, regresando a la espera...',
-          'Juego terminado'
-        ).then(() => {
-          this.router.navigate(['/cliente-espera-pedido']);
-        });
+        this.notificationService
+          .showError('Perdiste, regresando a la espera...', 'Juego terminado')
+          .then(() => {
+            this.router.navigate(['/cliente-espera-pedido']);
+          });
       }
     } else if (this.palabraCompleta()) {
       this.aplicarDescuento();
@@ -87,7 +94,9 @@ export class AhorcadoComponent implements OnInit {
   }
 
   actualizarImagen() {
-    this.imagenActual = `assets/games/AHORCADO${6 - this.intentosRestantes}.png`;
+    this.imagenActual = `assets/games/AHORCADO${
+      6 - this.intentosRestantes
+    }.png`;
   }
 
   async getPedido() {
@@ -99,7 +108,7 @@ export class AhorcadoComponent implements OnInit {
       if (!querySnapshot.empty) {
         const pedidoDoc = querySnapshot.docs[0];
         this.pedido = pedidoDoc.data();
-        this.pedido.id = pedidoDoc.id; // Store the document ID for updating
+        this.pedido.id = pedidoDoc.id;
       } else {
         console.log('No se encontraron pedidos para este usuario.');
       }
@@ -114,25 +123,24 @@ export class AhorcadoComponent implements OnInit {
       return;
     }
 
-    // Calculate the discount (10% of the total price)
-    const descuento = this.pedido.Precio * 0.10;
+    const descuento = this.pedido.Precio * 0.1;
     const precioConDescuento = this.pedido.Precio - descuento;
 
     try {
-      // Update the pedido document in Firestore
       const pedidoDocRef = doc(this.firestore, 'pedidos', this.pedido.id);
       await updateDoc(pedidoDocRef, {
         Descuento: descuento,
         PrecioConDescuento: precioConDescuento,
       });
 
-      // Show success message with NotificationService
-      this.notificationService.showSuccess2(
-        'Descuento aplicado correctamente. Regresando a la espera...',
-        '¡Ganaste!'
-      ).then(() => {
-        this.router.navigate(['/cliente-espera-pedido']);
-      });
+      this.notificationService
+        .showSuccess2(
+          'Descuento aplicado correctamente. Regresando a la espera...',
+          '¡Ganaste!'
+        )
+        .then(() => {
+          this.router.navigate(['/cliente-espera-pedido']);
+        });
     } catch (error) {
       console.error('Error al aplicar el descuento en el pedido:', error);
     }

@@ -169,12 +169,10 @@ export class CartService {
       orderData['items'].forEach((item: any) => {
         const productType = item.tipo;
 
-        // Si el tipo de producto no existe aún en el objeto, lo creamos como un array vacío
         if (!ordersByType[productType]) {
           ordersByType[productType] = [];
         }
 
-        // Agregamos el producto al array correspondiente a su tipo
         ordersByType[productType].push({
           orderId: doc.id,
           ...item,

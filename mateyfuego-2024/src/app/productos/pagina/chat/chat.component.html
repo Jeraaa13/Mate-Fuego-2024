@@ -6,8 +6,11 @@
 
   <div class="chat-ventana" *ngIf="chatAbierto">
     <div class="chat-header">
-      <h3>Consulta al mozo</h3>
-      <div class="usuario-actual">Numero de mesa: {{ mesaNumero }}</div>
+      <h3 *ngIf="usuario?.tipoPerfil !== 'Mozo'">Consulta al mozo</h3>
+      <h3 *ngIf="usuario?.tipoPerfil === 'Mozo'">Consultas</h3>
+      <div class="usuario-actual" *ngIf="usuario?.tipoPerfil !== 'Mozo'">
+        Numero de mesa: {{ mesaNumero }}
+      </div>
     </div>
 
     <div class="chat-mensajes">
@@ -21,6 +24,9 @@
             <span class="usuario">{{ mensaje.usuario }}</span>
             <span class="hora">
               {{ mensaje.fecha.toDate() | date : "short" }}
+            </span>
+            <span class="mesa" *ngIf="usuario?.tipoPerfil !== 'Mozo'">
+              {{ mensaje.mesaNumero }}
             </span>
           </div>
           <div class="texto">{{ mensaje.texto }}</div>

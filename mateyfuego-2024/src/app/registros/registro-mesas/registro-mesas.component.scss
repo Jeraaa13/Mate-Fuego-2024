@@ -1,4 +1,3 @@
-// Using the same variables from the login styles
 $primary-color: #e63946;
 $secondary-color: #2a9d8f;
 $accent-color: #e9c46a;
@@ -73,7 +72,6 @@ $box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
     }
   }
 
-  // Specific styles for select dropdown
   select {
     appearance: none;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23f1faee' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
@@ -109,8 +107,6 @@ $box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
     &:active {
       transform: translateY(0);
     }
-
-    // Special styling for scanner and photo buttons
   }
 
   .foto-preview {
@@ -141,7 +137,6 @@ $box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
     }
   }
 
-  // Scanner container
   zxing-scanner {
     width: 100%;
     height: 300px;
@@ -152,7 +147,6 @@ $box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
   }
 }
 
-// Media queries for responsiveness
 @media (max-width: 768px) {
   .registro-container {
     margin: 1rem;

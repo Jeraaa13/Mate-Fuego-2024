@@ -19,6 +19,7 @@ import { ZXingScannerModule } from '@zxing/ngx-scanner';
 import { IonicModule } from '@ionic/angular';
 import { PushNotificationService } from '../services/push-notifications.service';
 import { AuthService } from '../services/auth.service';
+import { ChatComponent } from '../productos/pagina/chat/chat.component';
 
 interface Order {
   orderId: string;
@@ -44,7 +45,7 @@ interface Order {
   templateUrl: './mozo-home.component.html',
   styleUrls: ['./mozo-home.component.scss'],
   standalone: true,
-  imports: [CommonModule, IonicModule, ZXingScannerModule],
+  imports: [CommonModule, IonicModule, ZXingScannerModule, ChatComponent],
 })
 export class MozoHomeComponent implements OnInit {
   orders: Order[] = [];

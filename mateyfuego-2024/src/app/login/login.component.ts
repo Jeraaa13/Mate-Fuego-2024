@@ -69,7 +69,6 @@ export class LoginComponent implements OnInit {
 
     const { email, password } = this.loginForm.value;
     try {
-      // Sign in the user with Firebase
       const userCredential = await signInWithEmailAndPassword(
         this.auth,
         email,
@@ -77,7 +76,6 @@ export class LoginComponent implements OnInit {
       );
       console.log('User logged in: ', userCredential);
 
-      // After login, fetch user profile from Firestore
       await this.checkUserInCollections(userCredential.user.uid);
     } catch (error) {
       console.error('Error during login: ', error);

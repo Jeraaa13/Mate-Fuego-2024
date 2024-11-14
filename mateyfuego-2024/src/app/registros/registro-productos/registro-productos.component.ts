@@ -30,7 +30,7 @@ interface Producto {
   precio: number;
   fotosUrl: string[];
   qrCode?: string;
-  tipo : string;
+  tipo: string;
 }
 
 @Component({
@@ -47,7 +47,7 @@ export class RegistroProductosComponent {
     tiempoElaboracion: 0,
     precio: 0,
     fotosUrl: [],
-    tipo : ""
+    tipo: '',
   };
 
   qrData: string = '';
@@ -122,7 +122,6 @@ export class RegistroProductosComponent {
   }
 
   async guardarProducto() {
-    // Validaciones aquí
     if (!this.nuevoProducto.nombre || this.nuevoProducto.nombre.length < 3) {
       console.error(
         'El nombre es obligatorio y debe tener al menos 3 caracteres.'
@@ -155,9 +154,11 @@ export class RegistroProductosComponent {
     if (this.nuevoProducto.fotosUrl.length < 3) {
       console.error('Debe cargar al menos 3 fotos del producto.');
       return;
-    }if (!this.nuevoProducto.tipo) {
+    }
+    if (!this.nuevoProducto.tipo) {
       console.error('Debe seleccionar un tipo de producto.');
-      return;}
+      return;
+    }
 
     this.generateQRCode();
 
@@ -179,7 +180,7 @@ export class RegistroProductosComponent {
       tiempoElaboracion: 0,
       precio: 0,
       fotosUrl: [],
-      tipo : ""
+      tipo: '',
     };
     this.showQR = false;
     this.qrData = '';

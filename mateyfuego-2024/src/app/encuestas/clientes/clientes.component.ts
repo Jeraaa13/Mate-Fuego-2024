@@ -3,19 +3,24 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 import { AngularFireStorage } from '@angular/fire/compat/storage';
-import { Firestore, addDoc, collection, collectionData } from '@angular/fire/firestore';
+import {
+  Firestore,
+  addDoc,
+  collection,
+  collectionData,
+} from '@angular/fire/firestore';
 import { Chart, registerables } from 'chart.js';
 import { lastValueFrom, Observable } from 'rxjs';
 import { NotificationService } from 'src/app/services/notification.service';
 import { ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 interface EncuestaCliente {
-  satisfaccionGeneral: number;      
-  nombre: string;                   
-  recomendaria: boolean;           
-  serviciosUtilizados: string[];   
-  tipoCliente: string;             
-  comentarios: string;             
-  fotosUrls: string[];             
+  satisfaccionGeneral: number;
+  nombre: string;
+  recomendaria: boolean;
+  serviciosUtilizados: string[];
+  tipoCliente: string;
+  comentarios: string;
+  fotosUrls: string[];
   fechaCreacion: Date;
 }
 
@@ -25,7 +30,7 @@ interface EncuestaCliente {
   styleUrls: ['./clientes.component.scss'],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   standalone: true,
-  imports: [CommonModule, FormsModule, IonicModule]
+  imports: [CommonModule, FormsModule, IonicModule],
 })
 export class ClientesComponent implements OnInit {
   encuesta: EncuestaCliente = {
@@ -36,7 +41,7 @@ export class ClientesComponent implements OnInit {
     tipoCliente: '',
     comentarios: '',
     fotosUrls: [],
-    fechaCreacion: new Date()
+    fechaCreacion: new Date(),
   };
   @ViewChild('satisfactionChart') satisfactionChartRef!: ElementRef;
   @ViewChild('servicesChart') servicesChartRef!: ElementRef;
@@ -51,7 +56,7 @@ export class ClientesComponent implements OnInit {
   constructor(
     private storage: AngularFireStorage,
     private firestore: Firestore,
-    private notificationService : NotificationService
+    private notificationService: NotificationService
   ) {
     Chart.register(...registerables);
   }
@@ -70,18 +75,20 @@ export class ClientesComponent implements OnInit {
       }
 
       this.loading = true;
-      
+
       for (let i = 0; i < files.length; i++) {
         const file = files[i];
-        const filePath = `encuestas_clientes/foto_${new Date().getTime()}_${file.name}`;
+        const filePath = `encuestas_clientes/foto_${new Date().getTime()}_${
+          file.name
+        }`;
         const fileRef = this.storage.ref(filePath);
-        
+
         await fileRef.put(file);
         const photoUrl = await lastValueFrom(fileRef.getDownloadURL());
-        
+
         this.encuesta.fotosUrls.push(photoUrl);
       }
-      
+
       console.log('Fotos subidas exitosamente:', this.encuesta.fotosUrls);
     } catch (error) {
       console.error('Error al subir las fotos:', error);
@@ -96,30 +103,33 @@ export class ClientesComponent implements OnInit {
 
   async submitEncuesta(event: Event) {
     event.preventDefault();
-    
+
     try {
       if (!this.validarEncuesta()) {
         this.notificationService.showError(
           'Por favor complete todos los campos requeridos',
           'Campos Incompletos'
         );
-        return; 
+        return;
       }
-  
+
       this.loading = true;
       const encuestaToSave = {
         ...this.encuesta,
-        fechaCreacion: new Date()
+        fechaCreacion: new Date(),
       };
-  
-      const encuestasCollection = collection(this.firestore, 'encuestas_clientes');
+
+      const encuestasCollection = collection(
+        this.firestore,
+        'encuestas_clientes'
+      );
       await addDoc(encuestasCollection, encuestaToSave);
-      
+
       this.notificationService.showSuccess(
         'La encuesta ha sido enviada con éxito.',
         'Encuesta Enviada'
       );
-      
+
       this.resetForm();
     } catch (error) {
       console.error('Error al enviar la encuesta:', error);
@@ -150,7 +160,7 @@ export class ClientesComponent implements OnInit {
       tipoCliente: '',
       comentarios: '',
       fotosUrls: [],
-      fechaCreacion: new Date()
+      fechaCreacion: new Date(),
     };
     this.servicioRestaurante = false;
     this.servicioBar = false;
@@ -159,19 +169,22 @@ export class ClientesComponent implements OnInit {
 
   onCheckboxChange(event: any, item: string) {
     const isChecked = event.detail.checked;
-    
+
     if (isChecked && !this.encuesta.serviciosUtilizados.includes(item)) {
       this.encuesta.serviciosUtilizados.push(item);
     } else {
-      this.encuesta.serviciosUtilizados = this.encuesta.serviciosUtilizados.filter(
-        servicio => servicio !== item
-      );
+      this.encuesta.serviciosUtilizados =
+        this.encuesta.serviciosUtilizados.filter(
+          (servicio) => servicio !== item
+        );
     }
   }
 
   obtenerEstadisticas() {
     const encuestasRef = collection(this.firestore, 'encuestas_clientes');
-    const encuestas$ = collectionData(encuestasRef, { idField: 'id' }) as Observable<EncuestaCliente[]>;
+    const encuestas$ = collectionData(encuestasRef, {
+      idField: 'id',
+    }) as Observable<EncuestaCliente[]>;
 
     encuestas$.subscribe({
       next: (data) => {
@@ -179,51 +192,56 @@ export class ClientesComponent implements OnInit {
       },
       error: (error) => {
         console.error('Error al obtener estadísticas:', error);
-      }
+      },
     });
   }
 
   private generarGraficos(data: EncuestaCliente[]) {
-    // Check if the canvas elements are available
     if (!this.satisfactionChartRef || !this.servicesChartRef) {
       console.error('Canvas elements are not available');
       return;
     }
 
-    // Gráfico de satisfacción general
-    const satisfaccionPromedio = data.reduce((acc, curr) => acc + curr.satisfaccionGeneral, 0) / data.length;
+    const satisfaccionPromedio =
+      data.reduce((acc, curr) => acc + curr.satisfaccionGeneral, 0) /
+      data.length;
 
     if (this.satisfaccionChart) {
       this.satisfaccionChart.destroy();
     }
 
-    this.satisfaccionChart = new Chart(this.satisfactionChartRef.nativeElement, {
-      type: 'line',
-      data: {
-        labels: ['Promedio de Satisfacción'],
-        datasets: [{
-          label: 'Nivel de Satisfacción',
-          data: [satisfaccionPromedio],
-          backgroundColor: 'rgba(54, 162, 235, 0.5)',
-          borderColor: 'rgb(54, 162, 235)',
-          borderWidth: 1
-        }]
-      },
-      options: {
-        responsive: true,
-        scales: {
-          y: {
-            beginAtZero: true,
-            max: 100
-          }
-        }
+    this.satisfaccionChart = new Chart(
+      this.satisfactionChartRef.nativeElement,
+      {
+        type: 'line',
+        data: {
+          labels: ['Promedio de Satisfacción'],
+          datasets: [
+            {
+              label: 'Nivel de Satisfacción',
+              data: [satisfaccionPromedio],
+              backgroundColor: 'rgba(54, 162, 235, 0.5)',
+              borderColor: 'rgb(54, 162, 235)',
+              borderWidth: 1,
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          scales: {
+            y: {
+              beginAtZero: true,
+              max: 100,
+            },
+          },
+        },
       }
-    });
+    );
 
-    // Gráfico de servicios utilizados
     const servicios = ['Restaurante', 'Bar', 'Delivery'];
-    const serviciosCount = servicios.map(servicio => 
-      data.filter(e => e.serviciosUtilizados.includes(servicio)).length
+    const serviciosCount = servicios.map(
+      (servicio) =>
+        data.filter((e) => e.serviciosUtilizados.includes(servicio)).length
     );
 
     if (this.serviciosChart) {
@@ -234,22 +252,24 @@ export class ClientesComponent implements OnInit {
       type: 'bar',
       data: {
         labels: servicios,
-        datasets: [{
-          label: 'Servicios Utilizados',
-          data: serviciosCount,
-          backgroundColor: 'rgba(153, 102, 255, 0.5)',
-          borderColor: 'rgb(153, 102, 255)',
-          borderWidth: 1
-        }]
+        datasets: [
+          {
+            label: 'Servicios Utilizados',
+            data: serviciosCount,
+            backgroundColor: 'rgba(153, 102, 255, 0.5)',
+            borderColor: 'rgb(153, 102, 255)',
+            borderWidth: 1,
+          },
+        ],
       },
       options: {
         responsive: true,
         scales: {
           y: {
-            beginAtZero: true
-          }
-        }
-      }
+            beginAtZero: true,
+          },
+        },
+      },
     });
   }
 }

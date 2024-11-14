@@ -25,7 +25,6 @@ export class AuthService {
     });
   }
 
-  // auth.service.ts
   async getCurrentUser2(): Promise<User | null> {
     return new Promise<User | null>((resolve) => {
       this.auth.onAuthStateChanged((user) => {

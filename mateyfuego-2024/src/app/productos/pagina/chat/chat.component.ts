@@ -30,6 +30,7 @@ interface Usuario {
   name: string;
   surname?: string;
   email?: string;
+  tipoPerfil: string;
 }
 
 @Component({
@@ -89,6 +90,7 @@ export class ChatComponent implements OnInit {
             name: userData['nombre'] || 'Nombre desconocido',
             surname: userData['apellido'] || 'Apellido desconocido',
             email: userData['email'],
+            tipoPerfil: userData['tipoPerfil'],
           };
           break;
         }
@@ -145,7 +147,9 @@ export class ChatComponent implements OnInit {
         await addDoc(mensajesCollection, mensaje);
         this.nuevoMensaje = '';
 
-        await this.manejarMozosNotificacion(this.usuario.name, mensaje.texto);
+        if (this.usuario.tipoPerfil != 'mozo') {
+          await this.manejarMozosNotificacion(this.usuario.name, mensaje.texto);
+        }
       } catch (error) {
         console.error('Error al enviar el mensaje:', error);
       }

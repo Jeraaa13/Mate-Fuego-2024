@@ -15,20 +15,40 @@
                 </div>
                 <div class="order-item-content">
                   <div>
-                    <p><strong>Tiempo de Espera:</strong> {{ order.TiempoEspera }} minutes</p>
+                    <p>
+                      <strong>Tiempo de Espera:</strong>
+                      {{ order.TiempoEspera }} minutes
+                    </p>
                     <p><strong>Precio:</strong> ${{ order.Precio }}</p>
                   </div>
                   <div *ngFor="let item of order.items">
                     <h4>{{ item.nombre }}</h4>
                     <p>Cantidad: {{ item.cantidad }}</p>
                     <p>Precio Unitario: ${{ item.precioUnitario }}</p>
-                    <p>Tiempo de Elaboración: {{ item.tiempoElaboracion }} minutos</p>
-                    <p *ngIf="order.EstadoDePedido === 'preparacion'">Estado: {{ item.estado }}</p>
+                    <p>
+                      Tiempo de Elaboración:
+                      {{ item.tiempoElaboracion }} minutos
+                    </p>
+                    <p *ngIf="order.EstadoDePedido === 'preparacion'">
+                      Estado: {{ item.estado }}
+                    </p>
                   </div>
                 </div>
                 <div class="order-item-actions">
-                  <ion-button *ngIf="order.EstadoDePedido === 'solicitado'" (click)="acceptOrder(order)" fill="solid" color="success">Aceptar</ion-button>
-                  <ion-button *ngIf="order.EstadoDePedido === 'solicitado'" (click)="rejectOrder(order)" fill="solid" color="danger">Rechazar</ion-button>
+                  <ion-button
+                    *ngIf="order.EstadoDePedido === 'solicitado'"
+                    (click)="acceptOrder(order)"
+                    fill="solid"
+                    color="success"
+                    >Aceptar</ion-button
+                  >
+                  <ion-button
+                    *ngIf="order.EstadoDePedido === 'solicitado'"
+                    (click)="rejectOrder(order)"
+                    fill="solid"
+                    color="danger"
+                    >Rechazar</ion-button
+                  >
                 </div>
               </div>
             </ion-list>
@@ -37,4 +57,7 @@
       </ion-col>
     </ion-row>
   </ion-grid>
+  <div class="chat-flotante">
+    <app-chat> </app-chat>
+  </div>
 </ion-content>
