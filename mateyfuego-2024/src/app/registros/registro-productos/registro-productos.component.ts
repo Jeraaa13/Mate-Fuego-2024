@@ -30,6 +30,7 @@ interface Producto {
   precio: number;
   fotosUrl: string[];
   qrCode?: string;
+  tipo : string;
 }
 
 @Component({
@@ -46,6 +47,7 @@ export class RegistroProductosComponent {
     tiempoElaboracion: 0,
     precio: 0,
     fotosUrl: [],
+    tipo : ""
   };
 
   qrData: string = '';
@@ -153,7 +155,9 @@ export class RegistroProductosComponent {
     if (this.nuevoProducto.fotosUrl.length < 3) {
       console.error('Debe cargar al menos 3 fotos del producto.');
       return;
-    }
+    }if (!this.nuevoProducto.tipo) {
+      console.error('Debe seleccionar un tipo de producto.');
+      return;}
 
     this.generateQRCode();
 
@@ -175,6 +179,7 @@ export class RegistroProductosComponent {
       tiempoElaboracion: 0,
       precio: 0,
       fotosUrl: [],
+      tipo : ""
     };
     this.showQR = false;
     this.qrData = '';

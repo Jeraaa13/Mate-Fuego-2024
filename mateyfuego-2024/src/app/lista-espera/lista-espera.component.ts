@@ -149,8 +149,7 @@ export class ClienteHomeComponent implements OnInit, OnDestroy {
     console.log('Resultado QR => ', resultado);
     console.log(this.datosMesa?.qrCode);
     if (
-      resultado == 'pasedeuna' ||
-      this.datosMesa?.qrcode.includes(resultado)
+      resultado == 'pasedeuna' || this.datosMesa?.qrCode.includes(resultado)
     ) {
       console.log('qr es valido');
       this.router.navigate(['productos/pagina']);

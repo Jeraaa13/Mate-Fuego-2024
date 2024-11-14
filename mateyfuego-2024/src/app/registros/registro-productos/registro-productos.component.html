@@ -74,6 +74,16 @@
     <span *ngIf="precio.errors?.['min']">El precio debe ser mayor a 0.</span>
   </div>
 
+  <label for="tipo">Tipo de Producto</label>
+<select id="tipo" [(ngModel)]="nuevoProducto.tipo" #tipo="ngModel" required>
+  <option value="" disabled selected>Selecciona un tipo</option>
+  <option value="bebida">Bebida</option>
+  <option value="comida">Comida</option>
+</select>
+<div *ngIf="tipo.invalid && tipo.touched" class="error-message">
+  <span>El tipo de producto es obligatorio.</span>
+</div>
+
   <button (click)="takePhoto()">Tomar Foto</button>
   <div *ngIf="nuevoProducto.fotosUrl.length > 0">
     <h3>Fotos Capturadas:</h3>
@@ -90,6 +100,7 @@
     <qrcode [qrdata]="qrData" [width]="256" [errorCorrectionLevel]="'M'">
     </qrcode>
   </div>
+
 
   <button (click)="guardarProducto()">Guardar Producto</button>
 </div>
