@@ -17,8 +17,6 @@ import {
   where,
   getDocs,
 } from 'firebase/firestore';
-import { PushNotificationService } from '../services/push-notifications.service';
-import Swal from 'sweetalert2';
 import { NotificationService } from '../services/notification.service';
 
 @Component({
@@ -37,7 +35,6 @@ export class LoginComponent implements OnInit {
     private auth: Auth,
     private router: Router,
     private route: ActivatedRoute,
-    private pushService: PushNotificationService,
     private notificationService: NotificationService
   ) {
     this.loginForm = this.fb.group({
@@ -82,10 +79,6 @@ export class LoginComponent implements OnInit {
 
       // After login, fetch user profile from Firestore
       await this.checkUserInCollections(userCredential.user.uid);
-      await this.pushService.inicializarNotificaciones(
-        userCredential.user.uid,
-        'dueno'
-      );
     } catch (error) {
       console.error('Error during login: ', error);
       this.notificationService.showError(
@@ -148,17 +141,17 @@ export class LoginComponent implements OnInit {
         this.router.navigate(['/home-maitre']);
         break;
 
-        case 'Mozo':
+      case 'Mozo':
         this.router.navigate(['/home-mozo']);
         break;
 
-        case 'Cocinero':
-          this.router.navigate(['/home-cocinero']);
-          break;
+      case 'Cocinero':
+        this.router.navigate(['/home-cocinero']);
+        break;
 
-          case 'Bartender':
-            this.router.navigate(['/home-bartender']);
-            break;
+      case 'Bartender':
+        this.router.navigate(['/home-bartender']);
+        break;
 
       default:
         this.router.navigate(['/home-empleados']);

@@ -31,6 +31,7 @@ interface DuenoSupervisor {
   fotoUrl: string;
   email: string;
   password: string;
+  token: string;
 }
 
 @Component({
@@ -160,7 +161,12 @@ export class RegistroDuenoSupervisorComponent implements OnInit {
         );
         await setDoc(duenoSupervisorRef, formData);
 
-        await this.pushNotificationService.obtenerYGuardarToken(uid);
+        console.log(this.registroForm.get('token')?.value);
+
+        await this.pushNotificationService.guardarTokenEnFirestore(
+          uid,
+          this.registroForm.get('token')?.value
+        );
 
         console.log('Usuario creado exitosamente con UID:', uid);
         this.registroForm.reset({

@@ -101,8 +101,8 @@ export const routes: Routes = [
   {
     path: 'home-bartender',
     loadComponent: () =>
-      import('./barteneder-home/barteneder-home.component').then(
-        (m) => m.BartenederHomeComponent
+      import('./bartender-home/bartender-home.component').then(
+        (m) => m.BartenderHomeComponent
       ),
   },
   {

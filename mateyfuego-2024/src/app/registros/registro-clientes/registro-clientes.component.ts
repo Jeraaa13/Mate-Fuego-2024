@@ -7,7 +7,7 @@ import {
   getDoc,
   setDoc,
 } from '@angular/fire/firestore';
-import { Auth, createUserWithEmailAndPassword } from '@angular/fire/auth';
+import { Auth, createUserWithEmailAndPassword, user } from '@angular/fire/auth';
 import {
   Storage,
   ref,
@@ -26,6 +26,7 @@ import {
 } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
+import { PushNotificationService } from 'src/app/services/push-notifications.service';
 
 interface Cliente {
   nombre: string;
@@ -59,7 +60,7 @@ export class RegistroClientesComponent {
     tipoPerfil: 'cliente',
     estadoVerificacion: false,
   };
-  isScanning = false; 
+  isScanning = false;
   isScannerVisible = false;
   tipoCliente: string = '';
 
@@ -70,7 +71,8 @@ export class RegistroClientesComponent {
     private storage: Storage,
     private actionSheetCtrl: ActionSheetController,
     private fb: FormBuilder,
-    private router: Router
+    private router: Router,
+    private pushNotificationService: PushNotificationService
   ) {
     this.registroForm = this.fb.group({
       nombre: ['', Validators.required],
@@ -225,11 +227,19 @@ export class RegistroClientesComponent {
           uid: uid,
         });
 
+        this.handleDuenoSupervisorQuery(this.nuevoCliente.nombre);
+
         this.router.navigate(['/login']);
       }
     } catch (error) {
       console.error('Error al registrar usuario:', error);
     }
+  }
+
+  async handleDuenoSupervisorQuery(clientName: string) {
+    await this.pushNotificationService.notificarDuenosYSupervisores(
+      `Se registro el cliente ${clientName}`
+    );
   }
 
   signInAnonymously(userName: string) {
@@ -298,6 +308,7 @@ export class RegistroClientesComponent {
 
     this.fetchClientDataFromQRCode(resultText);
   }
+
   async fetchClientDataFromQRCode(result: string) {
     try {
       const docRef = doc(this.firestore, 'codigosValidos', result);

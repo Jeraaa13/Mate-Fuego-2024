@@ -31,6 +31,7 @@ interface Empleado {
   fotoUrl: string;
   correo: string;
   contrasena: string;
+  token: string;
 }
 
 @Component({
@@ -73,6 +74,7 @@ export class AltaEmpleadosComponent {
     fotoUrl: '',
     correo: '',
     contrasena: '',
+    token: '',
   };
 
   allowedFormats = [BarcodeFormat.QR_CODE];
@@ -184,19 +186,16 @@ export class AltaEmpleadosComponent {
         const uid = userCredential.user.uid;
         const datosEmpleado = doc(this.firestore, 'empleados', uid);
 
-        console.log('Guardando empleado con datos:', {
-          ...this.empleadoForm.value,
-          fotoUrl: this.nuevoEmpleado.fotoUrl,
-          uid: userCredential.user.uid,
-        });
-
         await setDoc(datosEmpleado, {
           ...this.empleadoForm.value,
           fotoUrl: this.nuevoEmpleado.fotoUrl,
           uid: userCredential.user.uid,
         });
 
-        await this.pushNotificationService.obtenerYGuardarToken(uid);
+        await this.pushNotificationService.guardarTokenEnFirestore(
+          uid,
+          this.nuevoEmpleado.token
+        );
 
         console.log('Datos guardados en Firestore:', this.nuevoEmpleado);
         this.resetForm();
@@ -217,6 +216,7 @@ export class AltaEmpleadosComponent {
       fotoUrl: '',
       correo: '',
       contrasena: '',
+      token: '',
     };
   }
 

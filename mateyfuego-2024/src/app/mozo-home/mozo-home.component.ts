@@ -13,10 +13,11 @@ import {
   onSnapshot,
   Unsubscribe,
   updateDoc,
-  QuerySnapshot
+  QuerySnapshot,
 } from '@angular/fire/firestore';
 import { ZXingScannerModule } from '@zxing/ngx-scanner';
 import { IonicModule } from '@ionic/angular';
+import { PushNotificationService } from '../services/push-notifications.service';
 
 interface Order {
   orderId: string;
@@ -41,24 +42,24 @@ interface Order {
   templateUrl: './mozo-home.component.html',
   styleUrls: ['./mozo-home.component.scss'],
   standalone: true,
-  imports :[CommonModule,IonicModule, ZXingScannerModule,]
+  imports: [CommonModule, IonicModule, ZXingScannerModule],
 })
 export class MozoHomeComponent implements OnInit {
   orders: Order[] = [];
 
-  constructor(private firestore: Firestore) {}
+  constructor(
+    private firestore: Firestore,
+    private pushNotificationService: PushNotificationService
+  ) {}
 
   async ngOnInit() {
     await this.loadOrders();
     console.log(this.orders);
   }
 
- 
-  
   private loadOrders() {
     const ordersRef = collection(this.firestore, 'pedidos');
 
-    // Suscribirse a los cambios en la colección 'pedidos'
     onSnapshot(ordersRef, (ordersSnapshot: QuerySnapshot) => {
       this.orders = ordersSnapshot.docs.map((doc) => {
         const data = doc.data() as Order;
@@ -69,18 +70,27 @@ export class MozoHomeComponent implements OnInit {
           Precio: data.Precio,
           Mesa: data.Mesa,
           items: data.items,
-          uidUsuario: data.uidUsuario
+          uidUsuario: data.uidUsuario,
         };
       });
-      console.log(this.orders); 
+      console.log(this.orders);
     });
   }
-  
 
   async acceptOrder(order: Order) {
     const orderRef = doc(this.firestore, 'pedidos', order.orderId);
     await updateDoc(orderRef, { EstadoDePedido: 'preparacion' });
     order.EstadoDePedido = 'preparacion';
+
+    this.pushNotificationService.notificarSectores(
+      order.uidUsuario,
+      'Cocinero'
+    );
+
+    this.pushNotificationService.notificarSectores(
+      order.uidUsuario,
+      'Bartender'
+    );
   }
 
   async rejectOrder(order: Order) {
@@ -89,4 +99,3 @@ export class MozoHomeComponent implements OnInit {
     order.EstadoDePedido = 'rechazado';
   }
 }
-

@@ -6,6 +6,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 import { PushNotificationService } from '../services/push-notifications.service';
 import { NotificationService } from '../services/notification.service';
+import { AuthService } from '../services/auth.service';
 
 interface Mesas {
   cantidadComensales: number;
@@ -38,14 +39,23 @@ export class MaitreHomeComponent implements OnInit {
   mesasDisponibles: Mesas[] = [];
   mostrarMesas: boolean = false;
   usuarioSeleccionado: UsuarioListado | null = null;
+  userCredential: any;
 
   constructor(
     private firestore: AngularFirestore,
     private pushService: PushNotificationService,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private authService: AuthService
   ) {}
 
   ngOnInit() {
+    this.authService.getCurrentUser().then((user) => {
+      if (user) {
+        this.userCredential = user;
+      } else {
+        console.error('Usuario no autenticado');
+      }
+    });
     this.cargarListaEspera();
     this.CargarMesas();
   }
@@ -57,7 +67,6 @@ export class MaitreHomeComponent implements OnInit {
       .subscribe((data) => {
         this.listaDeEspera = data.map((e) => {
           const clienteData = e.payload.doc.data() as UsuarioListado;
-          this.pushService.inicializarNotificaciones(clienteData.uid, 'Maitre');
           return { ...clienteData, id: e.payload.doc.id };
         });
       });
@@ -93,7 +102,7 @@ export class MaitreHomeComponent implements OnInit {
         await this.firestore.collection('mesas').doc(mesa.id).update({
           disponible: false,
         });
-  
+
         await this.firestore.collection('lista-espera').doc(usuario.id).update({
           mesaAsignada: true,
           mesaSeleccionada: mesa.id,

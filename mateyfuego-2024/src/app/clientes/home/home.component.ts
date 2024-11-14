@@ -104,9 +104,7 @@ export class HomeComponent implements OnInit {
 
           console.log('Detalles del cliente:', clienteData);
 
-          await this.pushNotificationService.notificarClienteListaDeEspera(
-            nombreCompleto
-          );
+          await this.manejarMaitreNotificacion(clienteData['nombre']);
 
           this.router.navigate(['lista-espera']);
         }
@@ -118,6 +116,10 @@ export class HomeComponent implements OnInit {
     }
 
     this.toggleScanner();
+  }
+
+  async manejarMaitreNotificacion(clientName: string) {
+    await this.pushNotificationService.notificarMaitres(clientName, 'Maitre');
   }
 
   async navegarhome() {

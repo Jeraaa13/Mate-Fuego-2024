@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import {   
+import {
   Firestore,
   doc,
   getDoc,
@@ -10,9 +10,10 @@ import {
   getDocs,
   onSnapshot,
   Unsubscribe,
-  updateDoc } from '@angular/fire/firestore';
+  updateDoc,
+} from '@angular/fire/firestore';
 import { IonicModule } from '@ionic/angular';
-
+import { PushNotificationService } from '../services/push-notifications.service';
 
 interface Order {
   orderId: string;
@@ -43,18 +44,20 @@ interface Bebida {
 }
 
 @Component({
-  selector: 'app-barteneder-home',
-  templateUrl: './barteneder-home.component.html',
-  styleUrls: ['./barteneder-home.component.scss'],
+  selector: 'app-bartender-home',
+  templateUrl: './bartender-home.component.html',
+  styleUrls: ['./bartender-home.component.scss'],
   standalone: true,
-  imports : [CommonModule,IonicModule],
+  imports: [CommonModule, IonicModule],
 })
-export class BartenederHomeComponent  implements OnInit {
-
+export class BartenderHomeComponent implements OnInit {
   orders: Order[] = [];
   private unsubscribeOrders: Unsubscribe | null = null;
 
-  constructor(private firestore: Firestore) { }
+  constructor(
+    private firestore: Firestore,
+    private pushNotificationService: PushNotificationService
+  ) {}
 
   ngOnInit() {
     this.loadOrders();
@@ -63,16 +66,16 @@ export class BartenederHomeComponent  implements OnInit {
   private loadOrders() {
     const pedidosRef = collection(this.firestore, 'pedidos');
     const q = query(pedidosRef, where('EstadoDePedido', '==', 'preparacion'));
-  
+
     // Suscripción a los cambios en tiempo real
     this.unsubscribeOrders = onSnapshot(q, (ordersSnapshot) => {
       // Limpiar la lista de órdenes para evitar datos previos
       this.orders = [];
-  
+
       // Iterar sobre los documentos y agregarlos a la lista de órdenes
       ordersSnapshot.forEach((doc) => {
         const orderData = doc.data();
-  
+
         // Agregar el documento completo con sus items
         this.orders.push({
           orderId: doc.id,
@@ -84,21 +87,18 @@ export class BartenederHomeComponent  implements OnInit {
           items: orderData['items'],
         });
       });
-  
-      console.log("Pedidos en preparación actualizados:", this.orders);
+
+      console.log('Pedidos en preparación actualizados:', this.orders);
     });
   }
-  
-  
-  
 
   async RealizarOrden(order: Order, item: Bebida) {
     const orderRef = doc(this.firestore, 'pedidos', order.orderId);
     const orderDoc = await getDoc(orderRef);
-  
+
     if (orderDoc.exists()) {
       const orderData = orderDoc.data() as Order;
-  
+
       // Actualizamos solo el item específico a 'realizado'
       const updatedItems = orderData.items.map((currentItem) => {
         if (currentItem.productId === item.productId) {
@@ -106,16 +106,17 @@ export class BartenederHomeComponent  implements OnInit {
         }
         return currentItem;
       });
-  
+
       // Actualizamos el documento con los items modificados
       await updateDoc(orderRef, { items: updatedItems });
-  
-      console.log(`Item ${item.productId} de la orden ${order.orderId} marcado como 'realizado'.`);
+
+      this.pushNotificationService.notificarMozoDeBar('Mozo');
+
+      console.log(
+        `Item ${item.productId} de la orden ${order.orderId} marcado como 'realizado'.`
+      );
     } else {
       console.error(`No se encontró el pedido con ID: ${order.orderId}`);
     }
   }
-  
-
-  
 }

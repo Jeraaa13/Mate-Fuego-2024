@@ -15,6 +15,7 @@ import {
   getDocs,
   where,
 } from '@angular/fire/firestore';
+import { PushNotificationService } from 'src/app/services/push-notifications.service';
 
 interface Mensaje {
   texto: string;
@@ -46,7 +47,11 @@ export class ChatComponent implements OnInit {
   loading: boolean = true;
   mesaNumero: number | null = 0;
 
-  constructor(public authService: AuthService, private firestore: Firestore) {}
+  constructor(
+    public authService: AuthService,
+    private firestore: Firestore,
+    private pushNotificationService: PushNotificationService
+  ) {}
 
   async ngOnInit() {
     try {
@@ -139,6 +144,8 @@ export class ChatComponent implements OnInit {
         const mensajesCollection = collection(this.firestore, 'mensajes');
         await addDoc(mensajesCollection, mensaje);
         this.nuevoMensaje = '';
+
+        this.pushNotificationService.notificarMozos(this.usuario.name, 'Mozos');
       } catch (error) {
         console.error('Error al enviar el mensaje:', error);
       }

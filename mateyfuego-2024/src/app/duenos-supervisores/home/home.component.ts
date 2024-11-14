@@ -28,29 +28,12 @@ export class HomeComponent implements OnInit {
   constructor(
     private firestore: AngularFirestore,
     private mailService: MailService,
-    private pushService: PushNotificationService,
     private authService: AuthService,
-    private NotificationService : NotificationService
+    private NotificationService: NotificationService
   ) {}
 
   ngOnInit(): void {
-    this.authService
-      .getCurrentUser()
-      .then((user) => {
-        if (user) {
-          this.userCredential = user;
-          this.pushService.inicializarNotificaciones(
-            this.userCredential.uid,
-            'dueno'
-          );
-          this.cargarClientesPendientes();
-        } else {
-          console.error('Usuario no autenticado');
-        }
-      })
-      .catch((error) => {
-        console.error('Error al obtener usuario: ', error);
-      });
+    this.cargarClientesPendientes();
   }
 
   cargarClientesPendientes(): void {
@@ -78,7 +61,7 @@ export class HomeComponent implements OnInit {
       .then((docSnapshot) => {
         if (docSnapshot?.exists) {
           const cliente = docSnapshot?.data() as Cliente;
-  
+
           this.firestore
             .collection('clientes')
             .doc(clienteId)
@@ -123,9 +106,9 @@ export class HomeComponent implements OnInit {
       .then((docSnapshot) => {
         if (docSnapshot?.exists) {
           const cliente = docSnapshot?.data() as Cliente;
-  
+
           this.mailService.enviarConfirmacionDeshabilitado(cliente);
-  
+
           this.firestore
             .collection('clientes')
             .doc(clienteId)
