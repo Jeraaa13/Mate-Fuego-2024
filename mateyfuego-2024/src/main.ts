@@ -1,5 +1,4 @@
 import { bootstrapApplication } from '@angular/platform-browser';
-import { ApplicationConfig, ErrorHandler } from '@angular/core';
 import {
   RouteReuseStrategy,
   provideRouter,

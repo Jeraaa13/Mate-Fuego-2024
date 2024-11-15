@@ -3,12 +3,21 @@ import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 import { AuthService } from '../services/auth.service';
-import { Firestore, collection, query, onSnapshot, updateDoc, where, doc, getDocs } from '@angular/fire/firestore';
+import {
+  Firestore,
+  collection,
+  query,
+  onSnapshot,
+  updateDoc,
+  where,
+  doc,
+  getDocs,
+} from '@angular/fire/firestore';
 import { QrService } from '../services/qr.service';
 import { ZXingScannerModule } from '@zxing/ngx-scanner';
 import { Router } from '@angular/router';
 import { ErrorHandlerService } from '../services/error-handler.service';
-import { NotificationService } from '../services/notification.service'; // Importa el servicio de notificaciones
+import { NotificationService } from '../services/notification.service';
 
 @Component({
   selector: 'app-cliente-espera-pedido',
@@ -22,6 +31,7 @@ export class ClienteEsperaPedidoComponent implements OnInit {
   usuario: any;
   mesa: any;
   isScannerVisible = false;
+  escaneo = false;
 
   constructor(
     private authService: AuthService,
@@ -29,14 +39,19 @@ export class ClienteEsperaPedidoComponent implements OnInit {
     private qrService: QrService,
     private router: Router,
     private errorHandler: ErrorHandlerService,
-    private notificationService: NotificationService // Inyecta NotificationService
+    private notificationService: NotificationService
   ) {}
 
   async ngOnInit() {
     this.usuario = await this.authService.getCurrentUser2();
+    console.log('USER 2 => ', this.usuario);
     if (this.usuario && this.usuario.uid) {
       console.log('Usuario autenticado exitosamente');
-      this.getPedido();
+      await this.getPedido();
+      console.log('PEDIDO => ', this.pedido);
+      await this.getQrCode(this.pedido.Mesa);
+      console.log('MESA => ', this.mesa);
+      console.log('MESA QR => ', this.mesa?.qrCode);
     }
   }
 
@@ -44,32 +59,30 @@ export class ClienteEsperaPedidoComponent implements OnInit {
     this.router.navigate([path]);
   }
 
-  getPedido() {
+  async getPedido() {
     const collectionName = 'pedidos';
     const pedidosRef = collection(this.firestore, collectionName);
     const q = query(pedidosRef, where('uidUsuario', '==', this.usuario.uid));
 
-    onSnapshot(
-      q,
-      (querySnapshot) => {
-        if (!querySnapshot.empty) {
-          const pedidoDoc = querySnapshot.docs[0];
-          this.pedido = pedidoDoc.data();
-          this.pedido.id = pedidoDoc.id;
+    try {
+      const querySnapshot = await getDocs(q);
 
-          console.log(this.pedido.EstadoDePedido);
-          if (this.pedido.EstadoDePedido == 'entregado') {
-            this.confirmarRecepcion(); // Llama a la confirmación de recepción
-          }
-        } else {
-          console.log('No se encontraron pedidos para este usuario.');
+      if (!querySnapshot.empty) {
+        const pedidoDoc = querySnapshot.docs[0];
+        this.pedido = pedidoDoc.data();
+        this.pedido.id = pedidoDoc.id;
+
+        console.log(this.pedido.EstadoDePedido);
+        if (this.pedido.EstadoDePedido === 'entregado') {
+          this.confirmarRecepcion();
         }
-      },
-      (error) => {
-        console.error('Error al obtener el pedido:', error);
-        this.errorHandler.vibrate();
+      } else {
+        console.log('No se encontraron pedidos para este usuario.');
       }
-    );
+    } catch (error) {
+      console.error('Error al obtener el pedido:', error);
+      this.errorHandler.vibrate();
+    }
   }
 
   async confirmarRecepcion() {
@@ -91,8 +104,10 @@ export class ClienteEsperaPedidoComponent implements OnInit {
   }
 
   onScanSuccess(resultado: string) {
+    console.log('Resultado QR => ', resultado);
     if (resultado.includes(this.mesa.qrCode)) {
       console.log('QR SUCCESS');
+      this.escaneo = true;
     }
   }
 
@@ -101,6 +116,7 @@ export class ClienteEsperaPedidoComponent implements OnInit {
       const collectionName = 'mesas';
       const mesasRef = collection(this.firestore, collectionName);
       const q = query(mesasRef, where('numero', '==', mesaNumero));
+
       const querySnapshot = await getDocs(q);
 
       if (!querySnapshot.empty) {
