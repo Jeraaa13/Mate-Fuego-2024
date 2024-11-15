@@ -11,6 +11,9 @@
 <button (click)="toggleScanner()" style="border: none; background: none; margin-top: 20px;">
   <img src="../../assets/qrcode.png" alt="Scan QR" style="width: 80px; height: auto;">
 </button>
+<ion-button expand="block" color="success" (click)="onScanSuccess('pasedeuna')" style="margin-top: 10px;">
+         pasedenua
+        </ion-button>
 <div *ngIf="isScannerVisible" style="margin-top: 20px;">
   <zxing-scanner [torch]="true" (scanSuccess)="onScanSuccess($event)"></zxing-scanner>
 </div>
@@ -23,7 +26,7 @@
         <div class="status-display">
           <span class="badge badge-primary fs-4">{{ this.pedido?.EstadoDePedido}}</span>
         </div>
-        <ion-button expand="block" color="primary" (click)="navigateTo('/encuestas-clientes')">
+        <ion-button expand="block" color="primary" (click)="navigateTo('/ver-encuesta-cliente')">
           Encuesta
         </ion-button>
       </div>

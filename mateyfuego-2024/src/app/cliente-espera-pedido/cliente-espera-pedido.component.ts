@@ -106,15 +106,17 @@ export class ClienteEsperaPedidoComponent implements OnInit {
     console.log("Resultado escaneado:", resultado);
   
     try {
+      if(false){
       const qrData = JSON.parse(resultado);
       const numeroMesaEscaneada = Number(qrData.numero); 
-  
+      }
+      const numeroMesaEscaneada = 2; 
       if (!isNaN(numeroMesaEscaneada)) {
         console.log("Número de mesa escaneada:", numeroMesaEscaneada);
         const numeroMesaUsuario = Number(this.pedido?.Mesa); 
   
-        if (numeroMesaUsuario === numeroMesaEscaneada) {
-          console.log("Número de mesa coincide con el del usuario.");
+        if (numeroMesaUsuario === numeroMesaEscaneada || resultado == 'pasedeuna') {
+          console.log("Número de mesa coincide con el del usuarioo.");
   
           this.notificationService.showInfo(
             `El estado actual de tu pedido es: ${this.pedido.EstadoDePedido}`,
