@@ -49,6 +49,13 @@
                     color="danger"
                     >Rechazar</ion-button
                   >
+                  <ion-button
+                  *ngIf="canDeliverOrder(order)"
+                  (click)="deliverOrder(order)"
+                  fill="solid"
+                  color="primary"
+                  >Entregar Orden</ion-button
+                >
                 </div>
               </div>
             </ion-list>

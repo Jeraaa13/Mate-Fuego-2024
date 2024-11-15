@@ -125,4 +125,21 @@ export class MozoHomeComponent implements OnInit {
     await updateDoc(orderRef, { EstadoDePedido: 'rechazado' });
     order.EstadoDePedido = 'rechazado';
   }
+  canDeliverOrder(order: Order): boolean {
+    return order.items.every(item => item.estado === 'realizado');
+  }
+
+  async deliverOrder(order: Order) {
+    const orderRef = doc(this.firestore, 'pedidos', order.orderId);
+    await updateDoc(orderRef, { EstadoDePedido: 'entregado' });
+    order.EstadoDePedido = 'entregado';
+  
+    // Notificar al cliente, o cualquier otra lógica adicional
+    if (order.nombreCliente) {
+      this.pushNotificationService.notificarSectores(
+        `La orden de ${order.nombreCliente} ha sido entregada.`,
+        'Cliente'
+      );
+    }
+  }  
 }
