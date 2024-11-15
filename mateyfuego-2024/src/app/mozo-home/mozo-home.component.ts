@@ -126,7 +126,7 @@ export class MozoHomeComponent implements OnInit {
     order.EstadoDePedido = 'rechazado';
   }
   canDeliverOrder(order: Order): boolean {
-    return order.items.every(item => item.estado === 'realizado');
+    return order.EstadoDePedido == "preparacion" && order.items.every(item => item.estado === 'realizado');
   }
 
   async deliverOrder(order: Order) {

@@ -11,11 +11,9 @@
   <div class="container mt-3">
     <div class="row align-items-center justify-content-center g-5">
       <div class="col-lg-12 text-center bg">
-        <!--  <img src="../../assets/restaurant-icon.png" alt="Restaurant" style="width: 100px; height: auto; margin-bottom: 15px;">-->
-        
         <p class="fs-4">Estado de su pedido:</p>
         <div class="status-display">
-          <span class="badge badge-primary fs-4">{{ pedido?.EstadoDePedido || 'pendiente' }}</span>
+          <span class="badge badge-primary fs-4">{{ this.pedido?.EstadoDePedido}}</span>
         </div>
 
         <button (click)="toggleScanner()" style="border: none; background: none; margin-top: 20px;">
@@ -40,4 +38,5 @@
       </div>
     </div>
   </div>
+
 </ion-content>
