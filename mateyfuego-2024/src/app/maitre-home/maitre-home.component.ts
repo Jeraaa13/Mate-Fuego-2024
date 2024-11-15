@@ -108,6 +108,7 @@ export class MaitreHomeComponent implements OnInit {
         await this.firestore.collection('lista-espera').doc(usuario.id).update({
           mesaAsignada: true,
           mesaSeleccionada: mesa.id,
+          usuarioUid: usuario.id,
         });
         this.mostrarMesas = false;
         this.usuarioSeleccionado = null;

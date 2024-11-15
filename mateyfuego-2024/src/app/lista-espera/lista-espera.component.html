@@ -41,7 +41,8 @@
       </ion-card>
     </div>
     <div *ngIf="!currentUserDetails && !datosListado" class="loading">
-      <ion-spinner name="crescent"></ion-spinner>
+      <app-loading-spinner [message]="'Cargando datos...'" [overlay]="true">
+      </app-loading-spinner>
     </div>
   </div>
 </ion-content>

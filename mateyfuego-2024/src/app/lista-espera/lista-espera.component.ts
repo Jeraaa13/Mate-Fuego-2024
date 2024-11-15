@@ -1,5 +1,10 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  OnDestroy,
+  CUSTOM_ELEMENTS_SCHEMA,
+} from '@angular/core';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { ZXingScannerModule } from '@zxing/ngx-scanner';
 import { MailService } from '../services/mail.service';
@@ -17,13 +22,20 @@ import {
 } from '@angular/fire/firestore';
 import { Router, ActivatedRoute } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
+import { LoadingSpinnerComponent } from '../loading-spinner/loading-spinner.component';
 
 @Component({
   selector: 'app-lista-espera',
   templateUrl: './lista-espera.component.html',
   styleUrls: ['./lista-espera.component.scss'],
   standalone: true,
-  imports: [IonicModule, ZXingScannerModule, CommonModule],
+  imports: [
+    IonicModule,
+    ZXingScannerModule,
+    CommonModule,
+    LoadingSpinnerComponent,
+  ],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class ClienteHomeComponent implements OnInit, OnDestroy {
   currentUser: any | null = null;
@@ -149,7 +161,8 @@ export class ClienteHomeComponent implements OnInit, OnDestroy {
     console.log('Resultado QR => ', resultado);
     console.log(this.datosMesa?.qrCode);
     if (
-      resultado == 'pasedeuna' || this.datosMesa?.qrCode.includes(resultado)
+      resultado == 'pasedeuna' ||
+      this.datosMesa?.qrCode.includes(resultado)
     ) {
       console.log('qr es valido');
       this.router.navigate(['productos/pagina']);

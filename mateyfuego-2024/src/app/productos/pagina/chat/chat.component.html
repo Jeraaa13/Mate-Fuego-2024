@@ -8,9 +8,6 @@
     <div class="chat-header">
       <h3 *ngIf="usuario?.tipoPerfil !== 'Mozo'">Consulta al mozo</h3>
       <h3 *ngIf="usuario?.tipoPerfil === 'Mozo'">Consultas</h3>
-      <div class="usuario-actual" *ngIf="usuario?.tipoPerfil !== 'Mozo'">
-        Numero de mesa: {{ mesaNumero }}
-      </div>
     </div>
 
     <div class="chat-mensajes">
@@ -23,10 +20,10 @@
           <div class="mensaje-info">
             <span class="usuario">{{ mensaje.usuario }}</span>
             <span class="hora">
-              {{ mensaje.fecha.toDate() | date : "short" }}
+              {{ mensaje.fecha.toDate() | date : "short" }} |
             </span>
-            <span class="mesa" *ngIf="usuario?.tipoPerfil !== 'Mozo'">
-              {{ mensaje.mesaNumero }}
+            <span class="hora" *ngIf="usuario?.tipoPerfil !== 'Mozo'">
+              | Mesa: {{ mensaje.mesaNumero }}
             </span>
           </div>
           <div class="texto">{{ mensaje.texto }}</div>
@@ -44,4 +41,11 @@
       <button (click)="enviarMensaje()">↑</button>
     </div>
   </div>
+
+  <app-loading-spinner
+    *ngIf="loading"
+    [message]="'Cargando datos...'"
+    [overlay]="true"
+  >
+  </app-loading-spinner>
 </div>

@@ -1,4 +1,9 @@
-import { Component, Input, OnInit } from '@angular/core';
+import {
+  Component,
+  CUSTOM_ELEMENTS_SCHEMA,
+  Input,
+  OnInit,
+} from '@angular/core';
 import { AuthService } from 'src/app/services/auth.service';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -17,6 +22,7 @@ import {
 } from '@angular/fire/firestore';
 import { PushNotificationService } from 'src/app/services/push-notifications.service';
 import { ErrorHandlerService } from 'src/app/services/error-handler.service';
+import { LoadingSpinnerComponent } from '../../../loading-spinner/loading-spinner.component';
 
 interface Mensaje {
   texto: string;
@@ -37,9 +43,10 @@ interface Usuario {
 @Component({
   selector: 'app-chat',
   standalone: true,
-  imports: [FormsModule, CommonModule],
+  imports: [FormsModule, CommonModule, LoadingSpinnerComponent],
   templateUrl: './chat.component.html',
   styleUrls: ['./chat.component.scss'],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class ChatComponent implements OnInit {
   mensajes: Mensaje[] = [];
@@ -73,7 +80,6 @@ export class ChatComponent implements OnInit {
     } catch (error) {
       console.error('Error en la inicialización:', error);
       this.loading = false;
-      this.errorHandler.vibrate();
     }
   }
 
@@ -106,28 +112,26 @@ export class ChatComponent implements OnInit {
       console.error('Error al obtener datos del usuario:', error);
     } finally {
       this.loading = false;
-      this.errorHandler.vibrate();
     }
   }
 
   async getMesaNumero(uid: string): Promise<number | null> {
     try {
-      const pedidosRef = collection(this.firestore, 'pedidos');
-      const q = query(pedidosRef, where('uidUsuario', '==', uid));
+      const mesasRef = collection(this.firestore, 'mesas');
+      const q = query(mesasRef, where('usuarioUid', '==', uid));
 
       const querySnapshot = await getDocs(q);
 
       if (!querySnapshot.empty) {
-        const pedidoDoc = querySnapshot.docs[0];
-        const pedidoData = pedidoDoc.data();
-        return pedidoData['Mesa'] || null;
+        const mesaDoc = querySnapshot.docs[0];
+        const mesaData = mesaDoc.data();
+        return mesaData['numero'] || null;
       } else {
         console.log('No se encontraron pedidos para este usuario.');
         return null;
       }
     } catch (error) {
       console.error('Error al obtener el número de mesa:', error);
-      this.errorHandler.vibrate();
 
       return null;
     }
@@ -148,6 +152,8 @@ export class ChatComponent implements OnInit {
         mesaNumero: this.mesaNumero,
       };
 
+      console.log(mensaje.mesaNumero);
+
       try {
         const mensajesCollection = collection(this.firestore, 'mensajes');
         await addDoc(mensajesCollection, mensaje);
@@ -158,7 +164,6 @@ export class ChatComponent implements OnInit {
         }
       } catch (error) {
         console.error('Error al enviar el mensaje:', error);
-        this.errorHandler.vibrate();
       }
     }
   }

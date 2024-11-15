@@ -1,148 +1,174 @@
 <ion-content class="ion-padding">
   <ion-content class="ion-padding">
-    <ion-segment 
-    (ionChange)="seleccionarTipoUsuario($event.detail.value || 'empleado')" 
-    [value]="tipoUsuarioSeleccionado">
-  <ion-segment-button value="empleado">
-    <ion-label>Empleados</ion-label>
-  </ion-segment-button>
-  <ion-segment-button value="cliente">
-    <ion-label>Clientes</ion-label>
-  </ion-segment-button>
-</ion-segment>
+    <ion-segment
+      (ionChange)="seleccionarTipoUsuario($event.detail.value || 'empleado')"
+      [value]="tipoUsuarioSeleccionado"
+    >
+      <ion-segment-button value="empleado">
+        <ion-label>Empleados</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="cliente">
+        <ion-label>Clientes</ion-label>
+      </ion-segment-button>
+    </ion-segment>
 
-  <ion-list *ngIf="tipoUsuarioSeleccionado === 'empleado'">
-    <ion-item *ngFor="let empleado of empleados$ | async" 
-              (click)="seleccionarUsuario(empleado)"
-              [class.selected]="usuarioSeleccionado?.id === empleado.id">
-      <ion-label>{{ empleado.nombre }}</ion-label>
-    </ion-item>
-  </ion-list>
+    <ion-list *ngIf="tipoUsuarioSeleccionado === 'empleado'">
+      <ion-item
+        *ngFor="let empleado of empleados$ | async"
+        (click)="seleccionarUsuario(empleado)"
+        [class.selected]="usuarioSeleccionado?.id === empleado.id"
+      >
+        <ion-label>{{ empleado.nombre }}</ion-label>
+      </ion-item>
+    </ion-list>
 
-  <ion-list *ngIf="tipoUsuarioSeleccionado === 'cliente'">
-    <ion-item *ngFor="let cliente of clientes$ | async" 
-              (click)="seleccionarUsuario(cliente)"
-              [class.selected]="usuarioSeleccionado?.id === cliente.id">
-      <ion-label>{{ cliente.nombre }}</ion-label>
-    </ion-item>
-  </ion-list>
+    <ion-list *ngIf="tipoUsuarioSeleccionado === 'cliente'">
+      <ion-item
+        *ngFor="let cliente of clientes$ | async"
+        (click)="seleccionarUsuario(cliente)"
+        [class.selected]="usuarioSeleccionado?.id === cliente.id"
+      >
+        <ion-label>{{ cliente.nombre }}</ion-label>
+      </ion-item>
+    </ion-list>
 
-  <form *ngIf="usuarioSeleccionado" (submit)="submitEvaluacion($event)">
-    <ion-card>
-      <ion-card-header>
-        <ion-card-title>Evaluación para {{ usuarioSeleccionado.nombre }}</ion-card-title>
-      </ion-card-header>
+    <form *ngIf="usuarioSeleccionado" (submit)="submitEvaluacion($event)">
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title
+            >Evaluación para {{ usuarioSeleccionado.nombre }}</ion-card-title
+          >
+        </ion-card-header>
 
-      <ion-card-content>
-        <ion-item>
-          <ion-label position="stacked">Calificación</ion-label>
-          <ion-range [(ngModel)]="evaluacion.calificacion" 
-                    min="0" 
-                    max="100" 
-                    pin="true" 
-                    name="calificacion">
-            <ion-label slot="start">0</ion-label>
-            <ion-label slot="end">100</ion-label>
-          </ion-range>
-        </ion-item>
+        <ion-card-content>
+          <ion-item>
+            <ion-label position="stacked">Calificación</ion-label>
+            <ion-range
+              [(ngModel)]="evaluacion.calificacion"
+              min="0"
+              max="100"
+              pin="true"
+              name="calificacion"
+            >
+              <ion-label slot="start">0</ion-label>
+              <ion-label slot="end">100</ion-label>
+            </ion-range>
+          </ion-item>
 
-        <ion-item>
-          <ion-label position="stacked">Desempeño</ion-label>
-          <ion-textarea [(ngModel)]="evaluacion.desempeno" 
-                       name="desempeno"
-                       placeholder="Describe el desempeno..."
-                       rows="3">
-          </ion-textarea>
-        </ion-item>
+          <ion-item>
+            <ion-label position="stacked">Desempeño</ion-label>
+            <ion-textarea
+              [(ngModel)]="evaluacion.desempeno"
+              name="desempeno"
+              placeholder="Describe el desempeno..."
+              rows="3"
+            >
+            </ion-textarea>
+          </ion-item>
 
-        <ion-item>
-          <ion-label>Cumple objetivos</ion-label>
-          <ion-toggle [(ngModel)]="evaluacion.cumpleObjetivos" 
-                     name="cumpleObjetivos">
-          </ion-toggle>
-        </ion-item>
+          <ion-item>
+            <ion-label>Cumple objetivos</ion-label>
+            <ion-toggle
+              [(ngModel)]="evaluacion.cumpleObjetivos"
+              name="cumpleObjetivos"
+            >
+            </ion-toggle>
+          </ion-item>
 
-        <ion-list-header>
-          <ion-label>Áreas evaluadas</ion-label>
-        </ion-list-header>
+          <ion-list-header>
+            <ion-label>Áreas evaluadas</ion-label>
+          </ion-list-header>
 
-        <ion-item>
-          <ion-label>Atención</ion-label>
-          <ion-checkbox [(ngModel)]="areaAtencion" 
-                       (ionChange)="onCheckboxChange($event, 'Atención')"
-                       name="areaAtencion">
-          </ion-checkbox>
-        </ion-item>
+          <ion-item>
+            <ion-label>Atención</ion-label>
+            <ion-checkbox
+              [(ngModel)]="areaAtencion"
+              (ionChange)="onCheckboxChange($event, 'Atención')"
+              name="areaAtencion"
+            >
+            </ion-checkbox>
+          </ion-item>
 
-        <ion-item>
-          <ion-label>Puntualidad</ion-label>
-          <ion-checkbox [(ngModel)]="areaPuntualidad" 
-                       (ionChange)="onCheckboxChange($event, 'Puntualidad')"
-                       name="areaPuntualidad">
-          </ion-checkbox>
-        </ion-item>
+          <ion-item>
+            <ion-label>Puntualidad</ion-label>
+            <ion-checkbox
+              [(ngModel)]="areaPuntualidad"
+              (ionChange)="onCheckboxChange($event, 'Puntualidad')"
+              name="areaPuntualidad"
+            >
+            </ion-checkbox>
+          </ion-item>
 
-        <ion-item>
-          <ion-label>Calidad</ion-label>
-          <ion-checkbox [(ngModel)]="areaCalidad" 
-                       (ionChange)="onCheckboxChange($event, 'Calidad')"
-                       name="areaCalidad">
-          </ion-checkbox>
-        </ion-item>
+          <ion-item>
+            <ion-label>Calidad</ion-label>
+            <ion-checkbox
+              [(ngModel)]="areaCalidad"
+              (ionChange)="onCheckboxChange($event, 'Calidad')"
+              name="areaCalidad"
+            >
+            </ion-checkbox>
+          </ion-item>
 
-        <ion-item>
-          <ion-label position="stacked">Observaciones</ion-label>
-          <ion-textarea [(ngModel)]="evaluacion.observaciones" 
-                       name="observaciones"
-                       placeholder="Añade observaciones adicionales..."
-                       rows="3">
-          </ion-textarea>
-        </ion-item>
+          <ion-item>
+            <ion-label position="stacked">Observaciones</ion-label>
+            <ion-textarea
+              [(ngModel)]="evaluacion.observaciones"
+              name="observaciones"
+              placeholder="Añade observaciones adicionales..."
+              rows="3"
+            >
+            </ion-textarea>
+          </ion-item>
 
-        <ion-button expand="block" 
-                    type="submit" 
-                    [disabled]="loading">
-          {{ loading ? 'Guardando...' : 'Guardar Evaluación' }}
-        </ion-button>
-      </ion-card-content>
-    </ion-card>
-  </form>
-  <ion-grid *ngIf="usuarioSeleccionado">
-    <ion-row>
-      <ion-col size="12">
-        <ion-card>
-          <ion-card-header>
-            <ion-card-title>Historial de Calificaciones</ion-card-title>
-          </ion-card-header>
-          <ion-card-content>
-            <canvas id="calificacionChart"></canvas>
-          </ion-card-content>
-        </ion-card>
-      </ion-col>
-    </ion-row>
+          <ion-button expand="block" type="submit" [disabled]="loading">
+            {{ loading ? "Guardando..." : "Guardar Evaluación" }}
+          </ion-button>
+        </ion-card-content>
+      </ion-card>
+    </form>
+    <ion-grid *ngIf="usuarioSeleccionado">
+      <ion-row>
+        <ion-col size="12">
+          <ion-card>
+            <ion-card-header>
+              <ion-card-title>Historial de Calificaciones</ion-card-title>
+            </ion-card-header>
+            <ion-card-content>
+              <canvas id="calificacionChart"></canvas>
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+      </ion-row>
 
-    <ion-row>
-      <ion-col size="12" size-md="6">
-        <ion-card>
-          <ion-card-header>
-            <ion-card-title>Cumplimiento de Objetivos</ion-card-title>
-          </ion-card-header>
-          <ion-card-content>
-            <canvas id="cumplimientoChart"></canvas>
-          </ion-card-content>
-        </ion-card>
-      </ion-col>
+      <ion-row>
+        <ion-col size="12" size-md="6">
+          <ion-card>
+            <ion-card-header>
+              <ion-card-title>Cumplimiento de Objetivos</ion-card-title>
+            </ion-card-header>
+            <ion-card-content>
+              <canvas id="cumplimientoChart"></canvas>
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
 
-      <ion-col size="12" size-md="6">
-        <ion-card>
-          <ion-card-header>
-            <ion-card-title>Áreas Evaluadas</ion-card-title>
-          </ion-card-header>
-          <ion-card-content>
-            <canvas id="areasChart"></canvas>
-          </ion-card-content>
-        </ion-card>
-      </ion-col>
-    </ion-row>
-  </ion-grid>
-</ion-content>
+        <ion-col size="12" size-md="6">
+          <ion-card>
+            <ion-card-header>
+              <ion-card-title>Áreas Evaluadas</ion-card-title>
+            </ion-card-header>
+            <ion-card-content>
+              <canvas id="areasChart"></canvas>
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+
+    <app-loading-spinner
+      *ngIf="loading"
+      [message]="'Cargando datos...'"
+      [overlay]="true"
+    >
+    </app-loading-spinner> </ion-content
+></ion-content>

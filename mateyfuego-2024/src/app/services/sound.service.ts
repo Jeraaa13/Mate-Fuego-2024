@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { Howl } from 'howler';
-import { Platform } from '@ionic/angular';
 import { App } from '@capacitor/app';
 
 @Injectable({
@@ -10,7 +9,7 @@ export class SoundService {
   private sounds: { [key: string]: Howl } = {};
   private isTransitioning = false;
 
-  constructor(private platform: Platform) {
+  constructor() {
     this.preloadSounds();
     this.setupAppLifecycleListeners();
   }
@@ -19,6 +18,7 @@ export class SoundService {
     this.sounds['open'] = new Howl({
       src: ['assets/sounds/open-app.mp3'],
       volume: 0.5,
+      rate: 2.3,
     });
 
     this.sounds['close'] = new Howl({
@@ -30,7 +30,6 @@ export class SoundService {
   }
 
   private setupAppLifecycleListeners() {
-    // Only use appStateChange to manage opening and closing sounds
     App.addListener('appStateChange', ({ isActive }) => {
       if (!this.isTransitioning) {
         this.isTransitioning = true;
@@ -41,14 +40,12 @@ export class SoundService {
           this.playSound('close');
         }
 
-        // Reset the flag after sound finishes playing
         setTimeout(() => {
           this.isTransitioning = false;
-        }, 500); // Adjust delay to match sound duration
+        }, 500);
       }
     });
 
-    // Back button handler for a manual close sound if needed
     App.addListener('backButton', () => {
       this.playSound('close');
     });

@@ -72,7 +72,6 @@ export class CartService {
       }
     } catch (error) {
       console.error('Error al obtener datos del usuario:', error);
-      this.errorHandler.vibrate();
     }
   }
 
@@ -155,7 +154,6 @@ export class CartService {
       })
       .catch((error) => {
         console.error('Error al guardar el pedido:', error);
-        this.errorHandler.vibrate();
       });
   }
 

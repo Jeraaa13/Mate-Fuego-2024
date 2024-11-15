@@ -14,6 +14,7 @@ import { lastValueFrom, Observable } from 'rxjs';
 import { NotificationService } from 'src/app/services/notification.service';
 import { ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 import { ErrorHandlerService } from 'src/app/services/error-handler.service';
+import { LoadingSpinnerComponent } from '../../loading-spinner/loading-spinner.component';
 interface EncuestaCliente {
   satisfaccionGeneral: number;
   nombre: string;
@@ -31,7 +32,7 @@ interface EncuestaCliente {
   styleUrls: ['./clientes.component.scss'],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   standalone: true,
-  imports: [CommonModule, FormsModule, IonicModule],
+  imports: [CommonModule, FormsModule, IonicModule, LoadingSpinnerComponent],
 })
 export class ClientesComponent implements OnInit {
   encuesta: EncuestaCliente = {
