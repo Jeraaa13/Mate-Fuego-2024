@@ -112,8 +112,8 @@ export class RegistroMesasComponent {
     const mesainfo = {
       id: this.nuevaMesa.id,
       numero: this.nuevaMesa.numero,
-      descripcion: this.nuevaMesa.cantidadComensales,
-      tiempoElaboracion: this.nuevaMesa.tipo,
+      cantidadComensales: this.nuevaMesa.cantidadComensales,
+      tipo: this.nuevaMesa.tipo,
     };
 
     this.qrData = JSON.stringify(mesainfo);

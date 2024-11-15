@@ -119,7 +119,9 @@ export class ClienteEsperaPedidoComponent implements OnInit {
           this.notificationService.showInfo(
             `El estado actual de tu pedido es: ${this.pedido.EstadoDePedido}`,
             'Estado de tu pedido'
+          
           );
+          this.escaneo = true
         } else {
           console.warn("El número de mesa escaneada no coincide con el número de mesa del pedido del usuario.");
         }
