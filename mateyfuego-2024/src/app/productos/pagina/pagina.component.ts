@@ -6,6 +6,7 @@ import { IonicModule } from '@ionic/angular';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { ChatComponent } from './chat/chat.component';
+import { AuthService } from 'src/app/services/auth.service';
 
 export interface Product {
   id: string;
@@ -52,7 +53,8 @@ export class PaginaComponent implements OnInit {
   constructor(
     private firestore: AngularFirestore,
     private cartService: CartService,
-    private router: Router
+    private router: Router,
+    private authService: AuthService
   ) {}
 
   ngOnInit() {
@@ -69,15 +71,30 @@ export class PaginaComponent implements OnInit {
   toggleExpand() {
     this.isExpanded = !this.isExpanded;
   }
-
   loadMesa() {
+    const uidCliente = this.authService.getCurrentUserUid();
+
+    console.log('uidCliente => ', uidCliente);
+
+    if (!uidCliente) {
+      console.error('No logged-in user found');
+      return;
+    }
+
     this.firestore
-      .collection('mesas')
+      .collection('mesas', (ref) => ref.where('usuarioUid', '==', uidCliente))
       .get()
       .subscribe((querySnapshot) => {
-        const mesaData = querySnapshot.docs[0].data() as Mesa;
-        this.mesaId = querySnapshot.docs[0].id;
-        this.mesaNumero = mesaData.numero;
+        console.log('uidCliente => ', uidCliente);
+        console.log('querySnapshot => ', querySnapshot);
+        if (!querySnapshot.empty) {
+          const mesaData = querySnapshot.docs[0].data() as Mesa;
+          this.mesaId = querySnapshot.docs[0].id;
+          this.mesaNumero = mesaData.numero;
+          console.log('Numero de mesa en pagina producto => ', this.mesaNumero);
+        } else {
+          console.log('No se encontró la mesa para este cliente');
+        }
       });
   }
 

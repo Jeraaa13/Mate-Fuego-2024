@@ -4,26 +4,29 @@
     <ion-card-header>
       <ion-card-title>Lista de Espera</ion-card-title>
     </ion-card-header>
-    
+
     <ion-card-content>
       <div class="users-grid">
         <div *ngFor="let usuario of listaDeEspera" class="user-card">
           <div class="user-photo-container">
-            <img [src]="usuario.fotourl || 'assets/usudefault.png'" 
-                 [alt]="usuario.nombre" 
-                 class="user-photo"
-                 (error)="handleImageError($event)">
+            <img
+              [src]="usuario.fotourl || 'assets/usudefault.png'"
+              [alt]="usuario.nombre"
+              class="user-photo"
+              (error)="handleImageError($event)"
+            />
           </div>
           <p class="nombre-usuario">{{ usuario.nombre }}</p>
           <div class="user-status" [class.assigned]="usuario.mesaAsignada">
-            {{ usuario.mesaAsignada ? 'Mesa Asignada' : 'En Espera' }}
+            {{ usuario.mesaAsignada ? "Mesa Asignada" : "En Espera" }}
           </div>
-          <ion-button 
+          <ion-button
             (click)="mostrarSeleccionMesas(usuario)"
             [disabled]="usuario.mesaAsignada"
             class="asignar-button"
             color="primary"
-            size="small">
+            size="small"
+          >
             Seleccionar Mesa
           </ion-button>
         </div>
@@ -54,10 +57,11 @@
                 </ion-card-header>
                 <ion-card-content>
                   <p>Capacidad: {{ mesa.cantidadComensales }} personas</p>
-                  <ion-button 
+                  <ion-button
                     expand="block"
                     (click)="asignarMesaEspecifica(usuarioSeleccionado!, mesa)"
-                    color="success">
+                    color="success"
+                  >
                     Asignar Mesa
                   </ion-button>
                 </ion-card-content>
