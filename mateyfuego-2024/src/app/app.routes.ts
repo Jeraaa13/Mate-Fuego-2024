@@ -109,7 +109,14 @@ export const routes: Routes = [
     path: 'encuestas-clientes',
     loadComponent: () =>
       import('./encuestas/clientes/clientes.component').then(
-        (m) => m.ClientesComponent
+        (m) => m.EncuestaClienteComponent
+      ),
+  },
+  {
+    path: 'ver-encuesta-cliente',
+    loadComponent: () =>
+      import('./ver-encuesta/ver-encuesta.component').then(
+        (m) => m.VerEncuestaComponent
       ),
   },
   {
