@@ -1,4 +1,5 @@
 import { bootstrapApplication } from '@angular/platform-browser';
+import { ApplicationConfig, ErrorHandler } from '@angular/core';
 import {
   RouteReuseStrategy,
   provideRouter,
@@ -26,8 +27,14 @@ import { getStorage, provideStorage } from '@angular/fire/storage';
 import { PushNotificationService } from './app/services/push-notifications.service';
 import { provideHttpClient } from '@angular/common/http';
 import { IonicModule } from '@ionic/angular';
+import { ErrorHandlerService } from './app/services/error-handler.service';
+
 bootstrapApplication(AppComponent, {
   providers: [
+    {
+      provide: ErrorHandler,
+      useClass: ErrorHandlerService,
+    },
     {
       provide: FIREBASE_OPTIONS,
       useValue: environment.firebase,

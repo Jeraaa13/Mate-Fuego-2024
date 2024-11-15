@@ -21,6 +21,7 @@ import { Auth, createUserWithEmailAndPassword } from '@angular/fire/auth';
 import { Router } from '@angular/router';
 import { BarcodeScanner } from '@capacitor-community/barcode-scanner';
 import { PushNotificationService } from 'src/app/services/push-notifications.service';
+import { ErrorHandlerService } from 'src/app/services/error-handler.service';
 
 interface Empleado {
   nombre: string;
@@ -87,7 +88,8 @@ export class AltaEmpleadosComponent {
     private actionSheetCtrl: ActionSheetController,
     private auth: Auth,
     private router: Router,
-    private pushNotificationService: PushNotificationService
+    private pushNotificationService: PushNotificationService,
+    private errorHandler: ErrorHandlerService
   ) {
     this.createForm();
   }
@@ -144,6 +146,7 @@ export class AltaEmpleadosComponent {
       }
     } catch (error) {
       console.error('Error al capturar la imagen:', error);
+      this.errorHandler.vibrate();
     }
   }
 
@@ -198,6 +201,7 @@ export class AltaEmpleadosComponent {
       }
     } catch (error) {
       console.error('Error al registrar empleado:', error);
+      this.errorHandler.vibrate();
     }
   }
 
@@ -230,6 +234,7 @@ export class AltaEmpleadosComponent {
       }
     } catch (error) {
       console.error('Error al buscar el documento en Firestore:', error);
+      this.errorHandler.vibrate();
     }
   }
 
@@ -277,6 +282,7 @@ export class AltaEmpleadosComponent {
       }
     } catch (error) {
       console.error('Scanning failed:', error);
+      this.errorHandler.vibrate();
     } finally {
       this.stopScan();
     }

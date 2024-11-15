@@ -6,6 +6,7 @@ import { CommonModule } from '@angular/common';
 import { MailService } from 'src/app/services/mail.service';
 import { NotificationService } from 'src/app/services/notification.service';
 import { PushNotificationService } from 'src/app/services/push-notifications.service';
+import { ErrorHandlerService } from 'src/app/services/error-handler.service';
 
 interface Cliente {
   id: string;
@@ -30,7 +31,8 @@ export class HomeComponent implements OnInit {
     private mailService: MailService,
     private authService: AuthService,
     private NotificationService: NotificationService,
-    private pushNotificationService: PushNotificationService
+    private pushNotificationService: PushNotificationService,
+    private errorHandler: ErrorHandlerService
   ) {}
 
   ngOnInit(): void {
@@ -88,6 +90,7 @@ export class HomeComponent implements OnInit {
                 'No se pudo aprobar al cliente. Intente nuevamente.',
                 'Error al Aprobar Cliente'
               );
+              this.errorHandler.vibrate();
             });
         } else {
           console.error('Cliente no encontrado');
@@ -103,6 +106,7 @@ export class HomeComponent implements OnInit {
           'Hubo un error al obtener los datos del cliente.',
           'Error de Consulta'
         );
+        this.errorHandler.vibrate();
       });
   }
 
@@ -134,6 +138,7 @@ export class HomeComponent implements OnInit {
                 'No se pudo eliminar al cliente. Intente nuevamente.',
                 'Error al Rechazar Cliente'
               );
+              this.errorHandler.vibrate();
             });
         } else {
           console.error('Cliente no encontrado');
@@ -149,6 +154,7 @@ export class HomeComponent implements OnInit {
           'Hubo un error al obtener los datos del cliente.',
           'Error de Consulta'
         );
+        this.errorHandler.vibrate();
       });
   }
 }

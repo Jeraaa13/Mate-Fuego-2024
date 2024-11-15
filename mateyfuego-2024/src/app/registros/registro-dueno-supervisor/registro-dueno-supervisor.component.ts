@@ -21,6 +21,7 @@ import {
 import { BarcodeScanner } from '@capacitor-community/barcode-scanner';
 import { Auth, createUserWithEmailAndPassword } from '@angular/fire/auth';
 import { PushNotificationService } from 'src/app/services/push-notifications.service';
+import { ErrorHandlerService } from 'src/app/services/error-handler.service';
 
 interface DuenoSupervisor {
   nombre: string;
@@ -57,7 +58,8 @@ export class RegistroDuenoSupervisorComponent implements OnInit {
     private storage: Storage,
     private actionSheetCtrl: ActionSheetController,
     private auth: Auth,
-    private pushNotificationService: PushNotificationService
+    private pushNotificationService: PushNotificationService,
+    private errorHandler: ErrorHandlerService
   ) {
     this.registroForm = this.initForm();
   }
@@ -108,6 +110,7 @@ export class RegistroDuenoSupervisorComponent implements OnInit {
       }
     } catch (error) {
       console.error('Error al capturar la imagen:', error);
+      this.errorHandler.vibrate();
     }
   }
 
@@ -167,6 +170,7 @@ export class RegistroDuenoSupervisorComponent implements OnInit {
         });
       } catch (error) {
         console.error('Error en el proceso de registro:', error);
+        this.errorHandler.vibrate();
       }
     }
   }
@@ -193,6 +197,7 @@ export class RegistroDuenoSupervisorComponent implements OnInit {
       }
     } catch (error) {
       console.error('Error al buscar el documento en Firestore:', error);
+      this.errorHandler.vibrate();
     }
   }
 

@@ -5,6 +5,7 @@ import { QRCodeModule } from 'angularx-qrcode';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
+import { ErrorHandlerService } from '../services/error-handler.service';
 
 @Component({
   selector: 'app-qr-propina',
@@ -30,7 +31,8 @@ export class QrPropinaComponent {
 
   constructor(
     private storage: AngularFireStorage,
-    private firestore: Firestore
+    private firestore: Firestore,
+    private errorHandler: ErrorHandlerService
   ) {}
 
   generateQrCode() {
@@ -39,7 +41,7 @@ export class QrPropinaComponent {
         satisfaction: this.getSatisfactionLabel(this.selectedPercentage),
         tipPorcentaje: this.selectedPercentage,
       });
-      this.showQR = true; 
+      this.showQR = true;
       console.log('QR Data generado:', this.qrData);
     } else {
       console.warn('No se ha seleccionado ningún nivel de satisfacción.');
@@ -55,10 +57,9 @@ export class QrPropinaComponent {
 
   async saveQrImageToStorage() {
     if (this.qrCodeElement && this.qrData) {
-      const qrCanvas: HTMLCanvasElement = this.qrCodeElement.nativeElement.querySelector(
-        'canvas'
-      );
-      
+      const qrCanvas: HTMLCanvasElement =
+        this.qrCodeElement.nativeElement.querySelector('canvas');
+
       if (qrCanvas) {
         const qrImageData = qrCanvas.toDataURL('image/png');
         const filePath = `propinas/qr_${new Date().getTime()}.png`;
@@ -75,6 +76,7 @@ export class QrPropinaComponent {
           await this.saveQrUrlToFirestore(downloadUrl);
         } catch (error) {
           console.error('Error al guardar la imagen QR en Storage:', error);
+          this.errorHandler.vibrate();
         }
       } else {
         console.warn('No se encontró el elemento canvas para la imagen QR.');
@@ -89,15 +91,16 @@ export class QrPropinaComponent {
       satisfaction: this.getSatisfactionLabel(this.selectedPercentage || 0),
       tipPorcentaje: this.selectedPercentage,
       qrUrl: downloadUrl,
-      timestamp: new Date()
+      timestamp: new Date(),
     };
-    
+
     try {
       const docRef = doc(collection(this.firestore, 'propinas'));
       await setDoc(docRef, qrData);
       console.log('Datos del QR guardados en Firestore:', qrData);
     } catch (error) {
       console.error('Error al guardar los datos del QR en Firestore:', error);
+      this.errorHandler.vibrate();
     }
   }
 }

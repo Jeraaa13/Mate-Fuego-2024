@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import emailjs, { EmailJSResponseStatus } from 'emailjs-com';
 import { init } from 'emailjs-com';
+import { ErrorHandlerService } from './error-handler.service';
 
 init('PCEqSn7xdPHzXEZ2S');
 
@@ -8,7 +9,7 @@ init('PCEqSn7xdPHzXEZ2S');
   providedIn: 'root',
 })
 export class MailService {
-  constructor() {}
+  constructor(private errorHandler: ErrorHandlerService) {}
 
   enviarAviso(templateParams: {
     email_cliente: string;
@@ -23,6 +24,7 @@ export class MailService {
       })
       .catch((error) => {
         console.log('Error al enviar el email.', error);
+        this.errorHandler.vibrate();
       });
   }
 
@@ -51,6 +53,7 @@ export class MailService {
       })
       .catch((error) => {
         console.log('Error al enviar el email.', error);
+        this.errorHandler.vibrate();
       });
   }
 
@@ -79,6 +82,7 @@ export class MailService {
       })
       .catch((error) => {
         console.log('Error al enviar el email.', error);
+        this.errorHandler.vibrate();
       });
   }
 }

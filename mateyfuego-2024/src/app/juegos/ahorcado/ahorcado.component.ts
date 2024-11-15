@@ -12,6 +12,7 @@ import {
   getDocs,
 } from '@angular/fire/firestore';
 import { AuthService } from 'src/app/services/auth.service';
+import { ErrorHandlerService } from 'src/app/services/error-handler.service';
 
 @Component({
   selector: 'app-ahorcado',
@@ -44,7 +45,8 @@ export class AhorcadoComponent implements OnInit {
     private router: Router,
     private notificationService: NotificationService,
     private firestore: Firestore,
-    private authService: AuthService
+    private authService: AuthService,
+    private errorHandler: ErrorHandlerService
   ) {}
 
   async ngOnInit() {
@@ -114,6 +116,7 @@ export class AhorcadoComponent implements OnInit {
       }
     } catch (error) {
       console.error('Error al obtener el pedido:', error);
+      this.errorHandler.vibrate();
     }
   }
 
@@ -143,6 +146,7 @@ export class AhorcadoComponent implements OnInit {
         });
     } catch (error) {
       console.error('Error al aplicar el descuento en el pedido:', error);
+      this.errorHandler.vibrate();
     }
   }
 }

@@ -18,6 +18,7 @@ import {
   getDocs,
 } from 'firebase/firestore';
 import { NotificationService } from '../services/notification.service';
+import { ErrorHandlerService } from '../services/error-handler.service';
 
 @Component({
   selector: 'app-login',
@@ -35,7 +36,8 @@ export class LoginComponent implements OnInit {
     private auth: Auth,
     private router: Router,
     private route: ActivatedRoute,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private errorHandler: ErrorHandlerService
   ) {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
@@ -83,6 +85,7 @@ export class LoginComponent implements OnInit {
         'Error al iniciar sesión. Verifica tus credenciales.',
         'Error de Inicio de Sesión'
       );
+      this.errorHandler.vibrate();
     }
   }
 
@@ -172,6 +175,7 @@ export class LoginComponent implements OnInit {
       console.log('User logged in: ', userCredential);
     } catch (error) {
       console.error('Error during login: ', error);
+      this.errorHandler.vibrate();
     }
   }
 

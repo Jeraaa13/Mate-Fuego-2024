@@ -13,6 +13,7 @@ import { Chart, registerables } from 'chart.js';
 import { lastValueFrom, Observable } from 'rxjs';
 import { NotificationService } from 'src/app/services/notification.service';
 import { ViewChild, ElementRef, AfterViewInit } from '@angular/core';
+import { ErrorHandlerService } from 'src/app/services/error-handler.service';
 interface EncuestaCliente {
   satisfaccionGeneral: number;
   nombre: string;
@@ -56,7 +57,8 @@ export class ClientesComponent implements OnInit {
   constructor(
     private storage: AngularFireStorage,
     private firestore: Firestore,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private errorHandler: ErrorHandlerService
   ) {
     Chart.register(...registerables);
   }
@@ -92,6 +94,7 @@ export class ClientesComponent implements OnInit {
       console.log('Fotos subidas exitosamente:', this.encuesta.fotosUrls);
     } catch (error) {
       console.error('Error al subir las fotos:', error);
+      this.errorHandler.vibrate();
     } finally {
       this.loading = false;
     }
@@ -137,6 +140,7 @@ export class ClientesComponent implements OnInit {
         'Hubo un problema al enviar la encuesta. Intente nuevamente.',
         'Error al Enviar Encuesta'
       );
+      this.errorHandler.vibrate();
     } finally {
       this.loading = false;
     }

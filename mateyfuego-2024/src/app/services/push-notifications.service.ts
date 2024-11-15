@@ -13,6 +13,7 @@ import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { Platform } from '@ionic/angular';
 import { PushNotifications, Token } from '@capacitor/push-notifications';
+import { ErrorHandlerService } from './error-handler.service';
 
 @Injectable({
   providedIn: 'root',
@@ -23,7 +24,8 @@ export class PushNotificationService {
   constructor(
     private firestore: Firestore,
     private http: HttpClient,
-    private platform: Platform
+    private platform: Platform,
+    private errorHandler: ErrorHandlerService
   ) {}
 
   async inicializarNotificaciones(userId: string) {
@@ -65,6 +67,7 @@ export class PushNotificationService {
       }
     } catch (error) {
       console.error('Error initializing notifications:', error);
+      this.errorHandler.vibrate();
     }
   }
 
@@ -92,6 +95,7 @@ export class PushNotificationService {
       console.error('Usuario no encontrado en ninguna colección.');
     } catch (error) {
       console.error('Error al guardar el token en Firestore:', error);
+      this.errorHandler.vibrate();
     }
   }
 
@@ -117,6 +121,7 @@ export class PushNotificationService {
       console.log(`Notificaciones enviadas a ${tokens.length} destinatarios`);
     } catch (error) {
       console.error('Error al enviar las notificaciones:', error);
+      this.errorHandler.vibrate();
     }
   }
 
@@ -201,6 +206,7 @@ export class PushNotificationService {
         'Error al obtener los tokens de ' + tipoPerfil + ':',
         error
       );
+      this.errorHandler.vibrate();
     }
     return tokensEmpleados;
   }
@@ -221,6 +227,7 @@ export class PushNotificationService {
         'Error al obtener los tokens de los dueños y supervisores:',
         error
       );
+      this.errorHandler.vibrate();
     }
     return tokensDuenosYSupervisores;
   }

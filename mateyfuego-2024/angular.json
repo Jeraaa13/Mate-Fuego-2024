@@ -106,8 +106,8 @@
             "assets": [
               {
                 "glob": "**/*",
-                "input": "src/assets",
-                "output": "assets"
+                "input": "src/assets/sounds",
+                "output": "/assets/sounds"
               }
             ],
             "styles": ["src/global.scss", "src/theme/variables.scss"],

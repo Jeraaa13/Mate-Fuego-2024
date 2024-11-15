@@ -10,12 +10,17 @@ import {
   query,
   orderBy,
 } from '@angular/fire/firestore';
+import { ErrorHandlerService } from './error-handler.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ChatService {
-  constructor(private firestore: Firestore, private authService: AuthService) {}
+  constructor(
+    private firestore: Firestore,
+    private authService: AuthService,
+    private errorHandler: ErrorHandlerService
+  ) {}
 
   async sendMessage(message: string) {
     try {
@@ -31,10 +36,14 @@ export class ChatService {
         return true;
       } else {
         console.error('No hay usuario logeado para enviar mensajes.');
+        this.errorHandler.vibrate();
+
         return null;
       }
     } catch (error) {
       console.error('Error al enviar el mensaje:', error);
+      this.errorHandler.vibrate();
+
       return null;
     }
   }

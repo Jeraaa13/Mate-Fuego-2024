@@ -27,6 +27,7 @@ import {
 import { Router } from '@angular/router';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { PushNotificationService } from 'src/app/services/push-notifications.service';
+import { ErrorHandlerService } from 'src/app/services/error-handler.service';
 
 interface Cliente {
   nombre: string;
@@ -72,7 +73,8 @@ export class RegistroClientesComponent {
     private actionSheetCtrl: ActionSheetController,
     private fb: FormBuilder,
     private router: Router,
-    private pushNotificationService: PushNotificationService
+    private pushNotificationService: PushNotificationService,
+    private errorHandler: ErrorHandlerService
   ) {
     this.registroForm = this.fb.group({
       nombre: ['', Validators.required],
@@ -124,6 +126,7 @@ export class RegistroClientesComponent {
       }
     } catch (error) {
       console.error('Scanning failed:', error);
+      this.errorHandler.vibrate();
     } finally {
       this.stopScan();
     }
@@ -181,6 +184,7 @@ export class RegistroClientesComponent {
       }
     } catch (error) {
       console.error('Error al capturar la imagen:', error);
+      this.errorHandler.vibrate();
     }
   }
 
@@ -198,6 +202,8 @@ export class RegistroClientesComponent {
       return downloadUrl;
     } catch (error) {
       console.error('Error al subir la imagen:', error);
+      this.errorHandler.vibrate();
+
       throw error;
     }
   }
@@ -237,6 +243,7 @@ export class RegistroClientesComponent {
       }
     } catch (error) {
       console.error('Error al registrar usuario:', error);
+      this.errorHandler.vibrate();
     }
   }
 
@@ -264,6 +271,7 @@ export class RegistroClientesComponent {
       })
       .catch((error) => {
         console.error('Error en el inicio de sesión anónimo:', error);
+        this.errorHandler.vibrate();
       });
   }
 
@@ -325,6 +333,7 @@ export class RegistroClientesComponent {
       }
     } catch (error) {
       console.error('Error al buscar el documento en Firestore:', error);
+      this.errorHandler.vibrate();
     }
     this.isScannerVisible = false;
   }

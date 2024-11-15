@@ -19,6 +19,7 @@ import {
 import { QrService } from '../services/qr.service';
 import { ZXingScannerModule } from '@zxing/ngx-scanner';
 import { Router } from '@angular/router';
+import { ErrorHandlerService } from '../services/error-handler.service';
 @Component({
   selector: 'app-cliente-espera-pedido',
   standalone: true,
@@ -36,7 +37,8 @@ export class ClienteEsperaPedidoComponent implements OnInit {
     private authService: AuthService,
     private firestore: Firestore,
     private qrService: QrService,
-    private router: Router
+    private router: Router,
+    private errorHandler: ErrorHandlerService
   ) {}
 
   async ngOnInit() {
@@ -60,16 +62,17 @@ export class ClienteEsperaPedidoComponent implements OnInit {
       const pedidosRef = collection(this.firestore, collectionName);
       const q = query(pedidosRef, where('uidUsuario', '==', this.usuario.uid));
       const querySnapshot = await getDocs(q);
-  
+
       if (!querySnapshot.empty) {
         const pedidoDoc = querySnapshot.docs[0];
         this.pedido = pedidoDoc.data();
-        this.pedido.id = pedidoDoc.id; 
+        this.pedido.id = pedidoDoc.id;
       } else {
         console.log('No se encontraron pedidos para este usuario.');
       }
     } catch (error) {
       console.error('Error al obtener el pedido:', error);
+      this.errorHandler.vibrate();
     }
   }
 
@@ -103,6 +106,7 @@ export class ClienteEsperaPedidoComponent implements OnInit {
       }
     } catch (error) {
       console.error('Error al obtener el pedido:', error);
+      this.errorHandler.vibrate();
     }
   }
 

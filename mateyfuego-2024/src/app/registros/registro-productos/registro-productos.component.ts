@@ -21,6 +21,7 @@ import { CameraSource, Camera, CameraResultType } from '@capacitor/camera';
 import { QRCodeModule } from 'angularx-qrcode';
 import { NgForm } from '@angular/forms';
 import { IonContent } from '@ionic/angular/standalone';
+import { ErrorHandlerService } from 'src/app/services/error-handler.service';
 
 interface Producto {
   id?: string;
@@ -58,7 +59,8 @@ export class RegistroProductosComponent {
   constructor(
     private firestore: Firestore,
     private storage: Storage,
-    private actionSheetCtrl: ActionSheetController
+    private actionSheetCtrl: ActionSheetController,
+    private errorHandler: ErrorHandlerService
   ) {}
 
   toggleScanner() {
@@ -93,6 +95,7 @@ export class RegistroProductosComponent {
       }
     } catch (error) {
       console.error('Error al capturar la imagen:', error);
+      this.errorHandler.vibrate();
     }
   }
 
@@ -200,6 +203,7 @@ export class RegistroProductosComponent {
       }
     } catch (error) {
       console.error('Error al procesar el código QR:', error);
+      this.errorHandler.vibrate();
     }
   }
 

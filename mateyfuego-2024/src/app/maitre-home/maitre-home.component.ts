@@ -6,6 +6,7 @@ import { IonicModule } from '@ionic/angular';
 import { PushNotificationService } from '../services/push-notifications.service';
 import { NotificationService } from '../services/notification.service';
 import { AuthService } from '../services/auth.service';
+import { ErrorHandlerService } from '../services/error-handler.service';
 
 interface Mesas {
   cantidadComensales: number;
@@ -44,7 +45,8 @@ export class MaitreHomeComponent implements OnInit {
     private firestore: AngularFirestore,
     private pushNotificationService: PushNotificationService,
     private notificationService: NotificationService,
-    private authService: AuthService
+    private authService: AuthService,
+    private errorHandler: ErrorHandlerService
   ) {}
 
   ngOnInit() {
@@ -119,6 +121,7 @@ export class MaitreHomeComponent implements OnInit {
           'Hubo un problema al asignar la mesa. Intente nuevamente.',
           'Error al Asignar Mesa'
         );
+        this.errorHandler.vibrate();
       }
     }
   }

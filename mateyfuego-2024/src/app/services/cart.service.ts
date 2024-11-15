@@ -11,6 +11,7 @@ import {
   query,
   where,
 } from '@angular/fire/firestore';
+import { ErrorHandlerService } from './error-handler.service';
 
 interface CartItem {
   product: Product;
@@ -26,7 +27,11 @@ export class CartService {
   private totalTime: number = 0;
   private usuario: any;
 
-  constructor(private firestore: Firestore, private authService: AuthService) {
+  constructor(
+    private firestore: Firestore,
+    private authService: AuthService,
+    private errorHandler: ErrorHandlerService
+  ) {
     this.ngOnInit();
   }
 
@@ -67,6 +72,7 @@ export class CartService {
       }
     } catch (error) {
       console.error('Error al obtener datos del usuario:', error);
+      this.errorHandler.vibrate();
     }
   }
 
@@ -149,6 +155,7 @@ export class CartService {
       })
       .catch((error) => {
         console.error('Error al guardar el pedido:', error);
+        this.errorHandler.vibrate();
       });
   }
 

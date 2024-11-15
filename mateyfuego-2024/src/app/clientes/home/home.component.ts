@@ -16,6 +16,7 @@ import {
 } from '@angular/fire/firestore';
 import { PushNotificationService } from 'src/app/services/push-notifications.service';
 import { AuthService } from 'src/app/services/auth.service';
+import { ErrorHandlerService } from 'src/app/services/error-handler.service';
 
 interface UsuarioEnEspera {
   mesaAsignada: boolean;
@@ -45,7 +46,8 @@ export class HomeComponent implements OnInit {
     private mailService: MailService,
     private afAuth: AngularFireAuth,
     private authService: AuthService,
-    private pushNotificationService: PushNotificationService
+    private pushNotificationService: PushNotificationService,
+    private errorHandler: ErrorHandlerService
   ) {}
 
   ngOnInit(): void {
@@ -74,6 +76,7 @@ export class HomeComponent implements OnInit {
       }
     } catch (error) {
       console.error('Error al obtener detalles del usuario:', error);
+      this.errorHandler.vibrate();
     }
   }
 
@@ -135,6 +138,7 @@ export class HomeComponent implements OnInit {
         this.router.navigate(['/lista-espera']);
       } catch (error) {
         console.error('Error al guardar en lista de espera:', error);
+        this.errorHandler.vibrate();
       }
     }
   }

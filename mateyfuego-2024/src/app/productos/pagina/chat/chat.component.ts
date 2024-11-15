@@ -16,6 +16,7 @@ import {
   where,
 } from '@angular/fire/firestore';
 import { PushNotificationService } from 'src/app/services/push-notifications.service';
+import { ErrorHandlerService } from 'src/app/services/error-handler.service';
 
 interface Mensaje {
   texto: string;
@@ -51,7 +52,8 @@ export class ChatComponent implements OnInit {
   constructor(
     public authService: AuthService,
     private firestore: Firestore,
-    private pushNotificationService: PushNotificationService
+    private pushNotificationService: PushNotificationService,
+    private errorHandler: ErrorHandlerService
   ) {}
 
   async ngOnInit() {
@@ -71,6 +73,7 @@ export class ChatComponent implements OnInit {
     } catch (error) {
       console.error('Error en la inicialización:', error);
       this.loading = false;
+      this.errorHandler.vibrate();
     }
   }
 
@@ -103,6 +106,7 @@ export class ChatComponent implements OnInit {
       console.error('Error al obtener datos del usuario:', error);
     } finally {
       this.loading = false;
+      this.errorHandler.vibrate();
     }
   }
 
@@ -123,6 +127,8 @@ export class ChatComponent implements OnInit {
       }
     } catch (error) {
       console.error('Error al obtener el número de mesa:', error);
+      this.errorHandler.vibrate();
+
       return null;
     }
   }
@@ -152,6 +158,7 @@ export class ChatComponent implements OnInit {
         }
       } catch (error) {
         console.error('Error al enviar el mensaje:', error);
+        this.errorHandler.vibrate();
       }
     }
   }
