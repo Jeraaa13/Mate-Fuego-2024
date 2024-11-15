@@ -23,6 +23,8 @@ import {
 import { Router, ActivatedRoute } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 import { LoadingSpinnerComponent } from '../loading-spinner/loading-spinner.component';
+import Swal from 'sweetalert2';
+import { NotificationService } from '../services/notification.service';
 
 @Component({
   selector: 'app-lista-espera',
@@ -54,7 +56,8 @@ export class ClienteHomeComponent implements OnInit, OnDestroy {
     private mailService: MailService,
     private afAuth: AngularFireAuth,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private notificationService: NotificationService
   ) {}
 
   ngOnInit(): void {
@@ -76,6 +79,7 @@ export class ClienteHomeComponent implements OnInit, OnDestroy {
 
         const usuarioDoc = doc(this.firestore, 'clientes', this.userId);
         const docSnap = await getDoc(usuarioDoc);
+        console.log('docSnap usuario => ', docSnap);
 
         if (docSnap.exists()) {
           this.currentUserDetails = docSnap.data();
@@ -101,17 +105,28 @@ export class ClienteHomeComponent implements OnInit, OnDestroy {
 
     const mesasRef = collection(this.firestore, 'lista-espera');
     const q = query(mesasRef, where('uid', '==', this.userId));
+    console.log('USER ID => ', this.userId);
 
+    console.log('q =>', q);
     this.listaEsperaSubscription = onSnapshot(q, (snapshot) => {
+      console.log('SNAPSHOT => ', snapshot);
       if (!snapshot.empty) {
+        console.log('asdasdaAAAAAAAAAAAA');
         const listadoc = snapshot.docs[0];
         this.datosListado = {
           id: listadoc.id,
           ...listadoc.data(),
         };
         console.log('Actualización en lista de espera:', this.datosListado);
-        this.verificarEstado();
-        this.traerMesa();
+
+        if (this.datosListado.mesaAsignada) {
+          console.log('Mesa ya asignada, verificando estado...');
+          this.verificarEstado();
+          this.traerMesa();
+        } else {
+          console.log('El usuario sigue esperando asignación.');
+          this.verificarEstado();
+        }
       } else {
         console.log('El usuario ya no está en la lista de espera');
         this.datosListado = null;
@@ -166,6 +181,11 @@ export class ClienteHomeComponent implements OnInit, OnDestroy {
     ) {
       console.log('qr es valido');
       this.router.navigate(['productos/pagina']);
+    } else {
+      this.notificationService.showWarning(
+        'Este QR no es el de tu mesa',
+        'QR Equivocado'
+      );
     }
     this.toggleScanner();
   }

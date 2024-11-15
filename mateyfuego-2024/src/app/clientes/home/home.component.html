@@ -8,7 +8,7 @@
 
   <h3>Sera asignado/a a una mesa en breves</h3>
 
-  <button (click)="toggleScanner()">
+  <button (click)="toggleScanner()" [disabled]="isScannerVisible">
     <img src="../../../assets/qrcode.png" />
   </button>
 

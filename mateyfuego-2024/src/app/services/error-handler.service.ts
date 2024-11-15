@@ -14,17 +14,6 @@ export class ErrorHandlerService {
       await Haptics.vibrate();
 
       console.log('Haptics vibró');
-
-      // Opcionalmente, puedes usar un patrón más complejo
-      /*
-      const vibrateInterval = setInterval(async () => {
-        await Haptics.vibrate();
-      }, 200);
-
-      setTimeout(() => {
-        clearInterval(vibrateInterval);
-      }, 1000);
-      */
     } catch (e) {
       console.error('Error al intentar vibrar:', e);
     }

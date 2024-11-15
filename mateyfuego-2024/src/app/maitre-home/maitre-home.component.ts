@@ -103,6 +103,7 @@ export class MaitreHomeComponent implements OnInit {
       try {
         await this.firestore.collection('mesas').doc(mesa.id).update({
           disponible: false,
+          usuarioUid: usuario.id,
         });
 
         await this.firestore.collection('lista-espera').doc(usuario.id).update({

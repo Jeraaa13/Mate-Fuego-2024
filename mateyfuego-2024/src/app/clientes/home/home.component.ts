@@ -17,6 +17,7 @@ import {
 import { PushNotificationService } from 'src/app/services/push-notifications.service';
 import { AuthService } from 'src/app/services/auth.service';
 import { ErrorHandlerService } from 'src/app/services/error-handler.service';
+import { NotificationService } from 'src/app/services/notification.service';
 
 interface UsuarioEnEspera {
   mesaAsignada: boolean;
@@ -39,15 +40,13 @@ export class HomeComponent implements OnInit {
   userId: string = '';
 
   constructor(
-    private qrService: QrService,
     private router: Router,
-    private route: ActivatedRoute,
     private firestore: Firestore,
-    private mailService: MailService,
     private afAuth: AngularFireAuth,
     private authService: AuthService,
     private pushNotificationService: PushNotificationService,
-    private errorHandler: ErrorHandlerService
+    private errorHandler: ErrorHandlerService,
+    private notificationService: NotificationService
   ) {}
 
   ngOnInit(): void {
@@ -85,6 +84,12 @@ export class HomeComponent implements OnInit {
   }
 
   async onScanSuccess(result: string) {
+    if (!this.isScannerVisible) {
+      return;
+    }
+
+    this.isScannerVisible = false;
+
     const resultadoScaneo = result;
 
     if (resultadoScaneo.includes('restaurante:12345')) {
@@ -97,22 +102,34 @@ export class HomeComponent implements OnInit {
 
         if (clienteDoc.exists()) {
           const clienteData = clienteDoc.data();
-          const nombreCompleto = `${clienteData['nombre']} ${clienteData['apellido']}`;
           const listaEsperaRef = collection(this.firestore, 'lista-espera');
+          const usuarioEnEspera: UsuarioEnEspera = {
+            mesaAsignada: false,
+            uid: clienteId,
+            nombre: clienteData['nombre'] || '',
+            fotourl: clienteData['fotoUrl'] || '',
+          };
 
-          console.log('Detalles del cliente:', clienteData);
-
-          await this.manejarMaitreNotificacion(clienteData['nombre']);
-
-          this.router.navigate(['lista-espera']);
+          try {
+            await addDoc(listaEsperaRef, usuarioEnEspera);
+            await this.manejarMaitreNotificacion(clienteData['nombre']);
+            this.router.navigate(['lista-espera']);
+          } catch (error) {
+            console.error('Error al guardar en lista de espera:', error);
+            this.errorHandler.vibrate();
+          }
         }
       } else {
         console.error('No hay un usuario logueado');
       }
     } else {
-      this.qrService.onScanSuccess(result);
+      this.notificationService.showWarning(
+        'Este QR no es el del local',
+        'QR Equivocado'
+      );
     }
 
+    // Asegurarse de que el escáner pueda volver a activarse en caso de ser necesario.
     this.toggleScanner();
   }
 
@@ -133,8 +150,7 @@ export class HomeComponent implements OnInit {
 
       try {
         const listaEsperaRef = collection(this.firestore, 'lista-espera');
-        const nuevoDocRef = doc(listaEsperaRef, this.userId);
-        await setDoc(nuevoDocRef, usuarioEnEspera);
+        await addDoc(listaEsperaRef, usuarioEnEspera);
         this.router.navigate(['/lista-espera']);
       } catch (error) {
         console.error('Error al guardar en lista de espera:', error);
