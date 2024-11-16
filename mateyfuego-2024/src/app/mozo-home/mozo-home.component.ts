@@ -126,20 +126,49 @@ export class MozoHomeComponent implements OnInit {
     order.EstadoDePedido = 'rechazado';
   }
   canDeliverOrder(order: Order): boolean {
-    return order.EstadoDePedido == "preparacion" && order.items.every(item => item.estado === 'realizado');
+    return (
+      order.EstadoDePedido == 'preparacion' &&
+      order.items.every((item) => item.estado === 'realizado')
+    );
   }
 
   async deliverOrder(order: Order) {
     const orderRef = doc(this.firestore, 'pedidos', order.orderId);
     await updateDoc(orderRef, { EstadoDePedido: 'entregado' });
     order.EstadoDePedido = 'entregado';
-  
-    // Notificar al cliente, o cualquier otra lógica adicional
+
     if (order.nombreCliente) {
       this.pushNotificationService.notificarSectores(
         `La orden de ${order.nombreCliente} ha sido entregada.`,
         'Cliente'
       );
     }
-  }  
+  }
+
+  async confirmarPago(order: Order) {
+    try {
+      const orderRef = doc(this.firestore, 'pedidos', order.orderId);
+      const mesaRef = doc(this.firestore, 'mesas', order.Mesa.toString());
+
+      await updateDoc(orderRef, {
+        EstadoDePedido: 'pagado',
+      });
+
+      await updateDoc(mesaRef, {
+        disponible: true,
+        usuarioUid: '',
+      });
+
+      order.EstadoDePedido = 'pagado';
+
+      if (order.nombreCliente) {
+        this.pushNotificationService.notificarSectores(
+          `Pago confirmado!`,
+          'Cliente'
+        );
+      }
+    } catch (error) {
+      console.error('Error al confirmar el pago:', error);
+    }
+  }
 }

@@ -8,7 +8,10 @@
     <div *ngFor="let item of pedido.items" class="order-item">
       <div class="item-details">
         <div class="item-name">{{ item.nombre }}</div>
-        <div class="item-price">{{ item.precioUnitario | currency:'USD':'symbol':'1.0-0' }} x {{ item.cantidad }}</div>
+        <div class="item-price">
+          {{ item.precioUnitario | currency : "USD" : "symbol" : "1.0-0" }} x
+          {{ item.cantidad }}
+        </div>
       </div>
     </div>
 
@@ -16,32 +19,46 @@
     <div class="order-summary">
       <div class="subtotal">
         <span>SubTotal</span>
-        <span>{{ pedido.subtotal | currency:'USD':'symbol':'1.0-0' }}</span>
+        <span>{{
+          pedido.subtotal | currency : "USD" : "symbol" : "1.0-0"
+        }}</span>
       </div>
 
       <!-- Descuento aplicado -->
       <div class="discount" *ngIf="pedido.descuento">
         <span>Descuento (10% Juego Ganado!)</span>
-        <span>-{{ pedido.descuento | currency:'USD':'symbol':'1.0-0' }}</span>
+        <span
+          >-{{ pedido.descuento | currency : "USD" : "symbol" : "1.0-0" }}</span
+        >
       </div>
 
       <!-- Propina aplicada -->
       <div class="tip" *ngIf="propina > 0">
         <span>Propina ({{ propina }}%)</span>
-        <span>{{ ((pedido.totalConDescuento ?? 0) * propina / 100) | currency:'USD':'symbol':'1.0-0' }}</span>
+        <span>{{
+          ((pedido.totalConDescuento ?? 0) * propina) / 100
+            | currency : "USD" : "symbol" : "1.0-0"
+        }}</span>
       </div>
 
       <!-- Total final con Descuento y Propina -->
       <div class="total">
         <span>Total</span>
-        <span>{{ (pedido.totalConDescuento ?? 0) + ((pedido.totalConDescuento ?? 0) * propina / 100) | currency:'USD':'symbol':'1.0-0' }}</span>
+        <span>{{
+          (pedido.totalConDescuento ?? 0) +
+            ((pedido.totalConDescuento ?? 0) * propina) / 100
+            | currency : "USD" : "symbol" : "1.0-0"
+        }}</span>
       </div>
     </div>
   </div>
 
   <!-- Botón para escanear QR de propina -->
   <div *ngIf="scanning" class="qr-scanner">
-    <zxing-scanner (scanSuccess)="handleScanResult($event)" [tryHarder]="true"></zxing-scanner>
+    <zxing-scanner
+      (scanSuccess)="handleScanResult($event)"
+      [tryHarder]="true"
+    ></zxing-scanner>
     <ion-button expand="block" color="danger" (click)="scanning = false">
       Cancelar Escaneo
     </ion-button>
@@ -52,7 +69,7 @@
   </ion-button>
 
   <!-- Botón de pago -->
-  <ion-button expand="block" class="pay-button" (click)="Pago()">
-    <ion-icon name="cash-outline"></ion-icon> PAGAR
+  <ion-button expand="block" class="pay-button" (click)="realizarPago()">
+    <ion-icon name="cash-outline"></ion-icon> Solicitar cuenta
   </ion-button>
 </ion-content>
