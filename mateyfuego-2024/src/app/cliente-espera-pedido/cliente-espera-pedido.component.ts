@@ -140,6 +140,7 @@ export class ClienteEsperaPedidoComponent implements OnInit {
       if (!querySnapshot.empty) {
         const mesasDoc = querySnapshot.docs[0];
         this.Mesa = mesasDoc.data();
+        this.escaneo = true;
       } else {
         console.log('No se encontraron mesas para este número.');
       }
