@@ -108,38 +108,38 @@
 
 Al ingresar a la aplicación el cliente tiene la opcion de iniciar sesión si ya posee una cuenta, o de registrarse como cliente normal, o en su defecto, como cliente anonimo.
 
-![Ingreso a la aplicación](./fotosReadme/login-registros.png?qraw=true)
+![Ingreso a la aplicación](./readmeFotos/login-registros.png?qraw=true)
 
 ### Una vez dentro...
 
 El cliente debe escanear un QR que lo ingresa a la lista de espera. De ser aceptado y de habérsele asignado una mesa, debe escanear el QR de la misma (no puede escanear otro).
 
-![Cliente ingresa a la mesa](./fotosReadme/ingreso-cliente.png?qraw=true)
+![Cliente ingresa a la mesa](./readmeFotos/ingreso-cliente.png?qraw=true)
 
 ### Realización de pedido
 
 Una vez aquí, el cliente tiene la opción de consultar al mozo mediante un chat, o realizar el pedido correspondiente.
 
-![Realizar pedido](./fotosReadme/pedido.png?qraw=true)
+![Realizar pedido](./readmeFotos/pedido.png?qraw=true)
 
 ### Luego de realizar el pedido...
 
 Aqui el cliente tiene la opción de confirmar la recepción de su pedido, además puede volver a escanear el código QR de la mesa para visualizar el estado del pedido, y una vez recibido puede pedir la cuenta o acceder a la encuesta.
 
-![Cliente espera el pedido](./fotosReadme/esperando-pedido.png?qraw=true)
+![Cliente espera el pedido](./readmeFotos/esperando-pedido.png?qraw=true)
 
 ### Cuenta del pedido
 
 El cliente pide la cuenta y en la misma, se encuentra la opción de escanear un codigo QR para la propina, jugar un juego para obtener un descuento en el primer intento. Una vez realizado el pago, debe esperar la confirmación del mozo.
 
-![Cuenta](./fotosReadme/cuenta.png?qraw=true)
-![Cuenta del pedido](./fotosReadme/cuenta-del-pedido.png?qraw=true)
+![Cuenta](./readmeFotos/cuenta.png?qraw=true)
+![Cuenta del pedido](./readmeFotos/cuenta-del-pedido.png?qraw=true)
 
 ### Visualización de los graficos de la encuesta
 
 Al retirarse del local el cliente puede escanear nuevamente el QR de ingreso al local para visualizar los graficos de las encuestas.
 
-![Graficos de las encuestas](./fotosReadme/cliente-final.png?qraw=true)
+![Graficos de las encuestas](./readmeFotos/cliente-final.png?qraw=true)
 
 ## Interfaz de los empleados
 
@@ -147,16 +147,16 @@ Al retirarse del local el cliente puede escanear nuevamente el QR de ingreso al 
 
 Aquí se encuentran las tareas que puede realizar cada uno, cuando alguien ingresa al local y cuando alguien ingresa a la lista de espera respectivamente.
 
-![Tareas dueño, supervisor y metre](./fotosReadme/supervisor-metre-habilitacion.png?qraw=true)
+![Tareas dueño, supervisor y metre](./readmeFotos/supervisor-metre-habilitacion.png?qraw=true)
 
 ### Bartender, Chef y Mozo
 
 En esta sección tanto el bartender como el chef realizan los pedidos y se los devuelven al mozo. Los pedidos se separan por producto, asi que el tiempo de realización es el del producto que mayor elaboración conlleve. El mozo se encarga de enviar los pedidos a las secciones anteriormente mencionadas, entregarlo al cliente y por último confirmar el pago.
 
-![Tareas bartender, mozo y chef](./fotosReadme/pedidos-empleados-todos.png?qraw=true)
+![Tareas bartender, mozo y chef](./readmeFotos/pedidos-empleados-todos.png?qraw=true)
 
 ## Push notification y correo electronico
 
 Aquí se pueden ver los correos electronicos que le llegarian la cliente al momento de ingresar a la aplicación y cuando es habilitado. También se encuentra una de las distintas push notification que se mandan a lo largo de la aplicación
 
-![Notificaciones](./fotosReadme/mails-push.png?qraw=true)
+![Notificaciones](./readmeFotos/mails-push.png?qraw=true)
