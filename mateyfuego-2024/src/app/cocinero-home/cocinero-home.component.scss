@@ -1,37 +1,94 @@
 .order-item {
-    border-bottom: 1px solid #ddd;
-    padding: 1.2rem 0;
-  }
+  border-bottom: 1px solid #333333;
+  padding: 1.5rem 0;
+  background: #1e1e1e;
+  margin-bottom: 1rem;
+}
 
-  .order-item-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 0.7rem;
-  }
-
-  .order-item-header h3 {
+.order-item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  padding: 0.5rem;
+  
+  h3 {
     margin: 0;
+    font-size: 1.4rem;
+    color: #bb86fc;
+    font-weight: 500;
+  }
+  
+  p {
+    padding: 8px 16px;
+    border-radius: 8px;
     font-size: 1.2rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    
+    &:contains("rechazado") {
+      background: #ff4d4d;
+      color: white;
+    }
   }
+}
 
-  .order-item-content {
-    display: grid;
+.order-item-content {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-gap: 1.2rem;
+  padding: 0.5rem;
+  
+  @media (min-width: 768px) {
     grid-template-columns: 1fr 1fr;
-    grid-gap: 1.2rem;
   }
+  
+  p {
+    margin: 0.5rem 0;
+    font-size: 1.1rem;
+    color: rgba(255, 255, 255, 0.87);
+    
+    strong {
+      color: #bb86fc;
+    }
+  }
+}
 
-  .order-item-content p {
-    margin: 0.3rem 0;
-    font-size: 1rem;
+.order-item-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.8rem;
+  margin-top: 1.5rem;
+  padding: 0.5rem;
+  
+  ion-button {
+    font-size: 1.1rem;
+    --padding-start: 16px;
+    --padding-end: 16px;
+    
+    &[color="success"] {
+      --background: #03dac6;
+    }
+    
+    &[color="danger"] {
+      --background: #cf6679;
+    }
+    
+    &[color="primary"] {
+      --background: #bb86fc;
+    }
   }
+}
 
-  .order-item-actions {
-    display: flex;
-    justify-content: flex-end;
-    margin-top: 1.2rem;
-  }
-
-  .order-item-actions ion-button {
-    font-size: 1rem;
-  }
+/* Ajustes para el estado rechazado */
+.estado-pedido.rechazado {
+  background: #ff4d4d;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}

@@ -72,6 +72,8 @@ export class PushNotificationService {
 
   async guardarTokenEnFirestore(userId: string, token: string) {
     console.log('userId => ', userId);
+    console.log('Guardando token para usuario:', userId);
+    console.log('Token a guardar:', token);
 
     try {
       const collections = ['duenosSupervisores', 'empleados', 'clientes'];
@@ -107,8 +109,10 @@ export class PushNotificationService {
       return;
     }
 
+    console.log('Intentando enviar notificación a tokens:', tokens);
+
     try {
-      await this.http
+      const response = await this.http
         .post(`${this.NOTIFICATION_SERVER_URL}/api/push/role`, {
           title: titulo,
           body: mensaje,
@@ -116,9 +120,11 @@ export class PushNotificationService {
         })
         .toPromise();
 
-      console.log(`Notificaciones enviadas a ${tokens.length} destinatarios`);
+      console.log('Respuesta del servidor:', response);
+      return response;
     } catch (error) {
       console.error('Error al enviar las notificaciones:', error);
+      throw error;
     }
   }
 
@@ -208,22 +214,26 @@ export class PushNotificationService {
   }
 
   private async obtenerTokensDuenosYSupervisores(): Promise<string[]> {
-    const tokensDuenosYSupervisores: string[] = [];
     try {
       const q = query(collection(this.firestore, 'duenosSupervisores'));
       const snapshot = await getDocs(q);
+      const tokens: string[] = [];
+
       snapshot.forEach((doc) => {
         const data = doc.data();
         if (data['token']) {
-          tokensDuenosYSupervisores.push(data['token']);
+          console.log('Token encontrado para usuario:', doc.id);
+          console.log('Token:', data['token']);
+          tokens.push(data['token']);
         }
       });
+
+      console.log('Total tokens encontrados:', tokens.length);
+      console.log('Tokens:', tokens);
+      return tokens;
     } catch (error) {
-      console.error(
-        'Error al obtener los tokens de los dueños y supervisores:',
-        error
-      );
+      console.error('Error al obtener tokens:', error);
+      return [];
     }
-    return tokensDuenosYSupervisores;
   }
 }

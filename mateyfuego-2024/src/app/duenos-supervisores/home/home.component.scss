@@ -1,0 +1,79 @@
+/* Estilos para el título principal */
+ion-title {
+    font-size: 1.8rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+  }
+  
+  /* Estilos para la lista de clientes */
+  ion-list {
+    margin: 16px 0;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  
+  /* Estilos para cada item de la lista */
+  ion-item {
+    --padding-start: 16px;
+    --padding-end: 16px;
+    --padding-top: 12px;
+    --padding-bottom: 12px;
+    margin-bottom: 8px;
+    border-radius: 6px;
+    --background: #f8f9fa;
+  }
+  
+  /* Estilos para el nombre del cliente */
+  ion-label h2 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 4px;
+  }
+  
+  /* Estilos para el correo del cliente */
+  ion-label p {
+    font-size: 0.9rem;
+    color: #6c757d;
+    margin: 0;
+  }
+  
+  /* Estilos para los botones */
+  ion-button {
+    --padding-start: 16px;
+    --padding-end: 16px;
+    font-weight: 500;
+    text-transform: none;
+    margin: 0 4px;
+  }
+  
+  /* Estilo para el mensaje de no clientes */
+  ng-template p {
+    text-align: center;
+    color: #6c757d;
+    font-size: 1rem;
+    padding: 24px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    margin: 16px 0;
+  }
+  
+  /* Ajustes para modo oscuro */
+  @media (prefers-color-scheme: dark) {
+    ion-item {
+      --background: #2c3e50;
+    }
+    
+    ion-label h2 {
+      color: #f8f9fa;
+    }
+    
+    ion-label p {
+      color: #cbd5e0;
+    }
+    
+    ng-template p {
+      background: #2c3e50;
+      color: #cbd5e0;
+    }
+  }

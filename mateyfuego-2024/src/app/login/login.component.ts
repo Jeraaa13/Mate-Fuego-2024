@@ -19,7 +19,6 @@ import {
 } from 'firebase/firestore';
 import { NotificationService } from '../services/notification.service';
 import { ErrorHandlerService } from '../services/error-handler.service';
-import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -35,7 +34,6 @@ export class LoginComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private auth: Auth,
-    private authService: AuthService,
     private router: Router,
     private route: ActivatedRoute,
     private notificationService: NotificationService,
@@ -126,7 +124,6 @@ export class LoginComponent implements OnInit {
       );
     }
   }
-
   navigateToTipoPerfil(tipoPerfil: string) {
     switch (tipoPerfil) {
       case 'cliente':
@@ -164,7 +161,7 @@ export class LoginComponent implements OnInit {
   }
 
   goToRegister() {
-    this.router.navigate(['/registro-clientes']);
+    this.router.navigate(['/register']);
   }
 
   async login() {
@@ -244,9 +241,5 @@ export class LoginComponent implements OnInit {
         console.warn(`Rol ${role} no reconocido`);
         break;
     }
-  }
-
-  logout() {
-    this.authService.logout();
   }
 }

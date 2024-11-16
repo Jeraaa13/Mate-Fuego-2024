@@ -1,46 +1,154 @@
+:root {
+  --ion-background-color: #121212;
+  --ion-background-color-rgb: 18, 18, 18;
+  --ion-text-color: #ffffff;
+  --card-background: #1e1e1e;
+  --border-color: #333333;
+  --highlight-color: #bb86fc;
+  --success-color: #03dac6;
+  --danger-color: #cf6679;
+  --rejected-color: #ff4d4d;
+  --base-font-size: 1.1rem;
+}
+
+/* Estilos generales */
+ion-content {
+  --background: var(--ion-background-color);
+  --color: var(--ion-text-color);
+  font-size: var(--base-font-size);
+}
+
+ion-card {
+  background: var(--card-background);
+  border-radius: 16px;
+  margin: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+ion-card-header {
+  padding: 16px;
+}
+
+ion-card-title {
+  color: var(--highlight-color);
+  font-size: 1.8rem !important;
+  font-weight: 600;
+}
+
+/* Estilos de las órdenes */
 .order-item {
-  border-bottom: 1px solid #ddd;
-  padding: 1.2rem 0;
-}
-
-.order-item:last-child {
-  border-bottom: none;
-}
-
-.order-item.solicitado {
-  background-color: #f2f2f2;
+  background: var(--card-background);
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 20px;
+  border: 1px solid var(--border-color);
 }
 
 .order-item-header {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 0.7rem;
-}
-
-.order-item-header h3 {
-  margin: 0;
-  font-size: 1.2rem;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 20px;
+  
+  h3 {
+    margin: 0;
+    font-size: 1.4rem;
+    color: var(--highlight-color);
+  }
+  
+  p {
+    margin: 0;
+    padding: 8px 16px;
+    border-radius: 12px;
+    font-size: 1.2rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    
+    &:contains("rechazado") {
+      background: var(--rejected-color);
+      color: rgb(170, 62, 20);
+      text-align: center;
+      width: fit-content;
+    }
+  }
 }
 
 .order-item-content {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  grid-gap: 1.2rem;
+  > div {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 16px;
+    border-radius: 8px;
+    
+    h4 {
+      color: var(--highlight-color);
+      margin: 0 0 12px 0;
+      font-size: 1.3rem;
+    }
+    
+    p {
+      margin: 8px 0;
+      font-size: 1.1rem;
+      color: rgba(255, 255, 255, 0.87);
+      
+      strong {
+        color: var(--highlight-color);
+      }
+    }
+  }
 }
 
-.order-item-content p {
-  margin: 0.3rem 0;
-  font-size: 1rem;
+/* Información específica del pedido */
+.tiempo-espera, .precio {
+  font-size: 1.2rem;
+  margin: 10px 0;
+  
+  strong {
+    color: var(--highlight-color);
+  }
 }
 
+.item-details {
+  margin: 12px 0;
+  
+  .cantidad, .precio-unitario, .tiempo-elaboracion {
+    font-size: 1.1rem;
+    margin: 6px 0;
+  }
+}
+
+/* Estado del pedido prominente */
+.estado-pedido {
+  &.rechazado {
+    background: var(--rejected-color);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    text-align: center;
+    margin: 10px 0;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    box-shadow: 0 2px 4px rgba(255, 77, 77, 0.3);
+  }
+}
+
+/* Botones de acción */
 .order-item-actions {
-  display: flex;
-  justify-content: flex-end;
-  grid-column: 1 / -1;
-  margin-top: 1.2rem;
+  margin-top: 20px;
+  
+  ion-button {
+    --padding-start: 20px;
+    --padding-end: 20px;
+    font-size: 1.1rem;
+    height: 44px;
+  }
 }
 
-.order-item-actions ion-button {
-  font-size: 1rem;
+/* Texto descriptivo */
+.descripcion-item {
+  font-size: 1.1rem;
+  line-height: 1.5;
+  margin: 8px 0;
 }

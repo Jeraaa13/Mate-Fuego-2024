@@ -3,21 +3,12 @@ import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 import { AuthService } from '../services/auth.service';
-import {
-  Firestore,
-  collection,
-  query,
-  onSnapshot,
-  updateDoc,
-  where,
-  doc,
-  getDocs,
-} from '@angular/fire/firestore';
+import { Firestore, collection, query, onSnapshot, updateDoc, where, doc, getDocs } from '@angular/fire/firestore';
 import { QrService } from '../services/qr.service';
 import { ZXingScannerModule } from '@zxing/ngx-scanner';
 import { Router } from '@angular/router';
 import { ErrorHandlerService } from '../services/error-handler.service';
-import { NotificationService } from '../services/notification.service';
+import { NotificationService } from '../services/notification.service'; // Importa el servicio de notificaciones
 
 @Component({
   selector: 'app-cliente-espera-pedido',
@@ -39,7 +30,7 @@ export class ClienteEsperaPedidoComponent implements OnInit {
     private qrService: QrService,
     private router: Router,
     private errorHandler: ErrorHandlerService,
-    private notificationService: NotificationService
+    private notificationService: NotificationService 
   ) {}
 
   async ngOnInit() {
@@ -47,19 +38,16 @@ export class ClienteEsperaPedidoComponent implements OnInit {
     if (this.usuario && this.usuario.uid) {
       console.log('Usuario autenticado exitosamente');
       await this.getPedido();
-      console.log(
-        'Número de mesa obtenido del pedido:',
-        this.pedido.qrData.numero
-      );
+      console.log("Número de mesa obtenido del pedido:", this.pedido.qrData.numero);
       if (this.pedido && this.pedido.mesa && this.pedido.mesa.numero) {
         await this.getQrCode(this.pedido.qrData.numero);
         if (this.Mesa) {
-          console.log('Datos de la mesa cargados exitosamente:', this.Mesa);
+          console.log("Datos de la mesa cargados exitosamente:", this.Mesa);
         } else {
-          console.error('No se pudieron cargar los datos de la mesa.');
+          console.error("No se pudieron cargar los datos de la mesa.");
         }
       } else {
-        console.error('No se encontró un número de mesa en el pedido.');
+        console.error("No se encontró un número de mesa en el pedido.");
       }
     }
   }
@@ -113,41 +101,35 @@ export class ClienteEsperaPedidoComponent implements OnInit {
   toggleScanner() {
     this.isScannerVisible = !this.isScannerVisible;
   }
-
+  
   async onScanSuccess(resultado: string) {
-    console.log('Resultado escaneado:', resultado);
-
+    console.log("Resultado escaneado:", resultado);
+  
     try {
       const qrData = JSON.parse(resultado);
-      console.log('QR DATA => ', qrData);
-      const numeroMesaEscaneada = Number(qrData.numero);
-
+      const numeroMesaEscaneada = Number(qrData.numero); 
+  
       if (!isNaN(numeroMesaEscaneada)) {
-        console.log('Número de mesa escaneada:', numeroMesaEscaneada);
-        console.log('this.pedido?.Mesa => ', this.pedido?.Mesa);
-        const numeroMesaUsuario = Number(this.pedido?.Mesa);
-        console.log('numeroMesaUsuario => ', numeroMesaUsuario);
-
+        console.log("Número de mesa escaneada:", numeroMesaEscaneada);
+        const numeroMesaUsuario = Number(this.pedido?.Mesa); 
+  
         if (numeroMesaUsuario === numeroMesaEscaneada) {
-          console.log('Número de mesa coincide con el del usuario.');
-
+          console.log("Número de mesa coincide con el del usuario.");
+  
           this.notificationService.showInfo(
             `El estado actual de tu pedido es: ${this.pedido.EstadoDePedido}`,
             'Estado de tu pedido'
           );
         } else {
-          console.warn(
-            'El número de mesa escaneada no coincide con el número de mesa del pedido del usuario.'
-          );
+          console.warn("El número de mesa escaneada no coincide con el número de mesa del pedido del usuario.");
         }
       } else {
-        console.error('El QR escaneado no contiene un número de mesa válido.');
+        console.error("El QR escaneado no contiene un número de mesa válido.");
       }
     } catch (error) {
-      console.error('Error al parsear el QR escaneado:', error);
+      console.error("Error al parsear el QR escaneado:", error);
     }
   }
-
   async getQrCode(numero: number) {
     try {
       const collectionName = 'mesas';
@@ -166,31 +148,26 @@ export class ClienteEsperaPedidoComponent implements OnInit {
       this.errorHandler.vibrate();
     }
   }
-  async obtenerMesaPorNumeroPedido(
-    firestore: Firestore,
-    numeroMesaPedido: number
-  ) {
+  async obtenerMesaPorNumeroPedido(firestore: Firestore, numeroMesaPedido: number) {
     try {
       const mesasCollection = collection(firestore, 'mesas');
       const mesasSnapshot = await getDocs(mesasCollection);
-      const todasLasMesas = mesasSnapshot.docs.map((doc) => ({
+      const todasLasMesas = mesasSnapshot.docs.map(doc => ({
         id: doc.id,
-        ...doc.data(),
+        ...doc.data()
       }));
-      console.log('Todas las mesas:', todasLasMesas);
-      const mesaSeleccionada = todasLasMesas.find(
-        (mesa) => mesa.id === numeroMesaPedido.toString()
-      );
-
+      console.log("Todas las mesas:", todasLasMesas);
+      const mesaSeleccionada = todasLasMesas.find(mesa => mesa.id === numeroMesaPedido.toString());
+  
       if (mesaSeleccionada) {
-        console.log('Mesa seleccionada:', mesaSeleccionada);
+        console.log("Mesa seleccionada:", mesaSeleccionada);
         return mesaSeleccionada;
       } else {
-        console.error('No se encontró una mesa con el número especificado.');
+        console.error("No se encontró una mesa con el número especificado.");
         return null;
       }
     } catch (error) {
-      console.error('Error al obtener las mesas:', error);
+      console.error("Error al obtener las mesas:", error);
       return null;
     }
   }

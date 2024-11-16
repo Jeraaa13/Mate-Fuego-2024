@@ -55,7 +55,8 @@ export class VerEncuestaComponent implements AfterViewInit {
       console.error('Canvas elements are not available');
       return;
     }
-    
+
+    // Calculate the average satisfaction level
     const satisfaccionPromedio =
       data.reduce((acc, curr) => acc + curr.satisfaccionGeneral, 0) / data.length;
 
@@ -85,6 +86,7 @@ export class VerEncuestaComponent implements AfterViewInit {
       },
     });
 
+    // Services data
     const servicios = ['Restaurante', 'Bar', 'Delivery'];
     const serviciosCount = servicios.map(
       (servicio) => data.filter((e) => e.serviciosUtilizados.includes(servicio)).length
@@ -116,6 +118,7 @@ export class VerEncuestaComponent implements AfterViewInit {
       },
     });
 
+    // Count recommendations
     const recommendationCount = { yes: 0, no: 0 };
     data.forEach((encuesta) => {
       if (encuesta.recomendaria) {
