@@ -99,8 +99,10 @@ $box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
 
     .error-message {
       color: $error-color;
-      font-size: 0.875rem;
+      font-size: 1rem;
       margin-top: 0.25rem;
+      text-align: left;
+      display: block;
     }
 
     button {

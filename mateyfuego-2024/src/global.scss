@@ -10,6 +10,7 @@
 @import "@ionic/angular/css/text-alignment.css";
 @import "@ionic/angular/css/text-transformation.css";
 @import "@ionic/angular/css/flex-utils.css";
+@import "@ionic/angular/css/palettes/dark.system.css";
 @import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap");
 
 /**
@@ -38,4 +39,173 @@
   width: 100%; /* Ajusta el tamaÃ±o de la imagen */
   height: 100%; /* Limita la altura */
   object-fit: cover;
+}
+
+// Color Variables
+:root {
+  --primary-color: #e63946;
+  --secondary-color: #2a9d8f;
+  --accent-color: #e9c46a;
+  --dark-color: #1d3557;
+  --light-color: #f1faee;
+
+  --success-color: #2a9d8f;
+  --warning-color: #e9c46a;
+  --danger-color: #e63946;
+  --info-color: #457b9d;
+
+  --text-primary: #1d3557;
+  --text-secondary: #457b9d;
+  --text-light: #f1faee;
+}
+
+// Typography
+$font-family-base: "Roboto", sans-serif;
+$font-sizes: (
+  "xs": 0.75rem,
+  // 12px
+  "sm": 0.875rem,
+  // 14px
+  "base": 1rem,
+  // 16px
+  "lg": 1.125rem,
+  // 18px
+  "xl": 1.25rem,
+  // 20px
+  "2xl": 1.5rem,
+  // 24px
+  "3xl": 1.875rem,
+  // 30px
+  "4xl": 2.25rem // 36px,,,,
+);
+
+// Spacing
+$spacer: 1rem;
+$spacers: (
+  0: 0,
+  1: $spacer * 0.25,
+  // 4px
+  2: $spacer * 0.5,
+  // 8px
+  3: $spacer,
+  // 16px
+  4: $spacer * 1.5,
+  // 24px
+  5: $spacer * 3 // 48px,,,,
+);
+
+// Layout
+$border-radius: 12px;
+$border-radius-sm: 8px;
+$border-radius-lg: 16px;
+$box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+
+// Gradients
+$gradient-primary: linear-gradient(
+  135deg,
+  var(--primary-color),
+  darken(#e63946, 15%)
+);
+$gradient-secondary: linear-gradient(
+  135deg,
+  var(--secondary-color),
+  darken(#2a9d8f, 15%)
+);
+$gradient-accent: linear-gradient(
+  135deg,
+  var(--accent-color),
+  darken(#e9c46a, 15%)
+);
+
+// Breakpoints
+$breakpoints: (
+  "xs": 0,
+  "sm": 576px,
+  "md": 768px,
+  "lg": 992px,
+  "xl": 1200px,
+  "xxl": 1400px,
+);
+
+// Mixins
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin glass-effect {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: $box-shadow;
+}
+
+@mixin responsive($breakpoint) {
+  @if map-has-key($breakpoints, $breakpoint) {
+    @media (min-width: map-get($breakpoints, $breakpoint)) {
+      @content;
+    }
+  }
+}
+
+// Animation
+$transition-base: all 0.3s ease;
+$animation-duration: 0.3s;
+
+// Z-index
+$z-indices: (
+  "dropdown": 1000,
+  "sticky": 1020,
+  "fixed": 1030,
+  "modal": 1040,
+  "popover": 1050,
+  "tooltip": 1060,
+);
+
+// Splash Screen
+.splash-screen {
+  @include flex-center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: var(--light-color);
+  z-index: map-get($z-indices, "modal");
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+// Utility Classes
+.text-truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.clickable {
+  cursor: pointer;
+  transition: $transition-base;
+
+  &:hover {
+    opacity: 0.8;
+  }
+}
+
+// Ion-specific overrides
+:root {
+  --ion-color-primary: var(--primary-color);
+  --ion-color-secondary: var(--secondary-color);
+  --ion-color-success: var(--success-color);
+  --ion-color-warning: var(--warning-color);
+  --ion-color-danger: var(--danger-color);
+  --ion-color-dark: var(--dark-color);
+  --ion-color-light: var(--light-color);
+
+  --ion-font-family: #{$font-family-base};
 }

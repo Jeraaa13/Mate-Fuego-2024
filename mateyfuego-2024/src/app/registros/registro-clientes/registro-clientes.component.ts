@@ -76,21 +76,25 @@ export class RegistroClientesComponent {
     private pushNotificationService: PushNotificationService,
     private errorHandler: ErrorHandlerService
   ) {
-    this.registroForm = this.fb.group({
-      nombre: ['', Validators.required],
-      apellido: ['', Validators.required],
-      dni: [
-        '',
-        [
-          Validators.required,
-          Validators.pattern('^[0-9]*$'),
-          Validators.minLength(8),
-          Validators.maxLength(8),
+    this.registroForm = this.fb.group(
+      {
+        nombre: ['', Validators.required],
+        apellido: ['', Validators.required],
+        dni: [
+          '',
+          [
+            Validators.required,
+            Validators.pattern('^[0-9]*$'),
+            Validators.minLength(8),
+            Validators.maxLength(8),
+          ],
         ],
-      ],
-      correo: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.minLength(6)]],
-    });
+        correo: ['', [Validators.required, Validators.email]],
+        password: ['', [Validators.required, Validators.minLength(6)]],
+        confirmPassword: ['', Validators.required],
+      },
+      { validator: this.passwordMatchValidator }
+    );
 
     this.registroAnonimoForm = this.fb.group({
       nombre: ['', Validators.required],
@@ -360,5 +364,16 @@ export class RegistroClientesComponent {
       ],
     });
     await actionSheet.present();
+  }
+
+  passwordMatchValidator(form: FormGroup) {
+    const password = form.get('password')?.value;
+    const confirmPassword = form.get('confirmPassword')?.value;
+
+    if (password === confirmPassword) {
+      return null;
+    }
+
+    return { passwordMismatch: true };
   }
 }
