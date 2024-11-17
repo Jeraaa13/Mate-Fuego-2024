@@ -28,6 +28,7 @@ import { Router } from '@angular/router';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { PushNotificationService } from 'src/app/services/push-notifications.service';
 import { ErrorHandlerService } from 'src/app/services/error-handler.service';
+import { NotificationService } from 'src/app/services/notification.service';
 
 interface Cliente {
   nombre: string;
@@ -74,7 +75,8 @@ export class RegistroClientesComponent {
     private fb: FormBuilder,
     private router: Router,
     private pushNotificationService: PushNotificationService,
-    private errorHandler: ErrorHandlerService
+    private errorHandler: ErrorHandlerService,
+    private notificationService: NotificationService
   ) {
     this.registroForm = this.fb.group(
       {
@@ -241,7 +243,13 @@ export class RegistroClientesComponent {
           'Nombre del cliente del dueno: ',
           this.registroForm.get('nombre')?.value
         );
+
         this.handleDuenoSupervisorQuery(this.registroForm.get('nombre')?.value);
+
+        this.notificationService.showSuccess(
+          'Se ha registrado',
+          'Espere a ser verificado'
+        );
 
         this.router.navigate(['/login']);
       }
