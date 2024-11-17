@@ -1,27 +1,37 @@
 <ion-header>
-  <ion-toolbar color="primary">
+  <ion-toolbar color="dark-color">
     <ion-title>Clientes Pendientes</ion-title>
   </ion-toolbar>
 </ion-header>
-
 <ion-content class="ion-padding">
   <div *ngIf="clientesPendientes.length > 0; else noClientes">
     <ion-list>
       <ion-item *ngFor="let cliente of clientesPendientes">
-        <ion-label>
-          <h2>{{ cliente.nombre }}</h2>
-          <p>{{ cliente.correo }}</p>
+        <ion-label class="ion-padding-bottom">
+          <div class="client-info">
+            <h2>{{ cliente.nombre }}</h2>
+            <p>{{ cliente.correo }}</p>
+          </div>
+          <div class="button-container">
+            <ion-button
+              size="small"
+              (click)="aprobarCliente(cliente.id)"
+              color="success"
+            >
+              <span>Aceptar</span>
+            </ion-button>
+            <ion-button
+              size="small"
+              (click)="rechazarCliente(cliente.id)"
+              color="danger"
+            >
+              <span>Rechazar</span>
+            </ion-button>
+          </div>
         </ion-label>
-        <ion-button (click)="aprobarCliente(cliente.id)" color="success">
-          Aceptar
-        </ion-button>
-        <ion-button (click)="rechazarCliente(cliente.id)" color="danger">
-          Rechazar
-        </ion-button>
       </ion-item>
     </ion-list>
   </div>
-
   <ng-template #noClientes>
     <p>No hay clientes pendientes de aprobación.</p>
   </ng-template>

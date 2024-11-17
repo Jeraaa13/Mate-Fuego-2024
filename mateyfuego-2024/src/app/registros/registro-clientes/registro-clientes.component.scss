@@ -106,40 +106,44 @@ $box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
     }
 
     button {
-      margin-top: 1rem;
-      padding: 1rem;
+      padding: 1rem 2rem;
       border: none;
+      font-size: 1.25rem;
       border-radius: $border-radius;
       background: linear-gradient(
         135deg,
-        $primary-color,
-        darken($primary-color, 15%)
+        $secondary-color,
+        darken($secondary-color, 15%)
       );
       color: $light-color;
       font-weight: 600;
       cursor: pointer;
-      transition: all 0.3s ease;
-
-      &[type="button"] {
-        background: linear-gradient(
-          135deg,
-          $secondary-color,
-          darken($secondary-color, 15%)
-        );
-      }
+      transition: transform 0.3s ease;
 
       &:hover {
         transform: translateY(-2px);
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
       }
 
-      &:disabled {
-        background: #ccc;
-        cursor: not-allowed;
-        transform: none;
+      &:active {
+        transform: translateY(0);
       }
     }
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    &:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+      transform: none;
+    }
   }
+}
+
+span {
+  font-size: 1.2rem;
 }
 
 @media (max-width: 768px) {

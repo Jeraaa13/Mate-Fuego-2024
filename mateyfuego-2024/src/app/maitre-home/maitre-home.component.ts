@@ -25,6 +25,7 @@ interface UsuarioListado {
   nombre: string;
   id?: string;
   mesaSeleccionada?: string;
+  numeroMesa?: number;
 }
 
 @Component({
@@ -40,6 +41,7 @@ export class MaitreHomeComponent implements OnInit {
   mostrarMesas: boolean = false;
   usuarioSeleccionado: UsuarioListado | null = null;
   userCredential: any;
+  mesaNumero: number = 0;
 
   constructor(
     private firestore: AngularFirestore,
@@ -105,12 +107,15 @@ export class MaitreHomeComponent implements OnInit {
           disponible: false,
           usuarioUid: usuario.id,
         });
+        this.mesaNumero = mesa.numero;
 
         await this.firestore.collection('lista-espera').doc(usuario.id).update({
           mesaAsignada: true,
           mesaSeleccionada: mesa.id,
           usuarioUid: usuario.id,
+          numeroMesa: mesa.numero,
         });
+
         this.mostrarMesas = false;
         this.usuarioSeleccionado = null;
         this.notificationService.showSuccess(

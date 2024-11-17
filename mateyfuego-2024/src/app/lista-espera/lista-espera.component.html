@@ -9,14 +9,14 @@
           <div class="alert-info">
             <p>Estás actualmente en la lista de espera,</p>
             <p>Gracias por esperar.</p>
-            <ion-button 
-            (click)="RutearEncuestas()"
-            class="asignar-button encuestas"
-            color="primary"
-            size="small">
-            <ion-icon name="bar-chart-outline" slot="start"></ion-icon>
-            Ver encuestas previas
-          </ion-button>
+            <ion-button
+              (click)="RutearEncuestas()"
+              class="asignar-button encuestas"
+              color="secondary"
+              size="small"
+            >
+              <span> Ver encuestas previas </span>
+            </ion-button>
           </div>
         </ion-card-content>
       </ion-card>
@@ -35,15 +35,12 @@
           <div class="content">
             <p>Accede a todas nuestras funcionalidades</p>
           </div>
-          <button (click)="toggleScanner()">
+          <ion-button (click)="toggleScanner()" color="secondary">
             <img src="../../../assets/qrcode.png" />
-          </button>
+          </ion-button>
           <div *ngIf="isScannerVisible">
             <zxing-scanner [torch]="true" (scanSuccess)="onScanSuccess($event)">
             </zxing-scanner>
-            <button (click)="navegarDeUna()">
-              <img src="../../assets/accesos-rapidos/supervisor.png" />
-            </button>
           </div>
         </ion-card-content>
       </ion-card>

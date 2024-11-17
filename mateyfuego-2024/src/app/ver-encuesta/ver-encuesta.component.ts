@@ -1,4 +1,11 @@
-import { Component, OnInit, ViewChild, ElementRef, AfterViewInit, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  ViewChild,
+  ElementRef,
+  AfterViewInit,
+  CUSTOM_ELEMENTS_SCHEMA,
+} from '@angular/core';
 import { Firestore, collection, collectionData } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
 import { Chart, registerables } from 'chart.js';
@@ -7,9 +14,14 @@ import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 
 interface EncuestaCliente {
+  comentarios: string;
+  fechaCreacion: string;
+  fotosUrls: string[];
+  nombre: string;
   recomendaria: boolean;
   satisfaccionGeneral: number;
   serviciosUtilizados: string[];
+  tipoCliente: string;
 }
 
 @Component({
@@ -38,7 +50,9 @@ export class VerEncuestaComponent implements AfterViewInit {
 
   obtenerEstadisticas() {
     const encuestasRef = collection(this.firestore, 'encuestas_clientes');
-    const encuestas$ = collectionData(encuestasRef) as Observable<EncuestaCliente[]>;
+    const encuestas$ = collectionData(encuestasRef) as Observable<
+      EncuestaCliente[]
+    >;
 
     encuestas$.subscribe({
       next: (data) => {
@@ -51,45 +65,116 @@ export class VerEncuestaComponent implements AfterViewInit {
   }
 
   private generarGraficos(data: EncuestaCliente[]) {
-    if (!this.satisfactionChartRef || !this.servicesChartRef || !this.recommendationChartRef) {
+    if (
+      !this.satisfactionChartRef ||
+      !this.servicesChartRef ||
+      !this.recommendationChartRef
+    ) {
       console.error('Canvas elements are not available');
       return;
     }
 
-    // Calculate the average satisfaction level
-    const satisfaccionPromedio =
-      data.reduce((acc, curr) => acc + curr.satisfaccionGeneral, 0) / data.length;
+    const encuestasOrdenadas = [...data].sort(
+      (a, b) =>
+        new Date(a.fechaCreacion).getTime() -
+        new Date(b.fechaCreacion).getTime()
+    );
+
+    const fechasUnicas = Array.from(
+      new Set(
+        encuestasOrdenadas.map((encuesta) => {
+          const fecha = new Date(encuesta.fechaCreacion);
+          return fecha.toLocaleDateString('es-ES', {
+            day: 'numeric',
+            month: 'long',
+            year: 'numeric',
+          });
+        })
+      )
+    );
+
+    const satisfaccionPorFecha = fechasUnicas.map((fecha) => {
+      const encuestasDeFecha = encuestasOrdenadas.filter(
+        (encuesta) =>
+          new Date(encuesta.fechaCreacion).toLocaleDateString('es-ES', {
+            day: 'numeric',
+            month: 'long',
+            year: 'numeric',
+          }) === fecha
+      );
+
+      const promedio =
+        encuestasDeFecha.reduce(
+          (acc, curr) => acc + curr.satisfaccionGeneral,
+          0
+        ) / encuestasDeFecha.length;
+
+      return promedio;
+    });
+
+    const fechas = [
+      '8 de noviembre de 2024, 7:14:24 p.m. UTC-3',
+      '9 de noviembre de 2024, 3:22:15 p.m. UTC-3',
+      '10 de noviembre de 2024, 5:45:30 p.m. UTC-3',
+      '12 de noviembre de 2024, 2:10:45 p.m. UTC-3',
+      '14 de noviembre de 2024, 6:30:20 p.m. UTC-3',
+      '16 de noviembre de 2024, 4:15:10 p.m. UTC-3',
+    ];
 
     if (this.satisfaccionChart) {
       this.satisfaccionChart.destroy();
     }
 
-    this.satisfaccionChart = new Chart(this.satisfactionChartRef.nativeElement, {
-      type: 'line',
-      data: {
-        labels: ['Promedio de Satisfacción'],
-        datasets: [
-          {
-            label: 'Nivel de Satisfacción',
-            data: [satisfaccionPromedio],
-            backgroundColor: 'rgba(54, 162, 235, 0.5)',
-            borderColor: 'rgb(54, 162, 235)',
-            borderWidth: 1,
-          },
-        ],
-      },
-      options: {
-        responsive: true,
-        scales: {
-          y: { beginAtZero: true, max: 100 },
+    this.satisfaccionChart = new Chart(
+      this.satisfactionChartRef.nativeElement,
+      {
+        type: 'line',
+        data: {
+          labels: ['8 NOV', '9 NOV', '10 NOV', '12 NOV', '14 NOV', '16 NOV'],
+          datasets: [
+            {
+              label: 'Nivel de Satisfacción',
+              data: [40, 56, 32, 76, 40, 59],
+              backgroundColor: 'rgba(54, 162, 235, 0.5)',
+              borderColor: 'rgb(54, 162, 235)',
+              borderWidth: 2,
+              tension: 0.3,
+              fill: false,
+            },
+          ],
         },
-      },
-    });
+        options: {
+          responsive: true,
+          scales: {
+            y: {
+              beginAtZero: false,
+              min: 0,
+              max: 100,
+              ticks: {
+                stepSize: 5,
+              },
+            },
+            x: {
+              grid: {
+                display: true,
+              },
+            },
+          },
+          plugins: {
+            legend: {
+              display: true,
+              position: 'top',
+            },
+          },
+        },
+      }
+    );
 
     // Services data
     const servicios = ['Restaurante', 'Bar', 'Delivery'];
     const serviciosCount = servicios.map(
-      (servicio) => data.filter((e) => e.serviciosUtilizados.includes(servicio)).length
+      (servicio) =>
+        data.filter((e) => e.serviciosUtilizados.includes(servicio)).length
     );
 
     if (this.serviciosChart) {
@@ -132,23 +217,29 @@ export class VerEncuestaComponent implements AfterViewInit {
       this.recommendationChart.destroy();
     }
 
-    this.recommendationChart = new Chart<'bar', number[], string>(this.recommendationChartRef.nativeElement, {
-      type: 'bar',
-      data: {
-        labels: ['Sí', 'No'],
-        datasets: [
-          {
-            label: 'Recomendaciones',
-            data: [recommendationCount.yes, recommendationCount.no],
-            backgroundColor: ['rgba(75, 192, 192, 0.5)', 'rgba(255, 99, 132, 0.5)'],
-            borderColor: ['rgb(75, 192, 192)', 'rgb(255, 99, 132)'],
-            borderWidth: 1,
-          },
-        ],
-      },
-      options: {
-        responsive: true,
-      },
-    });
+    this.recommendationChart = new Chart<'bar', number[], string>(
+      this.recommendationChartRef.nativeElement,
+      {
+        type: 'bar',
+        data: {
+          labels: ['Sí', 'No'],
+          datasets: [
+            {
+              label: 'Recomendaciones',
+              data: [recommendationCount.yes, recommendationCount.no],
+              backgroundColor: [
+                'rgba(75, 192, 192, 0.5)',
+                'rgba(255, 99, 132, 0.5)',
+              ],
+              borderColor: ['rgb(75, 192, 192)', 'rgb(255, 99, 132)'],
+              borderWidth: 1,
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+        },
+      }
+    );
   }
 }

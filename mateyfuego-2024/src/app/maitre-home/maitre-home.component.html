@@ -4,27 +4,34 @@
     <ion-card-header>
       <ion-card-title>Lista de Espera</ion-card-title>
     </ion-card-header>
-    
+
     <ion-card-content>
       <div class="users-grid">
         <div *ngFor="let usuario of listaDeEspera" class="user-card">
           <div class="user-photo-container">
-            <img [src]="usuario.fotourl || 'assets/usudefault.png'" 
-                 [alt]="usuario.nombre" 
-                 class="user-photo"
-                 (error)="handleImageError($event)">
+            <img
+              [src]="usuario.fotourl || 'assets/usudefault.png'"
+              [alt]="usuario.nombre"
+              class="user-photo"
+              (error)="handleImageError($event)"
+            />
           </div>
           <p class="nombre-usuario">{{ usuario.nombre }}</p>
           <div class="user-status" [class.assigned]="usuario.mesaAsignada">
-            {{ usuario.mesaAsignada ? 'Mesa Asignada' : 'En Espera' }}
+            {{
+              usuario.mesaAsignada
+                ? "Mesa Asignada - Mesa " + usuario.numeroMesa
+                : "En Espera"
+            }}
           </div>
-          <ion-button 
+          <ion-button
+            *ngIf="!usuario.mesaAsignada"
             (click)="mostrarSeleccionMesas(usuario)"
-            [disabled]="usuario.mesaAsignada"
             class="asignar-button"
-            color="primary"
-            size="small">
-            Seleccionar Mesa
+            color="secondary"
+            size="large"
+          >
+            SELECCIONAR MESA
           </ion-button>
         </div>
       </div>
@@ -32,33 +39,59 @@
   </ion-card>
 
   <!-- Modal de selección de mesas -->
-  <ion-modal [isOpen]="mostrarMesas" (didDismiss)="cerrarSeleccionMesas()">
+  <ion-modal
+    [isOpen]="mostrarMesas"
+    (didDismiss)="cerrarSeleccionMesas()"
+    class="modal-fullscreen"
+  >
     <ng-template>
       <ion-header>
-        <ion-toolbar>
-          <ion-title>Seleccionar Mesa</ion-title>
+        <ion-toolbar color="secondary">
+          <ion-title
+            class="ion-text-center"
+            style="font-size: 1.5rem; font-weight: bold"
+          >
+            Seleccionar Mesa
+          </ion-title>
           <ion-buttons slot="end">
-            <ion-button (click)="cerrarSeleccionMesas()">Cerrar</ion-button>
+            <ion-button (click)="cerrarSeleccionMesas()" size="large">
+              <ion-icon
+                name="close-circle-outline"
+                style="font-size: 1.8rem"
+              ></ion-icon>
+            </ion-button>
           </ion-buttons>
         </ion-toolbar>
       </ion-header>
-
-      <ion-content class="ion-padding">
-        <ion-grid>
+      <ion-content>
+        <ion-grid class="ion-no-padding">
           <ion-row>
             <ion-col size="6" *ngFor="let mesa of mesasDisponibles">
-              <ion-card>
+              <ion-card class="mesa-card">
                 <ion-card-header>
-                  <ion-card-subtitle>Mesa {{ mesa.numero }}</ion-card-subtitle>
-                  <ion-card-title>{{ mesa.tipo }}</ion-card-title>
+                  <ion-card-subtitle
+                    style="font-size: 1.3rem; font-weight: 500"
+                  >
+                    Mesa {{ mesa.numero }}
+                  </ion-card-subtitle>
+                  <ion-card-title style="font-size: 1.8rem; margin: 10px 0">
+                    {{ mesa.tipo }}
+                  </ion-card-title>
                 </ion-card-header>
                 <ion-card-content>
-                  <p>Capacidad: {{ mesa.cantidadComensales }} personas</p>
-                  <ion-button 
+                  <p style="font-size: 1.4rem; margin: 15px 0">
+                    Capacidad: {{ mesa.cantidadComensales }} personas
+                  </p>
+                  <ion-button
                     expand="block"
                     (click)="asignarMesaEspecifica(usuarioSeleccionado!, mesa)"
-                    color="success">
-                    Asignar Mesa
+                    color="success"
+                    size="large"
+                    class="asignar-button"
+                  >
+                    <span style="font-size: 1.3rem; padding: 10px"
+                      >Asignar Mesa</span
+                    >
                   </ion-button>
                 </ion-card-content>
               </ion-card>

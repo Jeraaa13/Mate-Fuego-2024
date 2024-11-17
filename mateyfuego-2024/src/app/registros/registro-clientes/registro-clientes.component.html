@@ -1,13 +1,15 @@
 <div class="registro-container">
   <h2>Registro de Clientes</h2>
 
-  <!-- Botones de selección de tipo de cliente -->
   <div>
-    <button (click)="seleccionarTipoCliente('normal')">Cliente</button>
-    <button (click)="seleccionarTipoCliente('anonimo')">Cliente Anónimo</button>
+    <button (click)="seleccionarTipoCliente('normal')">
+      <span>Cliente</span>
+    </button>
+    <button (click)="seleccionarTipoCliente('anonimo')">
+      <span>Cliente Anónimo</span>
+    </button>
   </div>
 
-  <!-- Formulario para Cliente Normal -->
   <form
     *ngIf="tipoCliente === 'normal'"
     [formGroup]="registroForm"
@@ -20,7 +22,6 @@
       formControlName="nombre"
       placeholder="Nombre"
     />
-    <!-- Validación de nombre -->
     <div
       *ngIf="
         registroForm.get('nombre')?.invalid &&
@@ -31,7 +32,6 @@
       <span>El nombre es requerido</span>
     </div>
 
-    <!-- Otros campos para el cliente normal -->
     <label for="apellido">Apellido</label>
     <input
       id="apellido"
@@ -131,9 +131,7 @@
       <span>Las contraseñas no coinciden</span>
     </div>
 
-    <ion-button expand="block" color="primary" (click)="startScan()">
-      Escanear DNI
-    </ion-button>
+    <button type="button" (click)="startScan()">Escanear DNI</button>
     <div class="scanner-container" *ngIf="isScanning">
       <div class="scanner-overlay">
         <div class="scanner-frame"></div>
@@ -149,7 +147,6 @@
     <button type="submit">Registrarse</button>
   </form>
 
-  <!-- Formulario para Cliente Anónimo -->
   <form
     *ngIf="tipoCliente === 'anonimo'"
     [formGroup]="registroAnonimoForm"

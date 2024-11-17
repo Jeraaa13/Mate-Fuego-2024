@@ -1,9 +1,9 @@
 .users-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 25px; 
+  gap: 25px;
   padding: 20px;
-  background-color: #000000; 
+  background-color: #000000;
 }
 
 .user-card {
@@ -11,24 +11,24 @@
   flex-direction: column;
   align-items: center;
   padding: 24px;
-  background-color: #020d2a; 
-  border-radius: 15px; 
+  background-color: #020d2a;
+  border-radius: 15px;
   transition: transform 0.2s ease;
   cursor: pointer;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); 
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 
   &:hover {
-    transform: translateY(-8px); 
+    transform: translateY(-8px);
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
   }
 }
 
 .user-photo-container {
-  width: 120px; 
-  height: 120px; 
+  width: 120px;
+  height: 120px;
   border-radius: 50%;
   overflow: hidden;
-  border: 4px solid #000; 
+  border: 4px solid #000;
   margin-bottom: 12px;
 }
 
@@ -39,46 +39,78 @@
 }
 
 .nombre-usuario {
-  margin: 12px 0; 
-  font-size: 18px; 
+  margin: 12px 0;
+  font-size: 1.7rem;
   font-weight: bold;
-  color: #ffffff; 
+  color: #ffffff;
   text-align: center;
   display: block;
   width: 100%;
 }
 
 .user-status {
-  font-size: 1.1rem;
+  font-size: 1.4rem;
   color: #ca9400;
   text-align: center;
   margin-top: 8px;
   margin-bottom: 16px;
   font-weight: 500;
-  
+
   &.assigned {
-    color: #4caf50; 
+    color: #4caf50;
   }
 }
 
 .asignar-button {
-  margin-top: 12px; 
+  margin-top: 12px;
   --padding-start: 24px;
   --padding-end: 24px;
 }
 
 @media (max-width: 576px) {
   .users-grid {
-    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); 
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
     gap: 20px;
   }
 
   .user-photo-container {
-    width: 100px; 
+    width: 100px;
     height: 100px;
   }
+}
 
-  .nombre-usuario {
-    font-size: 16px;
+.modal-fullscreen {
+  --height: 90%;
+  --width: 90%;
+
+  &::part(content) {
+    border-radius: 20px;
   }
+}
+
+.mesa-card {
+  margin: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+
+  ion-card-header {
+    padding: 16px;
+  }
+
+  ion-card-content {
+    padding: 16px;
+  }
+}
+
+.asignar-button {
+  margin-top: 10px;
+  height: 50px;
+}
+
+ion-grid {
+  margin: 0;
+  padding: 10px;
+}
+
+ion-col {
+  padding: 5px;
 }
