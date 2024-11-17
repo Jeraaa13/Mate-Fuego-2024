@@ -193,4 +193,8 @@ export class ClienteHomeComponent implements OnInit, OnDestroy {
   navegarDeUna() {
     this.onScanSuccess('pasedeuna');
   }
+
+  RutearEncuestas(){
+    this.router.navigate(['/ver-encuesta-cliente']);
+  };
 }

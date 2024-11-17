@@ -51,6 +51,7 @@ body {
   ion-card {
     @include glass-effect;
     color: $light-color;
+
   }
   .alert-info {
     background-color: rgba(255, 255, 255, 0.1);
@@ -136,4 +137,39 @@ body {
   p {
     font-size: 1.5rem;
   }
+
+}
+
+
+.asignar-button[size="small"] {
+  --border-radius: 25px;
+  --padding-start: 20px;
+  --padding-end: 20px;
+  height: 36px;
+  font-size: 14px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 12px 0;
+  --background: #3880ff;
+  --background-hover: #4d8dff;
+  --box-shadow: 0 4px 12px rgba(56, 128, 255, 0.3);
+  transition: all 0.3s ease;
+}
+
+.asignar-button[size="small"]:hover {
+  --background: #4d8dff;
+  --box-shadow: 0 6px 16px rgba(56, 128, 255, 0.4);
+  transform: translateY(-2px);
+}
+
+.asignar-button[size="small"]:active {
+  --background: #3171e0;
+  transform: translateY(1px);
+  --box-shadow: 0 2px 8px rgba(56, 128, 255, 0.3);
+}
+ion-button[color="primary"]:has(.encuestas) {
+  --background: #0015ff;
+  --background-hover: #6370ff;
+  --box-shadow: 0 4px 12px rgba(82, 96, 255, 0.3);
 }

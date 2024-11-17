@@ -1,0 +1,224 @@
+.ion-padding {
+    --padding: 24px;
+    background-color: #121212;
+    color: #ffffff;
+  }
+  
+  /* Estilos del título principal */
+  .text-4xl {
+    color: #ffffff;
+    text-shadow: 0 0 10px rgba(187, 134, 252, 0.3);
+    letter-spacing: -0.5px;
+  }
+  
+  /* Estilos para grupo de input con label fijo */
+  .input-group {
+    position: relative;
+    margin-bottom: 1.5rem;
+  }
+  
+  .fixed-label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #ffffff !important;
+    font-weight: 500 !important;
+  }
+  
+  /* Estilos para los items del formulario */
+  ion-item {
+    --background: #1e1e1e;
+    --border-color: #333333;
+    --padding-start: 16px;
+    --padding-end: 16px;
+    --padding-top: 12px;
+    --padding-bottom: 12px;
+    margin-bottom: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    border-radius: 8px;
+    transition: all 0.3s ease;
+  }
+  
+  ion-item:hover {
+    --background: #2d2d2d;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(187, 134, 252, 0.2);
+  }
+  
+  /* Estilos para los inputs */
+  ion-input, ion-textarea, ion-select {
+    --background: #1e1e1e;
+    --color: #ffffff;
+    --placeholder-color: #666666;
+    --placeholder-opacity: 0.8;
+    --padding-start: 0;
+    --padding-top: 8px;
+    --padding-bottom: 8px;
+  }
+  
+  /* Estilos para el range slider */
+  ion-range {
+    --bar-background: #333333;
+    --bar-background-active: #ffffff;
+    --knob-background: #ffffff;
+    --pin-background: #ffffff;
+    --pin-color: #000000;
+    padding: 21px 0;
+  }
+  
+  /* Estilos para los radio buttons */
+  ion-radio-group ion-item {
+    --ripple-color: #ffffff;
+  }
+  
+  ion-radio {
+    --color-checked: #ffffff;
+    margin-right: 12px;
+  }
+  
+  /* Estilos para los checkboxes */
+  ion-checkbox {
+    --size: 24px;
+    --checkbox-background-checked: #ffffff;
+    --border-color: #ffffff;
+    --border-radius: 4px;
+    margin-right: 12px;
+  }
+  
+  /* Estilos para el botón de envío */
+  ion-button[type="submit"] {
+    --background: #ffffff;
+    --background-hover: #9965e3;
+    --background-activated: #9965e3;
+    --padding-top: 20px;
+    --padding-bottom: 20px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-top: 16px;
+  }
+  
+  /* Estilos para la previsualización de fotos */
+  .grid-cols-3 img {
+    border: 2px solid #333333;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+  }
+  
+  .grid-cols-3 img:hover {
+    transform: scale(1.05);
+    border-color: #ffffff;
+    box-shadow: 0 0 15px rgba(187, 134, 252, 0.3);
+  }
+  
+  /* Estilos para el botón de eliminar foto */
+  ion-button[fill="clear"] {
+    --color: #ff4081;
+  }
+  
+  ion-button[fill="clear"] ion-icon {
+    font-size: 24px;
+    filter: drop-shadow(0 0 5px rgba(255, 64, 129, 0.5));
+  }
+  
+  /* Estilos para el spinner de carga */
+  app-loading-spinner {
+    --spinner-color: #ffffff;
+    --overlay-background: rgba(0, 0, 0, 0.8);
+  }
+  
+  /* Estilos para los mensajes de error */
+  .error-message {
+    color: #cf6679;
+    font-size: 0.875rem;
+    margin-top: 4px;
+    padding-left: 16px;
+  }
+  
+  /* Estilos para el input de archivo */
+  input[type="file"] {
+    background: #1e1e1e;
+    padding: 8px;
+    border: 2px dashed #333333;
+    border-radius: 8px;
+    width: 100%;
+    cursor: pointer;
+    color: #ffffff;
+    transition: all 0.3s ease;
+  }
+  
+  input[type="file"]:hover {
+    border-color: #ffffff;
+    box-shadow: 0 0 10px rgba(187, 134, 252, 0.2);
+  }
+  
+  /* Estilos para estados disabled */
+  ion-input.disabled,
+  ion-textarea.disabled,
+  ion-select.disabled,
+  ion-button[disabled] {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  
+  /* Efectos de neón para elementos activos */
+  ion-item:focus-within {
+    box-shadow: 0 0 15px rgba(187, 134, 252, 0.3);
+  }
+  
+  /* Animación de entrada con glow */
+  @keyframes fadeInGlow {
+    0% { 
+      opacity: 0; 
+      transform: translateY(10px);
+      filter: brightness(0.5);
+    }
+    100% { 
+      opacity: 1; 
+      transform: translateY(0);
+      filter: brightness(1);
+    }
+  }
+  
+  .ion-padding > * {
+    animation: fadeInGlow 0.4s ease-out;
+  }
+  
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    background: #1e1e1e;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background: #ffffff;
+    border-radius: 4px;
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    background: #9965e3;
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .ion-padding {
+      --padding: 16px;
+    }
+    
+    .grid-cols-3 {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .grid-cols-3 {
+      grid-template-columns: 1fr;
+    }
+    
+    ion-item {
+      --padding-start: 12px;
+      --padding-end: 12px;
+    }
+  }

@@ -1,140 +1,146 @@
 <ion-content class="ion-padding">
   <div class="max-w-4xl mx-auto">
-    <h2 class="text-2xl font-bold mb-6">
+    <h2 class="text-4xl font-bold mb-4">
       Encuesta de Satisfacción del Cliente
     </h2>
 
-    <form (ngSubmit)="submitEncuesta($event)" class="space-y-6">
-      <!-- Input para nombre -->
-      <ion-item class="rounded-lg">
-        <ion-label position="floating">Nombre</ion-label>
-        <ion-input
-          [(ngModel)]="encuesta.nombre"
-          name="nombre"
-          required
-          placeholder="Ingrese su nombre"
-        >
-        </ion-input>
-      </ion-item>
+    <form (ngSubmit)="submitEncuesta($event)" class="space-y-4">
+      <!-- Input para nombre - Con label fijo -->
+      <div class="input-group">
+        <ion-label class="fixed-label text-xl">Nombre</ion-label>
+        <ion-item class="rounded-lg">
+          <ion-input
+            [(ngModel)]="encuesta.nombre"
+            name="nombre"
+            required
+            placeholder="Ingrese su nombre"
+            class="text-xl"
+          >
+          </ion-input>
+        </ion-item>
+      </div>
 
       <!-- Range para satisfacción -->
-      <ion-item class="rounded-lg overflow-hidden">
-        <ion-label position="stacked" class="font-medium"
-          >Nivel de Satisfacción (0-100)</ion-label
-        >
-        <ion-range
-          [(ngModel)]="encuesta.satisfaccionGeneral"
-          min="0"
-          max="100"
-          name="satisfaccionGeneral"
-          pin="true"
-          color="primary"
-        >
-          <ion-icon slot="start" name="sad-outline"></ion-icon>
-          <ion-icon slot="end" name="happy"></ion-icon>
-        </ion-range>
-      </ion-item>
+      <div class="input-group">
+        <ion-label class="fixed-label text-xl">Nivel de Satisfacción (0-100)</ion-label>
+        <ion-item class="rounded-lg overflow-hidden">
+          <ion-range
+            [(ngModel)]="encuesta.satisfaccionGeneral"
+            min="0"
+            max="100"
+            name="satisfaccionGeneral"
+            pin="true"
+            color="tertiary"
+          >
+            <ion-icon slot="start" name="sad-outline" class="text-xl"></ion-icon>
+            <ion-icon slot="end" name="happy" class="text-xl"></ion-icon>
+          </ion-range>
+        </ion-item>
+      </div>
 
       <!-- Radio para recomendación -->
-      <ion-list class="rounded-lg overflow-hidden">
-        <ion-list-header>
-          <ion-label class="font-medium"
-            >¿Recomendaría nuestro servicio?</ion-label
+      <div class="input-group">
+        <ion-label class="fixed-label text-xl">¿Recomendaría nuestro servicio?</ion-label>
+        <ion-list class="rounded-lg overflow-hidden">
+          <ion-radio-group
+            [(ngModel)]="encuesta.recomendaria"
+            name="recomendaria"
           >
-        </ion-list-header>
-        <ion-radio-group
-          [(ngModel)]="encuesta.recomendaria"
-          name="recomendaria"
-        >
-          <ion-item>
-            <ion-label>Sí</ion-label>
-            <ion-radio slot="start" [value]="true"></ion-radio>
-          </ion-item>
-          <ion-item>
-            <ion-label>No</ion-label>
-            <ion-radio slot="start" [value]="false"></ion-radio>
-          </ion-item>
-        </ion-radio-group>
-      </ion-list>
+            <ion-item>
+              <ion-label class="text-xl">Sí</ion-label>
+              <ion-radio slot="start" [value]="true"></ion-radio>
+            </ion-item>
+            <ion-item>
+              <ion-label class="text-xl">No</ion-label>
+              <ion-radio slot="start" [value]="false"></ion-radio>
+            </ion-item>
+          </ion-radio-group>
+        </ion-list>
+      </div>
 
       <!-- Checkboxes para servicios -->
-      <ion-list class="rounded-lg overflow-hidden">
-        <ion-list-header>
-          <ion-label class="font-medium">Servicios Utilizados</ion-label>
-        </ion-list-header>
-        <ion-item>
-          <ion-checkbox
-            [(ngModel)]="servicioRestaurante"
-            (ionChange)="onCheckboxChange($event, 'Restaurante')"
-            name="servicioRestaurante"
-          >
-          </ion-checkbox>
-          <ion-label class="ml-2">Restaurante</ion-label>
-        </ion-item>
-        <ion-item>
-          <ion-checkbox
-            [(ngModel)]="servicioBar"
-            (ionChange)="onCheckboxChange($event, 'Bar')"
-            name="servicioBar"
-          >
-          </ion-checkbox>
-          <ion-label class="ml-2">Bar</ion-label>
-        </ion-item>
-        <ion-item>
-          <ion-checkbox
-            [(ngModel)]="servicioDelivery"
-            (ionChange)="onCheckboxChange($event, 'Delivery')"
-            name="servicioDelivery"
-          >
-          </ion-checkbox>
-          <ion-label class="ml-2">Delivery</ion-label>
-        </ion-item>
-      </ion-list>
+      <div class="input-group">
+        <ion-label class="fixed-label text-xl">Servicios Utilizados</ion-label>
+        <ion-list class="rounded-lg overflow-hidden">
+          <ion-item>
+            <ion-checkbox
+              [(ngModel)]="servicioRestaurante"
+              (ionChange)="onCheckboxChange($event, 'Restaurante')"
+              name="servicioRestaurante"
+            >
+            </ion-checkbox>
+            <ion-label class="ml-2 text-xl">Restaurante</ion-label>
+          </ion-item>
+          <ion-item>
+            <ion-checkbox
+              [(ngModel)]="servicioBar"
+              (ionChange)="onCheckboxChange($event, 'Bar')"
+              name="servicioBar"
+            >
+            </ion-checkbox>
+            <ion-label class="ml-2 text-xl">Bar</ion-label>
+          </ion-item>
+          <ion-item>
+            <ion-checkbox
+              [(ngModel)]="servicioDelivery"
+              (ionChange)="onCheckboxChange($event, 'Delivery')"
+              name="servicioDelivery"
+            >
+            </ion-checkbox>
+            <ion-label class="ml-2 text-xl">Delivery</ion-label>
+          </ion-item>
+        </ion-list>
+      </div>
 
       <!-- Select para tipo de cliente -->
-      <ion-item class="rounded-lg">
-        <ion-label>Tipo de Cliente</ion-label>
-        <ion-select
-          [(ngModel)]="encuesta.tipoCliente"
-          name="tipoCliente"
-          interface="popover"
-        >
-          <ion-select-option value="nuevo">Nuevo</ion-select-option>
-          <ion-select-option value="ocasional">Ocasional</ion-select-option>
-          <ion-select-option value="frecuente">Frecuente</ion-select-option>
-        </ion-select>
-      </ion-item>
+      <div class="input-group">
+        <ion-label class="fixed-label text-xl">Tipo de Cliente</ion-label>
+        <ion-item class="rounded-lg">
+          <ion-select
+            [(ngModel)]="encuesta.tipoCliente"
+            name="tipoCliente"
+            interface="popover"
+            class="text-xl"
+            placeholder="Seleccione el tipo de cliente"
+          >
+            <ion-select-option value="nuevo">Nuevo</ion-select-option>
+            <ion-select-option value="ocasional">Ocasional</ion-select-option>
+            <ion-select-option value="frecuente">Frecuente</ion-select-option>
+          </ion-select>
+        </ion-item>
+      </div>
 
       <!-- Textarea para comentarios -->
-      <ion-item class="rounded-lg">
-        <ion-label position="floating">Comentarios adicionales</ion-label>
-        <ion-textarea
-          [(ngModel)]="encuesta.comentarios"
-          name="comentarios"
-          rows="3"
-          placeholder="Comparta su experiencia..."
-        >
-        </ion-textarea>
-      </ion-item>
+      <div class="input-group">
+        <ion-label class="fixed-label text-xl">Comentarios adicionales</ion-label>
+        <ion-item class="rounded-lg">
+          <ion-textarea
+            [(ngModel)]="encuesta.comentarios"
+            name="comentarios"
+            rows="3"
+            placeholder="Comparta su experiencia..."
+            class="text-xl"
+          >
+          </ion-textarea>
+        </ion-item>
+      </div>
 
       <!-- Carga de fotos -->
-      <div class="space-y-2">
+      <div class="input-group">
+        <ion-label class="fixed-label text-xl">Fotos (máximo 3)</ion-label>
         <ion-item class="rounded-lg">
-          <ion-label position="stacked" class="font-medium"
-            >Fotos (máximo 3)</ion-label
-          >
           <input
             type="file"
             (change)="uploadPhotos($event)"
             accept="image/*"
             multiple
             [disabled]="encuesta.fotosUrls.length >= 3"
-            class="mt-2"
+            class="mt-2 text-xl"
           />
         </ion-item>
 
         <!-- Preview de fotos -->
-        <div class="grid grid-cols-3 gap-4 mt-2">
+        <div class="grid grid-cols-3 gap-2 mt-2">
           <div
             *ngFor="let foto of encuesta.fotosUrls; let i = index"
             class="relative"
@@ -149,14 +155,14 @@
               (click)="removePhoto(i)"
               class="absolute top-0 right-0"
             >
-              <ion-icon name="close-circle" color="danger"></ion-icon>
+              <ion-icon name="close-circle" color="danger" class="text-xl"></ion-icon>
             </ion-button>
           </div>
         </div>
       </div>
 
       <!-- Botón de envío -->
-      <ion-button expand="block" type="submit" [disabled]="loading">
+      <ion-button expand="block" type="submit" [disabled]="loading" class="text-xl">
         <ion-icon name="paper-plane-outline" slot="start"></ion-icon>
         {{ loading ? "Enviando..." : "Enviar Encuesta" }}
       </ion-button>

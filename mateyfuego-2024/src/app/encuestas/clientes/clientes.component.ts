@@ -7,6 +7,7 @@ import { ErrorHandlerService } from 'src/app/services/error-handler.service';
 import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 interface EncuestaCliente {
   satisfaccionGeneral: number;
   nombre: string;
@@ -46,7 +47,8 @@ export class EncuestaClienteComponent implements OnInit {
     private storage: AngularFireStorage,
     private firestore: Firestore,
     private notificationService: NotificationService,
-    private errorHandler: ErrorHandlerService
+    private errorHandler: ErrorHandlerService,
+    private router: Router
   ) {}
 
   ngOnInit() {}
@@ -94,10 +96,11 @@ export class EncuestaClienteComponent implements OnInit {
       const encuestasCollection = collection(this.firestore, 'encuestas_clientes');
       await addDoc(encuestasCollection, encuestaToSave);
       this.notificationService.showSuccess(
-        'La encuesta ha sido enviada con éxito.',
+        'Gracias por su encuesta',
         'Encuesta Enviada'
       );
       this.resetForm();
+      this.router.navigate(['cliente-espera-pedido']);
     } catch (error) {
       console.error('Error al enviar la encuesta:', error);
       this.notificationService.showError(
