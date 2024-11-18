@@ -162,7 +162,8 @@ export class ClienteHomeComponent implements OnInit, OnDestroy {
       this.RutearEncuestas();
 
       this.flagYaEntro = true;
-    } else {
+    } else if (this.flagYaEntro == true) {
+      this.flagYaEntro = false;
       this.notificationService.showError(
         'Espere a ser asignado a una mesa',
         'No estas en la lista de espera'
