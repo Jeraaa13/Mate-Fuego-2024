@@ -9,14 +9,16 @@
           <div class="alert-info">
             <p>Estás actualmente en la lista de espera,</p>
             <p>Gracias por esperar.</p>
-            <ion-button
-              (click)="RutearEncuestas()"
-              class="asignar-button encuestas"
-              color="secondary"
-              size="small"
-            >
-              <span> Ver encuestas previas </span>
+            <ion-button (click)="toggleScanner()" color="secondary">
+              <img src="../../../assets/qrcode.png" />
             </ion-button>
+            <div *ngIf="isScannerVisible">
+              <zxing-scanner
+                [torch]="true"
+                (scanSuccess)="onScanSuccessEspera($event)"
+              >
+              </zxing-scanner>
+            </div>
           </div>
         </ion-card-content>
       </ion-card>

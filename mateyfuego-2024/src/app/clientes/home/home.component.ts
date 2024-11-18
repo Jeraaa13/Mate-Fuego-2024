@@ -38,6 +38,7 @@ export class HomeComponent implements OnInit {
   currentUser: any | null = null;
   currentUserDetails: any | null = null;
   userId: string = '';
+  flagYaEntro: boolean = false;
 
   constructor(
     private router: Router,
@@ -92,7 +93,17 @@ export class HomeComponent implements OnInit {
 
     const resultadoScaneo = result;
 
-    if (resultadoScaneo.includes('restaurante:12345')) {
+    console.log(this.flagYaEntro);
+
+    if (
+      resultadoScaneo.includes('restaurante:12345') &&
+      this.flagYaEntro == false
+    ) {
+      this.notificationService.showSuccess(
+        'Bienvenido a la lista de espera',
+        'QR escaneado exitosamente'
+      );
+
       const currentUser = await this.authService.getCurrentUser();
 
       if (currentUser) {
@@ -110,10 +121,14 @@ export class HomeComponent implements OnInit {
             fotourl: clienteData['fotoUrl'] || '',
           };
 
+          console.log('Entro a la flag');
+          this.flagYaEntro = true;
+
           try {
             await addDoc(listaEsperaRef, usuarioEnEspera);
             await this.manejarMaitreNotificacion(clienteData['nombre']);
-            this.router.navigate(['lista-espera']);
+
+            this.router.navigate(['/lista-espera']);
           } catch (error) {
             console.error('Error al guardar en lista de espera:', error);
             this.errorHandler.vibrate();
@@ -147,6 +162,11 @@ export class HomeComponent implements OnInit {
         nombre: this.currentUserDetails.nombre || '',
         fotourl: this.currentUserDetails.fotoUrl || '',
       };
+
+      this.notificationService.showSuccess(
+        'Bienvenido a la lista de espera',
+        'QR escaneado exitosamente'
+      );
 
       try {
         const listaEsperaRef = collection(this.firestore, 'lista-espera');

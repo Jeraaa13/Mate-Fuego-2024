@@ -50,6 +50,7 @@ export class ClienteHomeComponent implements OnInit, OnDestroy {
   userId: string | null = null;
   nombreUsuario: string | null = null;
   private listaEsperaSubscription: Unsubscribe | null = null;
+  flagYaEntro: boolean = false;
 
   constructor(
     private firestore: Firestore,
@@ -145,6 +146,31 @@ export class ClienteHomeComponent implements OnInit, OnDestroy {
     }
   }
 
+  async onScanSuccessEspera(result: string) {
+    if (!this.isScannerVisible) {
+      return;
+    }
+
+    this.isScannerVisible = false;
+
+    const resultadoScaneo = result;
+
+    if (
+      resultadoScaneo.includes('restaurante:12345') &&
+      this.flagYaEntro == false
+    ) {
+      this.RutearEncuestas();
+
+      this.flagYaEntro = true;
+    } else {
+      this.notificationService.showError(
+        'Espere a ser asignado a una mesa',
+        'No estas en la lista de espera'
+      );
+    }
+    this.toggleScanner();
+  }
+
   async traerMesa() {
     if (!this.datosListado?.mesaSeleccionada) return;
 
@@ -194,7 +220,7 @@ export class ClienteHomeComponent implements OnInit, OnDestroy {
     this.onScanSuccess('pasedeuna');
   }
 
-  RutearEncuestas(){
+  RutearEncuestas() {
     this.router.navigate(['/ver-encuesta-cliente']);
-  };
+  }
 }
