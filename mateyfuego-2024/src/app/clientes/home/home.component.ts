@@ -113,7 +113,7 @@ export class HomeComponent implements OnInit {
 
         if (clienteDoc.exists()) {
           const clienteData = clienteDoc.data();
-          const listaEsperaRef = collection(this.firestore, 'lista-espera');
+          const listaEsperaRef = doc(this.firestore, "lista-espera", clienteId)
           const usuarioEnEspera: UsuarioEnEspera = {
             mesaAsignada: false,
             uid: clienteId,
@@ -125,7 +125,7 @@ export class HomeComponent implements OnInit {
           this.flagYaEntro = true;
 
           try {
-            await addDoc(listaEsperaRef, usuarioEnEspera);
+            await setDoc(listaEsperaRef, usuarioEnEspera);
             await this.manejarMaitreNotificacion(clienteData['nombre']);
 
             this.router.navigate(['/lista-espera']);
@@ -169,8 +169,6 @@ export class HomeComponent implements OnInit {
       );
 
       try {
-        const listaEsperaRef = collection(this.firestore, 'lista-espera');
-        await addDoc(listaEsperaRef, usuarioEnEspera);
         this.router.navigate(['/lista-espera']);
       } catch (error) {
         console.error('Error al guardar en lista de espera:', error);

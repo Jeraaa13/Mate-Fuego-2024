@@ -1,6 +1,7 @@
 <ion-content>
   <div class="container">
-    <div *ngIf="mostrarVistaEspera && datosListado" class="espera-container">
+    <!-- Vista de espera -->
+    <div *ngIf="mostrarVistaEspera && datosListado && !datosListado.mesaAsignada" class="espera-container">
       <ion-card>
         <ion-card-header>
           <ion-card-title>Lista de Espera</ion-card-title>
@@ -23,32 +24,41 @@
         </ion-card-content>
       </ion-card>
     </div>
-    <div
-      *ngIf="!mostrarVistaEspera && currentUserDetails"
+
+    <div 
+      *ngIf="(!mostrarVistaEspera || (datosListado && datosListado.mesaAsignada)) && currentUserDetails" 
       class="home-container"
     >
       <ion-card>
         <ion-card-header>
-          <ion-card-title
-            >¡Bienvenido, {{ currentUserDetails.nombre }}!</ion-card-title
-          >
+          <ion-card-title>¡Bienvenido, {{ currentUserDetails.nombre }}!</ion-card-title>
         </ion-card-header>
         <ion-card-content>
           <div class="content">
             <p>Accede a todas nuestras funcionalidades</p>
+            <div *ngIf="datosListado?.mesaAsignada && datosMesa">
+              <p>Mesa asignada: {{ datosMesa.numero }}</p>
+            </div>
           </div>
           <ion-button (click)="toggleScanner()" color="secondary">
             <img src="../../../assets/qrcode.png" />
           </ion-button>
           <div *ngIf="isScannerVisible">
-            <zxing-scanner [torch]="true" (scanSuccess)="onScanSuccess($event)">
+            <zxing-scanner 
+              [torch]="true" 
+              (scanSuccess)="onScanSuccess($event)"
+            >
             </zxing-scanner>
           </div>
         </ion-card-content>
       </ion-card>
     </div>
+
     <div *ngIf="!currentUserDetails && !datosListado" class="loading">
-      <app-loading-spinner [message]="'Cargando datos...'" [overlay]="true">
+      <app-loading-spinner 
+        [message]="'Cargando datos...'" 
+        [overlay]="true"
+      >
       </app-loading-spinner>
     </div>
   </div>

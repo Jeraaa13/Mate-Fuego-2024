@@ -51,6 +51,7 @@ export class ClienteHomeComponent implements OnInit, OnDestroy {
   nombreUsuario: string | null = null;
   private listaEsperaSubscription: Unsubscribe | null = null;
   flagYaEntro: boolean = false;
+  isScanning: boolean = true; 
 
   constructor(
     private firestore: Firestore,
@@ -98,78 +99,73 @@ export class ClienteHomeComponent implements OnInit, OnDestroy {
 
   escucharCambiosEnEspera() {
     if (!this.userId) {
-      console.log(
-        'No hay ID de usuario para escuchar cambios en la lista de espera'
-      );
+      console.log('No hay ID de usuario para escuchar cambios en la lista de espera');
       return;
     }
-
+  
     const mesasRef = collection(this.firestore, 'lista-espera');
     const q = query(mesasRef, where('uid', '==', this.userId));
-    console.log('USER ID => ', this.userId);
-
-    console.log('q =>', q);
+  
     this.listaEsperaSubscription = onSnapshot(q, (snapshot) => {
-      console.log('SNAPSHOT => ', snapshot);
+      console.log('Snapshot recibido:', snapshot);
+      
       if (!snapshot.empty) {
-        console.log('asdasdaAAAAAAAAAAAA');
         const listadoc = snapshot.docs[0];
         this.datosListado = {
           id: listadoc.id,
-          ...listadoc.data(),
+          ...listadoc.data()
         };
-        console.log('Actualización en lista de espera:', this.datosListado);
-
+        console.log('Datos actualizados:', this.datosListado);
+        this.verificarEstado();
+        
         if (this.datosListado.mesaAsignada) {
-          console.log('Mesa ya asignada, verificando estado...');
-          this.verificarEstado();
           this.traerMesa();
-        } else {
-          console.log('El usuario sigue esperando asignación.');
-          this.verificarEstado();
+          this.mostrarVistaEspera = false;
         }
       } else {
-        console.log('El usuario ya no está en la lista de espera');
         this.datosListado = null;
         this.verificarEstado();
       }
+    }, (error) => {
+      console.error('Error en la suscripción:', error);
     });
   }
-
+  
   verificarEstado() {
-    if (this.datosListado && !this.datosListado.mesaAsignada) {
-      this.mostrarVistaEspera = true;
-      console.log('Mostrando vista de espera');
+    if (this.datosListado) {
+      if (this.datosListado.mesaAsignada) {
+        this.mostrarVistaEspera = false;
+        console.log('Mesa asignada - mostrando vista principal');
+      } else {
+        this.mostrarVistaEspera = true;
+        console.log('En espera - mostrando vista de espera');
+      }
     } else {
       this.mostrarVistaEspera = false;
-      console.log('Mostrando vista principal');
+      console.log('Sin datos - mostrando vista principal');
     }
   }
 
   async onScanSuccessEspera(result: string) {
-    if (!this.isScannerVisible) {
+    if (!this.isScannerVisible || !this.isScanning) {
       return;
     }
-
+  
     this.isScannerVisible = false;
-
+    this.isScanning = false;
+  
     const resultadoScaneo = result;
-
-    if (
-      resultadoScaneo.includes('restaurante:12345') &&
-      this.flagYaEntro == false
-    ) {
+  
+    if (resultadoScaneo.includes('restaurante:12345') && !this.flagYaEntro) {
       this.RutearEncuestas();
-
       this.flagYaEntro = true;
-    } else if (this.flagYaEntro == true) {
+    } else if (this.flagYaEntro) {
       this.flagYaEntro = false;
       this.notificationService.showError(
         'Espere a ser asignado a una mesa',
-        'No estas en la lista de espera'
+        'No estás en la lista de espera'
       );
     }
-    this.toggleScanner();
   }
 
   async traerMesa() {
@@ -195,8 +191,9 @@ export class ClienteHomeComponent implements OnInit, OnDestroy {
     }
   }
 
-  toggleScanner() {
+  toggleScanner(): void {
     this.isScannerVisible = !this.isScannerVisible;
+    this.isScanning = this.isScannerVisible;
   }
 
   async onScanSuccess(resultado: string) {
