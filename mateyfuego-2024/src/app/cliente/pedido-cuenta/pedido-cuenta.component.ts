@@ -174,7 +174,7 @@ export class PedidoCuentaComponent implements OnInit {
       for (const docSnapshot of querySnapshot.docs) {
         const pedidoRef = doc(this.firestore, 'pedidos', docSnapshot.id);
         await updateDoc(pedidoRef, {
-          estado: 'cuenta-solicitada',
+          estado: 'Pagado',
         });
       }
 
@@ -187,4 +187,6 @@ export class PedidoCuentaComponent implements OnInit {
       this.notificationService.showError('Error al procesar el pago', 'Error');
     }
   }
+
+  
 }

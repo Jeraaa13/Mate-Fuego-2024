@@ -14,6 +14,7 @@ import {
   Unsubscribe,
   updateDoc,
   QuerySnapshot,
+  deleteDoc
 } from '@angular/fire/firestore';
 import { ZXingScannerModule } from '@zxing/ngx-scanner';
 import { IonicModule } from '@ionic/angular';
@@ -170,5 +171,16 @@ export class MozoHomeComponent implements OnInit {
     } catch (error) {
       console.error('Error al confirmar el pago:', error);
     }
+  }
+  async liberarMesa(order: Order)
+  {
+    const orderRef = doc(this.firestore, 'pedidos', order.orderId);
+    const mesaRef = doc(this.firestore, 'mesas', order.Mesa.toString());
+
+    await updateDoc(mesaRef, {
+      disponible: true,
+      usuarioUid: '',
+    });
+    await deleteDoc(orderRef);
   }
 }

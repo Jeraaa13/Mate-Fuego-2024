@@ -43,6 +43,13 @@
                     >Aceptar</ion-button
                   >
                   <ion-button
+                  *ngIf="order.EstadoDePedido === 'pagado'"
+                  (click)="liberarMesa(order)"
+                  fill="solid"
+                  color="success"
+                  >Liberar mesa</ion-button
+                >
+                  <ion-button
                     *ngIf="order.EstadoDePedido === 'solicitado'"
                     (click)="rejectOrder(order)"
                     fill="solid"
