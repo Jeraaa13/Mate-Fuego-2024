@@ -118,7 +118,7 @@ export class ChatComponent implements OnInit {
   async getMesaNumero(uid: string): Promise<number | null> {
     try {
       const mesasRef = collection(this.firestore, 'mesas');
-      const q = query(mesasRef, where('usuarioUid', '==', uid));
+      const q = query(mesasRef, where('usuarioUid', '==', this.usuario?.id));
 
       const querySnapshot = await getDocs(q);
 

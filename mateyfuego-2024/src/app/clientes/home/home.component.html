@@ -13,7 +13,12 @@
   </button>
 
   <div *ngIf="isScannerVisible">
-    <zxing-scanner [torch]="true" (scanSuccess)="onScanSuccess($event)">
+    <zxing-scanner
+      #scanner
+      [torch]="true"
+      (scanSuccess)="onScanSuccess($event)"
+      [enable]="isScanning"
+    >
     </zxing-scanner>
   </div>
 </div>

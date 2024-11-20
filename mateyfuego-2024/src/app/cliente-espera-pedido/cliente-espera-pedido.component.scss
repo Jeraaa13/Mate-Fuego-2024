@@ -1,0 +1,228 @@
+// Import the variables and mixins from the original theme
+$primary-color: #e63946;
+$secondary-color: #2a9d8f;
+$accent-color: #e9c46a;
+$dark-color: #1d3557;
+$light-color: #f1faee;
+$border-radius: 12px;
+$box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+
+@mixin glass-effect {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: $box-shadow;
+}
+
+// Header styles
+ion-header {
+  ion-toolbar {
+    --background: #{$dark-color};
+    --color: #{$light-color};
+
+    ion-title {
+      font-size: 1.8rem;
+      font-weight: 600;
+      padding: 1rem;
+    }
+
+    ion-menu-button {
+      font-size: 1.4rem;
+      color: $light-color;
+      margin-right: 1rem;
+    }
+  }
+}
+
+// Content styles
+ion-content {
+  --background: #{$dark-color};
+  --padding-top: 0;
+  --padding-bottom: 0;
+
+  .container {
+    padding: 0;
+    margin: 0;
+    max-width: 100%;
+  }
+
+  .row {
+    margin: 0;
+    padding: 1rem;
+  }
+}
+
+.fs-4 {
+  color: $light-color;
+  font-size: 5rem !important;
+  margin: 0.5rem 0;
+  text-align: center;
+  font-weight: 600;
+}
+
+button {
+  background-color: $secondary-color !important;
+  display: block;
+  margin: 0.5rem auto !important;
+  padding: 1.5rem 2.5rem;
+  border-radius: $border-radius;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  border: none;
+  box-shadow: $box-shadow;
+
+  &:hover {
+    transform: scale(1.05);
+    box-shadow: 0 12px 36px rgba(0, 0, 0, 0.15);
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
+
+  img {
+    width: 120px !important;
+    height: auto;
+    filter: brightness(0) invert(1);
+  }
+}
+
+// Status display
+.status-display {
+  @include glass-effect;
+  padding: 2rem;
+  margin: 1.5rem 0;
+  border-radius: $border-radius;
+
+  .badge {
+    font-size: 2rem !important;
+    padding: 1rem 2rem;
+    border-radius: $border-radius;
+    color: $light-color;
+  }
+}
+
+// Buttons
+ion-button {
+  --background: #{$primary-color};
+  --border-radius: #{$border-radius};
+  --padding-top: 1.5rem;
+  --padding-bottom: 1.5rem;
+  margin: 1rem 0;
+  font-size: 1.4rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+
+  &[color="success"] {
+    --background: #{$secondary-color};
+  }
+
+  &[color="warning"] {
+    --background: #{$accent-color};
+    --color: #{$dark-color};
+  }
+}
+
+p.fs-4 {
+  font-size: 4rem;
+}
+
+zxing-scanner {
+  margin: 0.5rem 0;
+  height: 350px;
+}
+
+.estado-lista {
+  font-size: 2.5rem;
+  line-height: 1.6;
+  margin: 0 auto;
+  text-align: left;
+
+  ul {
+    list-style-type: disc;
+    margin-left: 2rem;
+  }
+
+  li {
+    margin-bottom: 1.5rem;
+    font-weight: 500;
+  }
+
+  p.fs-5 {
+    font-size: 3rem;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 1.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .fs-4 {
+    font-size: 4rem !important;
+  }
+
+  button img {
+    width: 100px !important;
+  }
+
+  ion-title {
+    font-size: 1.6rem !important;
+  }
+
+  .fs-4 {
+    font-size: 1.6rem !important;
+  }
+
+  .status-display .badge {
+    font-size: 1.8rem !important;
+  }
+
+  ion-button {
+    font-size: 1.2rem;
+  }
+
+  .estado-lista {
+    font-size: 2rem;
+    line-height: 1.4;
+  }
+
+  .estado-lista p.fs-5 {
+    font-size: 2.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .fs-4 {
+    font-size: 1.8rem !important;
+  }
+
+  button img {
+    width: 90px !important;
+  }
+
+  ion-title {
+    font-size: 1.4rem !important;
+  }
+
+  .fs-4 {
+    font-size: 3rem !important;
+  }
+
+  .status-display .badge {
+    font-size: 1.6rem !important;
+  }
+
+  ion-button {
+    font-size: 1.1rem;
+  }
+
+  .estado-lista {
+    font-size: 1.8rem;
+    padding: 1.5rem;
+  }
+
+  .estado-lista p.fs-5 {
+    font-size: 2rem;
+  }
+}

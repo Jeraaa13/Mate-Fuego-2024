@@ -1,102 +1,109 @@
-/* order.component.scss */
 :host {
-    display: block;
-  }
-  
-  ion-content {
-    --background: #1a1a1a;
-    --color: white;
-  }
-  
-  .header {
-    display: flex;
-    justify-content: space-between;
-    padding: 1rem;
+  display: block;
+}
+
+ion-content {
+  --background: #1a1a1a;
+  --color: white;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  padding: 1rem;
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: white;
+  border-bottom: 1px solid #333;
+  margin-bottom: 1rem;
+}
+
+.order-list {
+  padding: 0 1rem;
+}
+
+.order-item {
+  background: #262626;
+  margin-bottom: 0.5rem;
+  padding: 1rem;
+  border-radius: 8px;
+}
+
+.item-details {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.item-name {
+  font-weight: 500;
+  color: white;
+  font-size: 2rem;
+}
+
+.item-price {
+  color: #fff; // Changed from #999 for better contrast
+  font-size: 2rem;
+  font-weight: 500;
+}
+
+.order-summary {
+  position: fixed;
+  bottom: 60px;
+  left: 0;
+  right: 0;
+  background: #262626;
+  padding: 1.5rem; // Increased padding for better spacing
+}
+
+// Common styles for all summary items
+.subtotal,
+.discount,
+.tip {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: white;
+  padding: 0.8rem;
+  font-size: 2.2rem; // Increased consistent size
+  font-weight: 500;
+}
+
+.total {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: white;
+  padding: 1rem;
+  font-size: 2.5rem;
+  font-weight: bold;
+  margin-top: 0.5rem;
+  border-top: 2px solid #333;
+}
+
+.qr-icon {
+  font-size: 2rem;
+}
+
+ion-button.pay-button,
+ion-button.scan-tip-button {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: 0;
+  --background: #4caf50;
+  --border-radius: 0;
+  height: 60px; // Increased height for better touch target
+  font-size: 2rem;
+  text-transform: none; // Makes text more readable
+
+  ion-icon {
     font-size: 2rem;
-    color: white;
-    border-bottom: 1px solid #333;
-    margin-bottom: 1rem;
+    margin-right: 8px;
   }
-  
-  .order-list {
-    padding: 0 1rem;
-  }
-  
-  .order-item {
-    background: #262626;
-    margin-bottom: 0.5rem;
-    padding: 1rem;
-    border-radius: 8px;
-    font-size: 1.7rem;
-  }
-  
-  .item-details {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  
-  .item-name {
-    font-weight: 500;
-    color: white;
-    font-size: 1.7rem;
-  }
-  
-  .item-price {
-    color: #999;
-    font-size: 1.7rem;
-  }
-  
-  .order-summary {
-    position: fixed;
-    bottom: 60px;
-    left: 0;
-    right: 0;
-    background: #262626;
-    padding: 1rem;
-  }
-  
-  .subtotal {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    color: white;
-    padding: 0.5rem;
-    font-size: 1.7rem;
-  }
-  
-  .qr-icon {
-    font-size: 1.5rem;
-  }
-  
-  ion-button.pay-button {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    margin: 0;
-    --background: #4CAF50;
-    --border-radius: 0;
-    height: 50px;
-    font-size: 1.7rem;
-  }
-  
-  ion-content::part(scroll) {
-    padding-bottom: 120px;
-  }
-  .discount{
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    color: white;
-    padding: 0.5rem;
-    font-size: 1.7rem;
-  }
-  .total{
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    color: white;
-    padding: 0.5rem;
-    font-size: 2.5rem;
-  }
+}
+
+ion-content::part(scroll) {
+  padding-bottom: 140px; // Increased to account for larger buttons
+}

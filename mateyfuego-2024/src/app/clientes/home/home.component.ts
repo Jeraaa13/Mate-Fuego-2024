@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { ZXingScannerModule } from '@zxing/ngx-scanner';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { ZXingScannerComponent, ZXingScannerModule } from '@zxing/ngx-scanner';
 import { QrService } from '../../services/qr.service';
 import { Router, ActivatedRoute } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -34,7 +34,10 @@ interface UsuarioEnEspera {
   styleUrls: ['./home.component.scss'],
 })
 export class HomeComponent implements OnInit {
+  @ViewChild('scanner') scanner!: ZXingScannerComponent;
+
   isScannerVisible = false;
+  isScanning = true;
   currentUser: any | null = null;
   currentUserDetails: any | null = null;
   userId: string = '';
@@ -81,7 +84,10 @@ export class HomeComponent implements OnInit {
   }
 
   toggleScanner() {
-    this.isScannerVisible = !this.isScannerVisible;
+    if (!this.flagYaEntro) {
+      this.isScannerVisible = !this.isScannerVisible;
+      this.isScanning = true;
+    }
   }
 
   async onScanSuccess(result: string) {
@@ -89,6 +95,7 @@ export class HomeComponent implements OnInit {
       return;
     }
 
+    this.isScanning = false;
     this.isScannerVisible = false;
 
     const resultadoScaneo = result;
@@ -113,7 +120,7 @@ export class HomeComponent implements OnInit {
 
         if (clienteDoc.exists()) {
           const clienteData = clienteDoc.data();
-          const listaEsperaRef = doc(this.firestore, "lista-espera", clienteId)
+          const listaEsperaRef = doc(this.firestore, 'lista-espera', clienteId);
           const usuarioEnEspera: UsuarioEnEspera = {
             mesaAsignada: false,
             uid: clienteId,
@@ -142,9 +149,9 @@ export class HomeComponent implements OnInit {
         'Este QR no es el del local',
         'QR Equivocado'
       );
+      this.isScannerVisible = false;
     }
 
-    // Asegurarse de que el escáner pueda volver a activarse en caso de ser necesario.
     this.toggleScanner();
   }
 
@@ -162,11 +169,6 @@ export class HomeComponent implements OnInit {
         nombre: this.currentUserDetails.nombre || '',
         fotourl: this.currentUserDetails.fotoUrl || '',
       };
-
-      this.notificationService.showSuccess(
-        'Bienvenido a la lista de espera',
-        'QR escaneado exitosamente'
-      );
 
       try {
         this.router.navigate(['/lista-espera']);

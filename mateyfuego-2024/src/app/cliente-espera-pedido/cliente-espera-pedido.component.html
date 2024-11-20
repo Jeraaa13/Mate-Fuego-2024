@@ -2,40 +2,91 @@
   <ion-toolbar>
     <ion-title>Tu mesa</ion-title>
     <ion-buttons slot="end">
-      <ion-menu-button menu="first" style="font-size: 14px">Menu</ion-menu-button>
+      <ion-menu-button menu="first" style="font-size: 14px"
+        >Menu</ion-menu-button
+      >
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
-<p *ngIf="!this.escaneo" class="fs-4">Escanee el QR para ver el estado de su pedido</p>
-<button (click)="toggleScanner()" style="border: none; background: none; margin-top: 20px;">
-  <img src="../../assets/qrcode.png" alt="Scan QR" style="width: 80px; height: auto;">
+<p *ngIf="!this.escaneo" class="fs-4">
+  Escanee el QR para ver el estado de su pedido
+</p>
+<button
+  (click)="toggleScanner()"
+  style="border: none; background: none; margin-top: 20px"
+>
+  <img
+    src="../../assets/qrcode.png"
+    alt="Scan QR"
+    style="width: 80px; height: auto"
+  />
 </button>
-<div *ngIf="isScannerVisible" style="margin-top: 20px;">
-  <zxing-scanner [torch]="true" (scanSuccess)="onScanSuccess($event)"></zxing-scanner>
+<div *ngIf="isScannerVisible" style="margin-top: 20px">
+  <zxing-scanner
+    [torch]="true"
+    (scanSuccess)="onScanSuccess($event)"
+  ></zxing-scanner>
 </div>
 
-<ion-content *ngIf="this.escaneo" >
+<ion-content *ngIf="this.escaneo">
   <div class="container mt-3">
     <div class="row align-items-center justify-content-center g-5">
       <div class="col-lg-12 text-center bg">
         <p class="fs-4">Estado de su pedido:</p>
         <div class="status-display">
-          <span class="badge badge-primary fs-4">{{ this.pedido?.EstadoDePedido}}</span>
+          <span class="badge badge-primary fs-4">{{
+            this.pedido?.EstadoDePedido
+          }}</span>
         </div>
-        <ion-button expand="block" color="primary" (click)="navigateTo('/encuestas-clientes')">
+      </div>
+
+      <div
+        *ngIf="itemsEstado.length > 0"
+        class="col-12 text-center estado-lista"
+      >
+        <p class="fs-5 mt-4">Estado de los items:</p>
+        <ul>
+          <li *ngFor="let item of itemsEstado">
+            {{ item.nombre }} - Estado: {{ item.estado }}
+          </li>
+        </ul>
+      </div>
+
+      <div
+        *ngIf="
+          (this.escaneo && this.pedido.EstadoDePedido == 'preparacion') ||
+          (this.escaneo && this.pedido.EstadoDePedido == 'recibido')
+        "
+        class="col-12 text-center"
+        style="margin-top: 30px"
+      >
+        <ion-button
+          *ngIf=""
+          expand="block"
+          color="primary"
+          (click)="navigateTo('/encuestas-clientes')"
+          style="margin-top: 10px"
+        >
           Encuesta
         </ion-button>
-      </div>
-      <div *ngIf="this.escaneo && this.pedido.EstadoDePedido == 'recibido' " class="col-12 text-center" style="margin-top: 30px;">
-        <ion-button expand="block" color="success" (click)="navigateTo('/cliente-pedido-cuenta')" style="margin-top: 10px;">
+        <ion-button
+          expand="block"
+          color="success"
+          (click)="navigateTo('/cliente-pedido-cuenta')"
+          style="margin-top: 10px"
+        >
           Pedir Cuenta
         </ion-button>
-        <ion-button expand="block" color="warning" (click)="navigateTo('/juegos')" style="margin-top: 10px;">
+        <ion-button
+          expand="block"
+          color="warning"
+          (click)="navigateTo('/juegos')"
+          style="margin-top: 10px"
+        >
           Juegos
         </ion-button>
       </div>
     </div>
   </div>
-
 </ion-content>
