@@ -149,27 +149,5 @@ export class ClienteEsperaPedidoComponent implements OnInit {
       this.errorHandler.vibrate();
     }
   }
-  async obtenerMesaPorNumeroPedido(firestore: Firestore, numeroMesaPedido: number) {
-    try {
-      const mesasCollection = collection(firestore, 'mesas');
-      const mesasSnapshot = await getDocs(mesasCollection);
-      const todasLasMesas = mesasSnapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      }));
-      console.log("Todas las mesas:", todasLasMesas);
-      const mesaSeleccionada = todasLasMesas.find(mesa => mesa.id === numeroMesaPedido.toString());
-  
-      if (mesaSeleccionada) {
-        console.log("Mesa seleccionada:", mesaSeleccionada);
-        return mesaSeleccionada;
-      } else {
-        console.error("No se encontró una mesa con el número especificado.");
-        return null;
-      }
-    } catch (error) {
-      console.error("Error al obtener las mesas:", error);
-      return null;
-    }
-  }
+ 
 }

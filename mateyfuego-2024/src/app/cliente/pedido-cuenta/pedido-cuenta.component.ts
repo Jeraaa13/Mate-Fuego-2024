@@ -159,7 +159,7 @@ export class PedidoCuentaComponent implements OnInit {
   }
 
   iniciarEscaneo() {
-    this.scanning = true; // Inicia el escáner QR
+    this.scanning = true; 
   }
 
   async realizarPago() {
@@ -174,7 +174,7 @@ export class PedidoCuentaComponent implements OnInit {
       for (const docSnapshot of querySnapshot.docs) {
         const pedidoRef = doc(this.firestore, 'pedidos', docSnapshot.id);
         await updateDoc(pedidoRef, {
-          estado: 'Pagado',
+          EstadoDePedido: 'Pagado',
         });
       }
 

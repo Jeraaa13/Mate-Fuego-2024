@@ -21,6 +21,7 @@ import { IonicModule } from '@ionic/angular';
 import { PushNotificationService } from '../services/push-notifications.service';
 import { AuthService } from '../services/auth.service';
 import { ChatComponent } from '../productos/pagina/chat/chat.component';
+import { NotificationService } from '../services/notification.service';
 
 interface Order {
   orderId: string;
@@ -39,6 +40,7 @@ interface Order {
   }[];
   uidUsuario: string;
   nombreCliente?: string;
+
 }
 
 @Component({
@@ -50,11 +52,13 @@ interface Order {
 })
 export class MozoHomeComponent implements OnInit {
   orders: Order[] = [];
+  mesa : any = null;
 
   constructor(
     private firestore: Firestore,
     private pushNotificationService: PushNotificationService,
-    private authService: AuthService
+    private authService: AuthService,
+    private notificationService: NotificationService
   ) {}
 
   async ngOnInit() {
@@ -146,41 +150,51 @@ export class MozoHomeComponent implements OnInit {
     }
   }
 
-  async confirmarPago(order: Order) {
+  private async getMesaByNumero(numeroMesa: number): Promise<any> {
     try {
-      const orderRef = doc(this.firestore, 'pedidos', order.orderId);
-      const mesaRef = doc(this.firestore, 'mesas', order.Mesa.toString());
-
-      await updateDoc(orderRef, {
-        EstadoDePedido: 'pagado',
-      });
-
-      await updateDoc(mesaRef, {
-        disponible: true,
-        usuarioUid: '',
-      });
-
-      order.EstadoDePedido = 'pagado';
-
-      if (order.nombreCliente) {
-        this.pushNotificationService.notificarSectores(
-          `Pago confirmado!`,
-          'Cliente'
-        );
+      const mesasRef = collection(this.firestore, 'mesas');
+      const q = query(mesasRef, where('numero', '==', numeroMesa));
+      const querySnapshot = await getDocs(q);
+  
+      if (!querySnapshot.empty) {
+        const mesaDoc = querySnapshot.docs[0];
+        this.mesa =  { id: mesaDoc.id, ...mesaDoc.data() };
+        return { id: mesaDoc.id, ...mesaDoc.data() };
       }
+
+      console.warn(`No se encontró una mesa con el número: ${numeroMesa}`);
+      return null;
     } catch (error) {
-      console.error('Error al confirmar el pago:', error);
+      console.error('Error al buscar la mesa:', error);
     }
   }
-  async liberarMesa(order: Order)
-  {
-    const orderRef = doc(this.firestore, 'pedidos', order.orderId);
-    const mesaRef = doc(this.firestore, 'mesas', order.Mesa.toString());
 
-    await updateDoc(mesaRef, {
-      disponible: true,
-      usuarioUid: '',
-    });
-    await deleteDoc(orderRef);
+
+  
+  async liberarMesa(order: Order) {
+    try {
+      const mesa = await this.getMesaByNumero(order.Mesa);
+
+      if (mesa) {
+        const mesaRef = doc(this.firestore, 'mesas', mesa.id);
+        await updateDoc(mesaRef, {
+          disponible: true,
+          usuarioUid: '',
+        });
+
+        const orderRef = doc(this.firestore, 'pedidos', order.orderId);
+        await deleteDoc(orderRef);
+  
+        const usuaerioref = doc(this.firestore, 'clientes', order.uidUsuario);
+        await deleteDoc(usuaerioref);
+
+        console.log(`Mesa ${order.Mesa} liberada y pedido ${order.orderId} eliminado.`);
+      } else {
+        console.warn('No se pudo liberar la mesa porque no se encontró.');
+      }
+    } catch (error) {
+      console.error('Error al liberar la mesa y eliminar el pedido:', error);
+    }
   }
+  
 }
