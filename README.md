@@ -8,24 +8,24 @@
 - **Juan Manuel Portela**
 - **Quimey Rojo**
 
-## Primer Sprint
+## 🖥 Primer Sprint
 
 ### FECHA INICIO: 26-10-2024 / FECHA FINAL: 9-11-2024
 
-- - ✔ **Alta empleados** - Quimey Rojo
-- - ✔ **Alta dueño / supervisor** - Quimey Rojo
-- - ✔ **Alta clientes** - Juan Manuel Portela
-- - ✔ **Alta de Mesa** - Juan Manuel Portela
-- - ✔ **Alta de productos** - Gerardo Toranzo
-- - ✔ **Login** - Gerardo Toranzo
-- - ✔ **Icono y splash** - Gerardo Toranzo
-- - ✔ **QR de ingreso al local** - Gerardo Toranzo
-- - ✔ **QR de la mesa** - Juan Manuel Portela
-- - ✔ **QR de propina** - Quimey Rojo
+- ✔ **Alta empleados** - Quimey Rojo
+- ✔ **Alta dueño / supervisor** - Quimey Rojo
+- ✔ **Alta clientes** - Juan Manuel Portela
+- ✔ **Alta de Mesa** - Juan Manuel Portela
+- ✔ **Alta de productos** - Gerardo Toranzo
+- ✔ **Login** - Gerardo Toranzo
+- ✔ **Icono y splash** - Gerardo Toranzo
+- ✔ **QR de ingreso al local** - Gerardo Toranzo
+- ✔ **QR de la mesa** - Juan Manuel Portela
+- ✔ **QR de propina** - Quimey Rojo
 
-## Segundo Sprint
+## 🖥 Segundo Sprint
 
-#### FECHA INICIO: 21/10/2021 - FECHA FIN: 30/10/2021
+#### FECHA INICIO: 9-11 - FECHA FIN 11-11
 
 - ✔ **Asignación de mesa** - Juan Manuel Portela
 - ✔ **Ingreso del local** - Juan Manuel Portela
@@ -40,9 +40,9 @@
 - ✔ **Dueño/supervisor habilita entrada de clientes** - Juan Manuel Portela
 - ✔ **Metre habilita entrada de la lista de espera** - Juan Manuel Portela
 
-## 🖥 Tercera semana
+## 🖥 Tercera Sprint
 
-#### FECHA INICIO: 30/10/2021 - FECHA FIN: 6/11/2021
+#### FECHA INICIO: 11-11 - FECHA FIN 13-11
 
 - ✔ **Envio de correo electrónico** - Gerardo Toranzo
 - ✔ **3 Push Notifications** - Gerardo Toranzo / Rojo Quimey / Juan Manuel Portela
@@ -56,20 +56,18 @@
 - ✔ **Sonido entre paginas** - Gerardo Toranzo
 - ✔ **Vibraciones en errores** - Gerardo Toranzo
 
-## 🖥 Cuarta semana
+## 🖥 Cuarta Sprint
 
-#### FECHA INICIO: 6/11/2021 - FECHA FIN: 13/11/2021
+#### FECHA INICIO: 13-11 - FECHA FIN 15-11
 
 - ✔ **Arreglo palabras en ingles** - Gerardo Toranzo
 - ✔ **Arreglo espacios neutros en estado del pedido y importe más grande en cuenta del pedido** - Juan Manuel Portela
 - ✔ **Productos más grandes en listado de pedidos y mejora de visibilidad en el carrito** - Rojo Quimey
 
-## 🖥 Quinta semana
+## 🖥 Quinta Sprint
 
-#### FECHA INICIO: 13/11/2021 - FECHA FIN: 20/11/2021
+#### FECHA INICIO: 15-11 - FECHA FIN 17-11
 
-- ✔ **Reserva de mesa en tiempo futuro** - Juan Manuel Portela
-- ✔ **Push Notification reserva de la mesa** - Gerardo Toranzo
 - ✔ **Juego de 10% descuento** - Rojo Quimey
 
 ## QRS
@@ -94,11 +92,11 @@
 
 #### QR 15% Propina Muy Buena
 
-<img src="./readmeFotos/PropinasQR/15%25.png" alt="QR 15% Propina" width="200">
+<img src="./readmeFotos/PropinasQR/15%25.png" alt="QR 15% Propina" width="150">
 
 #### QR 20% Propina Excelente
 
-<img src="./readmeFotos/PropinasQR/20%25.png" alt="QR 20% Propina" width="200">
+<img src="./readmeFotos/PropinasQR/20%25.png" alt="QR 20% Propina" width="150">
 
 # Tour de la aplicación
 
@@ -126,20 +124,19 @@ Una vez aquí, el cliente tiene la opción de consultar al mozo mediante un chat
 
 Aqui el cliente tiene la opción de confirmar la recepción de su pedido, además puede volver a escanear el código QR de la mesa para visualizar el estado del pedido, y una vez recibido puede pedir la cuenta o acceder a la encuesta.
 
-![Cliente espera el pedido](./readmeFotos/esperando-pedido.png?qraw=true)
+![Cliente espera el pedido](./readmeFotos/espera-del-pedido.png?qraw=true)
 
 ### Cuenta del pedido
 
 El cliente pide la cuenta y en la misma, se encuentra la opción de escanear un codigo QR para la propina, jugar un juego para obtener un descuento en el primer intento. Una vez realizado el pago, debe esperar la confirmación del mozo.
 
-![Cuenta](./readmeFotos/cuenta.png?qraw=true)
 ![Cuenta del pedido](./readmeFotos/cuenta-del-pedido.png?qraw=true)
 
 ### Visualización de los graficos de la encuesta
 
 Al retirarse del local el cliente puede escanear nuevamente el QR de ingreso al local para visualizar los graficos de las encuestas.
 
-![Graficos de las encuestas](./readmeFotos/cliente-final.png?qraw=true)
+![Graficos de las encuestas](./readmeFotos/estadisticas.png?qraw=true)
 
 ## Interfaz de los empleados
 
@@ -147,13 +144,13 @@ Al retirarse del local el cliente puede escanear nuevamente el QR de ingreso al 
 
 Aquí se encuentran las tareas que puede realizar cada uno, cuando alguien ingresa al local y cuando alguien ingresa a la lista de espera respectivamente.
 
-![Tareas dueño, supervisor y metre](./readmeFotos/supervisor-metre-habilitacion.png?qraw=true)
+![Tareas dueño, supervisor y metre](./readmeFotos/dueno-maitre.png?qraw=true)
 
 ### Bartender, Chef y Mozo
 
 En esta sección tanto el bartender como el chef realizan los pedidos y se los devuelven al mozo. Los pedidos se separan por producto, asi que el tiempo de realización es el del producto que mayor elaboración conlleve. El mozo se encarga de enviar los pedidos a las secciones anteriormente mencionadas, entregarlo al cliente y por último confirmar el pago.
 
-![Tareas bartender, mozo y chef](./readmeFotos/pedidos-empleados-todos.png?qraw=true)
+![Tareas bartender, mozo y chef](./readmeFotos/empleados-menu.png?qraw=true)
 
 ## Push notification y correo electronico
 
