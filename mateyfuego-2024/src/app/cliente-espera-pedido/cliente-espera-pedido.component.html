@@ -40,33 +40,12 @@
           }}</span>
         </div>
       </div>
-
-      <div
-        *ngIf="itemsEstado.length > 0"
-        class="col-12 text-center estado-lista"
-      >
-        <p class="fs-5 mt-4">Estado de los items:</p>
-        <ul>
-          <li *ngFor="let item of itemsEstado">
-            {{ item.nombre }} - Estado: {{ item.estado }}
-          </li>
-        </ul>
-      </div>
-
-      <div
-        *ngIf="
-          (this.escaneo && this.pedido.EstadoDePedido == 'preparacion') ||
-          (this.escaneo && this.pedido.EstadoDePedido == 'recibido')
-        "
-        class="col-12 text-center"
-        style="margin-top: 30px"
-      >
+      <div class="col-12 text-center" style="margin-top: 30px">
         <ion-button
-          *ngIf=""
+          *ngIf="!this.pedido?.encuestaCompletada"
           expand="block"
           color="primary"
           (click)="navigateTo('/encuestas-clientes')"
-          style="margin-top: 10px"
         >
           Encuesta
         </ion-button>

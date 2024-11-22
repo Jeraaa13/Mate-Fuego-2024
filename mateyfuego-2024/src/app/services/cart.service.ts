@@ -128,6 +128,7 @@ export class CartService {
 
     const orderData = {
       EstadoDePedido: 'solicitado',
+      encuestaCompletada: false,
       TiempoEspera: maxTiempoElaboracion,
       Precio: this.totalPrice,
       Mesa: mesaNumero,

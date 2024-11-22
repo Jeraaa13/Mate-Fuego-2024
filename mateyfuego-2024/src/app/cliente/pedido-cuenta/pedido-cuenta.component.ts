@@ -10,6 +10,7 @@ import {
   updateDoc,
 } from '@angular/fire/firestore';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 import { ZXingScannerModule } from '@zxing/ngx-scanner';
 import { AuthService } from 'src/app/services/auth.service';
@@ -39,14 +40,15 @@ export class PedidoCuentaComponent implements OnInit {
   @Input() userUid: string | undefined;
   pedidos: Pedido[] = [];
   usuario: any;
-  propina: number = 0; // Porcentaje de propina seleccionado
-  scanning: boolean = false; // Para mostrar el escáner QR
+  propina: number = 0;
+  scanning: boolean = false;
   cuentaSolicitada: boolean = false;
 
   constructor(
     private firestore: Firestore,
     private authService: AuthService,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private router: Router
   ) {}
 
   async ngOnInit() {
@@ -78,7 +80,7 @@ export class PedidoCuentaComponent implements OnInit {
 
         const subtotal = data['Precio'];
         const descuento = data['Descuento'] || 0;
-        const totalConDescuento = data['PrecioConDescuento'] ?? subtotal; // Asignamos subtotal si no está definido
+        const totalConDescuento = data['PrecioConDescuento'] ?? subtotal;
 
         return { items, subtotal, descuento, totalConDescuento };
       });
@@ -86,7 +88,7 @@ export class PedidoCuentaComponent implements OnInit {
     }
   }
   async handleScanResult(result: string) {
-    this.scanning = false; // Detenemos el escaneo
+    this.scanning = false;
     console.log('Scan result:', result);
 
     try {
@@ -127,7 +129,6 @@ export class PedidoCuentaComponent implements OnInit {
   async actualizarPedidoConPropina() {
     const totalFinal = this.calcularTotalConPropina();
 
-    // Consultamos todos los pedidos que coincidan con el uidUsuario del usuario logueado
     const pedidosCollection = collection(this.firestore, 'pedidos');
     const q = query(
       pedidosCollection,
@@ -139,8 +140,8 @@ export class PedidoCuentaComponent implements OnInit {
       const pedidoDocRef = doc(this.firestore, `pedidos/${docSnapshot.id}`);
       try {
         await updateDoc(pedidoDocRef, {
-          totalConPropina: totalFinal, // Guardamos el total final que incluye la propina
-          propina: this.propina, // Guardamos la propina aplicada
+          totalConPropina: totalFinal,
+          propina: this.propina,
         });
         console.log(
           `Pedido ${docSnapshot.id} actualizado con el total: ${totalFinal}`
@@ -159,7 +160,7 @@ export class PedidoCuentaComponent implements OnInit {
   }
 
   iniciarEscaneo() {
-    this.scanning = true; 
+    this.scanning = true;
   }
 
   async realizarPago() {
@@ -179,14 +180,16 @@ export class PedidoCuentaComponent implements OnInit {
       }
 
       this.notificationService.showSuccess(
-        'Pago realizado con éxito',
-        'Pago completado'
+        'Cuenta solicitada exitosamente',
+        'Cuenta solicitada'
       );
+
+      this.router.navigate(['/cliente-espera-pedido'], {
+        queryParams: { escaneo: false },
+      });
     } catch (error) {
       console.error('Error en el pago:', error);
       this.notificationService.showError('Error al procesar el pago', 'Error');
     }
   }
-
-  
 }

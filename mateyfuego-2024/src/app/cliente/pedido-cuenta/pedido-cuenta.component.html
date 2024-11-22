@@ -62,13 +62,18 @@
       Cancelar Escaneo
     </ion-button>
   </div>
+  <!-- Modifica esta parte al final de tu HTML -->
+  <div class="button-container">
+    <ion-button
+      expand="block"
+      class="scan-tip-button"
+      (click)="iniciarEscaneo()"
+    >
+      <ion-icon name="qr-code-outline"></ion-icon> Escanear Propina
+    </ion-button>
 
-  <ion-button expand="block" class="scan-tip-button" (click)="iniciarEscaneo()">
-    <ion-icon name="qr-code-outline"></ion-icon> Escanear Propina
-  </ion-button>
-
-  <!-- Botón de pago -->
-  <ion-button expand="block" class="pay-button" (click)="realizarPago()">
-    <ion-icon name="cash-outline"></ion-icon> Solicitar cuenta
-  </ion-button>
+    <ion-button expand="block" class="pay-button" (click)="realizarPago()">
+      <ion-icon name="cash-outline"></ion-icon> Solicitar Cuenta
+    </ion-button>
+  </div>
 </ion-content>

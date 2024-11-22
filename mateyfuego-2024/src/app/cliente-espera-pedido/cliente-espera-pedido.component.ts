@@ -3,10 +3,19 @@ import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 import { AuthService } from '../services/auth.service';
-import { Firestore, collection, query, onSnapshot, updateDoc, where, doc, getDocs } from '@angular/fire/firestore';
+import {
+  Firestore,
+  collection,
+  query,
+  onSnapshot,
+  updateDoc,
+  where,
+  doc,
+  getDocs,
+} from '@angular/fire/firestore';
 import { QrService } from '../services/qr.service';
 import { ZXingScannerModule } from '@zxing/ngx-scanner';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ErrorHandlerService } from '../services/error-handler.service';
 import { NotificationService } from '../services/notification.service'; // Importa el servicio de notificaciones
 
@@ -25,35 +34,55 @@ export class ClienteEsperaPedidoComponent implements OnInit {
   escaneo = false;
 
   constructor(
+    private route: ActivatedRoute,
     private authService: AuthService,
     private firestore: Firestore,
     private qrService: QrService,
     private router: Router,
     private errorHandler: ErrorHandlerService,
-    private notificationService: NotificationService 
+    private notificationService: NotificationService
   ) {}
 
   async ngOnInit() {
+    this.route.queryParams.subscribe((params) => {
+      if (params['escaneo'] !== undefined) {
+        this.escaneo = params['escaneo'] === 'true'; // Convertir a booleano
+      }
+    });
+
     this.usuario = await this.authService.getCurrentUser2();
     if (this.usuario && this.usuario.uid) {
       console.log('Usuario autenticado exitosamente');
       await this.getPedido();
-      console.log("Número de mesa obtenido del pedido:", this.pedido.qrData.numero);
+      console.log(
+        'Número de mesa obtenido del pedido:',
+        this.pedido.qrData.numero
+      );
       if (this.pedido && this.pedido.mesa && this.pedido.mesa.numero) {
         await this.getQrCode(this.pedido.qrData.numero);
         if (this.Mesa) {
-          console.log("Datos de la mesa cargados exitosamente:", this.Mesa);
+          console.log('Datos de la mesa cargados exitosamente:', this.Mesa);
         } else {
-          console.error("No se pudieron cargar los datos de la mesa.");
+          console.error('No se pudieron cargar los datos de la mesa.');
         }
       } else {
-        console.error("No se encontró un número de mesa en el pedido.");
+        console.error('No se encontró un número de mesa en el pedido.');
       }
     }
   }
 
   navigateTo(path: string) {
+    if (path === '/encuestas-clientes') {
+      this.markSurveyAsCompleted();
+    }
     this.router.navigate([path]);
+  }
+
+  async markSurveyAsCompleted() {
+    if (this.pedido && this.pedido.id) {
+      const pedidoRef = doc(this.firestore, 'pedidos', this.pedido.id);
+      await updateDoc(pedidoRef, { encuestaCompletada: true });
+    }
   }
 
   getPedido() {
@@ -101,33 +130,50 @@ export class ClienteEsperaPedidoComponent implements OnInit {
   toggleScanner() {
     this.isScannerVisible = !this.isScannerVisible;
   }
-  
+
   async onScanSuccess(resultado: string) {
-    console.log("Resultado escaneado:", resultado);
-  
-    try {
-      const qrData = JSON.parse(resultado);
-      const numeroMesaEscaneada = Number(qrData.numero); 
-  
-      if (!isNaN(numeroMesaEscaneada)) {
-        console.log("Número de mesa escaneada:", numeroMesaEscaneada);
-        const numeroMesaUsuario = Number(this.pedido?.Mesa); 
-  
-        if (numeroMesaUsuario === numeroMesaEscaneada) {
-          console.log("Número de mesa coincide con el del usuario.");
-  
-          this.notificationService.showInfo(
-            `El estado actual de tu pedido es: ${this.pedido.EstadoDePedido}`,
-            'Estado de tu pedido'
-          );
-        } else {
-          console.warn("El número de mesa escaneada no coincide con el número de mesa del pedido del usuario.");
-        }
+    console.log('Resultado escaneado:', resultado);
+
+    if (resultado == 'restaurante:12345') {
+      this.router.navigate(['/ver-encuesta-cliente']);
+    } else {
+      if (this.pedido.EstadoDePedido == 'Pagado') {
+        this.notificationService.showError(
+          'Usted ya ha confirmado el pago',
+          'Mesa liberada'
+        );
       } else {
-        console.error("El QR escaneado no contiene un número de mesa válido.");
+        try {
+          const qrData = JSON.parse(resultado);
+          const numeroMesaEscaneada = Number(qrData.numero);
+
+          if (!isNaN(numeroMesaEscaneada)) {
+            console.log('Número de mesa escaneada:', numeroMesaEscaneada);
+            const numeroMesaUsuario = Number(this.pedido?.Mesa);
+
+            if (numeroMesaUsuario === numeroMesaEscaneada) {
+              console.log('Número de mesa coincide con el del usuario.');
+
+              this.escaneo = true;
+
+              this.notificationService.showInfo(
+                `El estado actual de tu pedido es: ${this.pedido.EstadoDePedido}`,
+                'Estado de tu pedido'
+              );
+            } else {
+              console.warn(
+                'El número de mesa escaneada no coincide con el número de mesa del pedido del usuario.'
+              );
+            }
+          } else {
+            console.error(
+              'El QR escaneado no contiene un número de mesa válido.'
+            );
+          }
+        } catch (error) {
+          console.error('Error al parsear el QR escaneado:', error);
+        }
       }
-    } catch (error) {
-      console.error("Error al parsear el QR escaneado:", error);
     }
   }
   async getQrCode(numero: number) {
@@ -140,7 +186,7 @@ export class ClienteEsperaPedidoComponent implements OnInit {
       if (!querySnapshot.empty) {
         const mesasDoc = querySnapshot.docs[0];
         this.Mesa = mesasDoc.data();
-        this.escaneo = true;
+        console.log('ESCANEO = ', this.escaneo);
       } else {
         console.log('No se encontraron mesas para este número.');
       }
@@ -149,5 +195,4 @@ export class ClienteEsperaPedidoComponent implements OnInit {
       this.errorHandler.vibrate();
     }
   }
- 
 }
