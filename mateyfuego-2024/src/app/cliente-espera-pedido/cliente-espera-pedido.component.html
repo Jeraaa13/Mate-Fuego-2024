@@ -36,36 +36,51 @@
         <p class="fs-4">Estado de su pedido:</p>
         <div class="status-display">
           <span class="badge badge-primary fs-4">{{
-            this.pedido?.EstadoDePedido
+            this.pedido?.EstadoDePedido | uppercase
           }}</span>
         </div>
       </div>
-      <div class="col-12 text-center" style="margin-top: 30px">
-        <ion-button
-          *ngIf="!this.pedido?.encuestaCompletada"
-          expand="block"
-          color="primary"
-          (click)="navigateTo('/encuestas-clientes')"
-        >
-          Encuesta
-        </ion-button>
-        <ion-button
-          expand="block"
-          color="success"
-          (click)="navigateTo('/cliente-pedido-cuenta')"
-          style="margin-top: 10px"
-        >
-          Pedir Cuenta
-        </ion-button>
-        <ion-button
-          expand="block"
-          color="warning"
-          (click)="navigateTo('/juegos')"
-          style="margin-top: 10px"
-        >
-          Juegos
-        </ion-button>
+
+      <div
+        class="items-list mt-4"
+        *ngIf="pedido?.items && pedido.EstadoDePedido === 'preparacion'"
+      >
+        <p class="fs-5">Estado de los ítems:</p>
+        <ion-list>
+          <ion-item *ngFor="let item of pedido.items">
+            <ion-label>
+              <h2>{{ item.nombre }} - Estado: {{ item.estado }}</h2>
+            </ion-label>
+          </ion-item>
+        </ion-list>
       </div>
+    </div>
+
+    <div class="col-12 text-center" style="margin-top: 30px">
+      <ion-button
+        *ngIf="!this.pedido?.encuestaCompletada"
+        expand="block"
+        color="primary"
+        (click)="navigateTo('/encuestas-clientes')"
+      >
+        Encuesta
+      </ion-button>
+      <ion-button
+        expand="block"
+        color="success"
+        (click)="navigateTo('/cliente-pedido-cuenta')"
+        style="margin-top: 10px"
+      >
+        Pedir Cuenta
+      </ion-button>
+      <ion-button
+        expand="block"
+        color="warning"
+        (click)="navigateTo('/juegos')"
+        style="margin-top: 10px"
+      >
+        Juegos
+      </ion-button>
     </div>
   </div>
 </ion-content>

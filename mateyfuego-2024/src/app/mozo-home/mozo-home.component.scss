@@ -49,22 +49,22 @@ ion-card-title {
   flex-direction: column;
   gap: 12px;
   margin-bottom: 20px;
-  
+
   h3 {
     margin: 0;
     font-size: 1.4rem;
     color: var(--highlight-color);
   }
-  
+
   p {
     margin: 0;
     padding: 8px 16px;
     border-radius: 12px;
-    font-size: 1.2rem;
+    font-size: 1.4rem;
     font-weight: 500;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    
+
     &:contains("rechazado") {
       background: var(--rejected-color);
       color: rgb(170, 62, 20);
@@ -79,18 +79,18 @@ ion-card-title {
     background: rgba(255, 255, 255, 0.05);
     padding: 16px;
     border-radius: 8px;
-    
+
     h4 {
       color: var(--highlight-color);
       margin: 0 0 12px 0;
       font-size: 1.3rem;
     }
-    
+
     p {
       margin: 8px 0;
       font-size: 1.1rem;
       color: rgba(255, 255, 255, 0.87);
-      
+
       strong {
         color: var(--highlight-color);
       }
@@ -99,10 +99,11 @@ ion-card-title {
 }
 
 /* Información específica del pedido */
-.tiempo-espera, .precio {
+.tiempo-espera,
+.precio {
   font-size: 1.2rem;
   margin: 10px 0;
-  
+
   strong {
     color: var(--highlight-color);
   }
@@ -110,8 +111,10 @@ ion-card-title {
 
 .item-details {
   margin: 12px 0;
-  
-  .cantidad, .precio-unitario, .tiempo-elaboracion {
+
+  .cantidad,
+  .precio-unitario,
+  .tiempo-elaboracion {
     font-size: 1.1rem;
     margin: 6px 0;
   }
@@ -137,7 +140,7 @@ ion-card-title {
 /* Botones de acción */
 .order-item-actions {
   margin-top: 20px;
-  
+
   ion-button {
     --padding-start: 20px;
     --padding-end: 20px;

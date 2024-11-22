@@ -119,7 +119,7 @@ export class LoginComponent implements OnInit {
 
     if (!found) {
       this.notificationService.showError(
-        'No se encontró información del usuario en las colecciones.',
+        'Usted ha sido rechazado',
         'Usuario No Encontrado'
       );
     }

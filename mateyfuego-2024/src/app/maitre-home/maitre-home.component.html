@@ -66,20 +66,20 @@
       <ion-content>
         <ion-grid class="ion-no-padding">
           <ion-row>
-            <ion-col size="6" *ngFor="let mesa of mesasDisponibles">
+            <ion-col *ngFor="let mesa of mesasDisponibles">
               <ion-card class="mesa-card">
                 <ion-card-header>
                   <ion-card-subtitle
-                    style="font-size: 1.3rem; font-weight: 500"
+                    style="font-size: 1.5rem; font-weight: 500"
                   >
                     Mesa {{ mesa.numero }}
                   </ion-card-subtitle>
-                  <ion-card-title style="font-size: 1.8rem; margin: 10px 0">
+                  <ion-card-title style="font-size: 1.7rem; margin: 10px 0">
                     {{ mesa.tipo }}
                   </ion-card-title>
                 </ion-card-header>
                 <ion-card-content>
-                  <p style="font-size: 1.4rem; margin: 15px 0">
+                  <p style="font-size: 1.7rem; margin: 15px 0">
                     Capacidad: {{ mesa.cantidadComensales }} personas
                   </p>
                   <ion-button
@@ -89,7 +89,7 @@
                     size="large"
                     class="asignar-button"
                   >
-                    <span style="font-size: 1.3rem; padding: 10px"
+                    <span style="font-size: 1.6rem; padding: 10px"
                       >Asignar Mesa</span
                     >
                   </ion-button>

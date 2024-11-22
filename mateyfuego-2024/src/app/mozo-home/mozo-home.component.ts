@@ -14,7 +14,7 @@ import {
   Unsubscribe,
   updateDoc,
   QuerySnapshot,
-  deleteDoc
+  deleteDoc,
 } from '@angular/fire/firestore';
 import { ZXingScannerModule } from '@zxing/ngx-scanner';
 import { IonicModule } from '@ionic/angular';
@@ -40,7 +40,6 @@ interface Order {
   }[];
   uidUsuario: string;
   nombreCliente?: string;
-
 }
 
 @Component({
@@ -52,7 +51,7 @@ interface Order {
 })
 export class MozoHomeComponent implements OnInit {
   orders: Order[] = [];
-  mesa : any = null;
+  mesa: any = null;
 
   constructor(
     private firestore: Firestore,
@@ -109,8 +108,8 @@ export class MozoHomeComponent implements OnInit {
 
   async acceptOrder(order: Order) {
     const orderRef = doc(this.firestore, 'pedidos', order.orderId);
-    await updateDoc(orderRef, { EstadoDePedido: 'preparacion' });
-    order.EstadoDePedido = 'preparacion';
+    await updateDoc(orderRef, { EstadoDePedido: 'preparación' });
+    order.EstadoDePedido = 'preparación';
 
     if (order.nombreCliente) {
       this.pushNotificationService.notificarSectores(
@@ -132,7 +131,7 @@ export class MozoHomeComponent implements OnInit {
   }
   canDeliverOrder(order: Order): boolean {
     return (
-      order.EstadoDePedido == 'preparacion' &&
+      order.EstadoDePedido == 'preparación' &&
       order.items.every((item) => item.estado === 'realizado')
     );
   }
@@ -155,10 +154,10 @@ export class MozoHomeComponent implements OnInit {
       const mesasRef = collection(this.firestore, 'mesas');
       const q = query(mesasRef, where('numero', '==', numeroMesa));
       const querySnapshot = await getDocs(q);
-  
+
       if (!querySnapshot.empty) {
         const mesaDoc = querySnapshot.docs[0];
-        this.mesa =  { id: mesaDoc.id, ...mesaDoc.data() };
+        this.mesa = { id: mesaDoc.id, ...mesaDoc.data() };
         return { id: mesaDoc.id, ...mesaDoc.data() };
       }
 
@@ -169,8 +168,6 @@ export class MozoHomeComponent implements OnInit {
     }
   }
 
-
-  
   async liberarMesa(order: Order) {
     try {
       const mesa = await this.getMesaByNumero(order.Mesa);
@@ -184,11 +181,13 @@ export class MozoHomeComponent implements OnInit {
 
         const orderRef = doc(this.firestore, 'pedidos', order.orderId);
         await deleteDoc(orderRef);
-  
+
         const usuaerioref = doc(this.firestore, 'clientes', order.uidUsuario);
         await deleteDoc(usuaerioref);
 
-        console.log(`Mesa ${order.Mesa} liberada y pedido ${order.orderId} eliminado.`);
+        console.log(
+          `Mesa ${order.Mesa} liberada y pedido ${order.orderId} eliminado.`
+        );
       } else {
         console.warn('No se pudo liberar la mesa porque no se encontró.');
       }
@@ -196,5 +195,4 @@ export class MozoHomeComponent implements OnInit {
       console.error('Error al liberar la mesa y eliminar el pedido:', error);
     }
   }
-  
 }

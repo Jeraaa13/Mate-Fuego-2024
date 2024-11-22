@@ -70,7 +70,9 @@ export class ChatComponent implements OnInit {
 
       if (currentUser && currentUser.uid) {
         await this.getUserDetails(currentUser.uid);
-        this.mesaNumero = await this.getMesaNumero(currentUser.uid);
+        if (this.usuario?.tipoPerfil != 'Mozo') {
+          this.mesaNumero = await this.getMesaNumero(currentUser.uid);
+        }
       } else {
         console.error('Usuario no autenticado.');
         this.loading = false;
@@ -137,6 +139,20 @@ export class ChatComponent implements OnInit {
     }
   }
 
+  shouldShowMesa(mensaje: Mensaje): boolean {
+    if (!this.usuario) return false;
+
+    // Si soy mozo, solo mostrar mesa en mensajes de clientes
+    if (this.usuario.tipoPerfil === 'Mozo') {
+      return (
+        mensaje.idUsuario !== this.usuario.id && mensaje.mesaNumero !== null
+      );
+    }
+
+    // Si soy cliente, solo mostrar mesa en mis propios mensajes
+    return mensaje.idUsuario === this.usuario.id && mensaje.mesaNumero !== null;
+  }
+
   async enviarMensaje() {
     if (!this.usuario) {
       console.error('No hay usuario definido');
@@ -149,17 +165,15 @@ export class ChatComponent implements OnInit {
         usuario: this.usuario.name || 'Anónimo',
         idUsuario: this.usuario.id,
         fecha: new Date(),
-        mesaNumero: this.mesaNumero,
+        mesaNumero: this.usuario.tipoPerfil === 'Mozo' ? null : this.mesaNumero,
       };
-
-      console.log(mensaje.mesaNumero);
 
       try {
         const mensajesCollection = collection(this.firestore, 'mensajes');
         await addDoc(mensajesCollection, mensaje);
         this.nuevoMensaje = '';
 
-        if (this.usuario.tipoPerfil != 'mozo') {
+        if (this.usuario.tipoPerfil !== 'Mozo') {
           await this.manejarMozosNotificacion(this.usuario.name, mensaje.texto);
         }
       } catch (error) {

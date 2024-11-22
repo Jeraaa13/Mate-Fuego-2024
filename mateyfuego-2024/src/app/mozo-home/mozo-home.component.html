@@ -10,7 +10,7 @@
             <ion-list>
               <div class="order-item" *ngFor="let order of orders">
                 <div class="order-item-header">
-                  <h3>Mesa {{ order.Mesa }} - Pedido {{ order.Precio }}</h3>
+                  <h3>Mesa {{ order.Mesa }} - Total: {{ order.Precio }}</h3>
                   <p>{{ order.EstadoDePedido }}</p>
                 </div>
                 <div class="order-item-content">
@@ -29,7 +29,7 @@
                       Tiempo de Elaboración:
                       {{ item.tiempoElaboracion }} minutos
                     </p>
-                    <p *ngIf="order.EstadoDePedido === 'preparacion'">
+                    <p *ngIf="order.EstadoDePedido === 'preparación'">
                       Estado: {{ item.estado }}
                     </p>
                   </div>

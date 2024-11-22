@@ -9,9 +9,11 @@
     <div class="order-item" *ngFor="let order of orders">
       <div class="order-item-content">
         <ng-container *ngFor="let item of order.items">
-          <ng-container *ngIf="item.tipo === 'comida' && item.estado === 'preparacion'">
+          <ng-container
+            *ngIf="item.tipo === 'comida' && item.estado === 'preparación'"
+          >
             <div class="order-item-header">
-              <h3>Mesa {{ order.Mesa }} - Pedido {{ order.orderId }}</h3>
+              <h3>Mesa {{ order.Mesa }}</h3>
             </div>
             <div>
               <h4>{{ item.nombre }}</h4>

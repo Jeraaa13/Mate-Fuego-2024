@@ -14,15 +14,18 @@
       <div
         *ngFor="let mensaje of mensajes"
         class="mensaje"
-        [class.mensaje-propio]="usuario && mensaje.usuario === usuario.email"
+        [ngClass]="{
+          'mensaje-propio': mensaje.idUsuario === usuario?.id,
+          'mensaje-otro': mensaje.idUsuario !== usuario?.id
+        }"
       >
         <div class="mensaje-contenido">
           <div class="mensaje-info">
             <span class="usuario">{{ mensaje.usuario }}</span>
             <span class="hora">
-              {{ mensaje.fecha.toDate() | date : "short" }} |
+              {{ mensaje.fecha.toDate() | date : "short" }}
             </span>
-            <span class="hora" *ngIf="usuario?.tipoPerfil !== 'Mozo'">
+            <span class="mesa" *ngIf="shouldShowMesa(mensaje)">
               | Mesa: {{ mensaje.mesaNumero }}
             </span>
           </div>

@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule, UpperCasePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
@@ -157,7 +157,7 @@ export class ClienteEsperaPedidoComponent implements OnInit {
               this.escaneo = true;
 
               this.notificationService.showInfo(
-                `El estado actual de tu pedido es: ${this.pedido.EstadoDePedido}`,
+                `El estado actual de tu pedido es: ${this.pedido.EstadoDePedido.toUpperCase()}`,
                 'Estado de tu pedido'
               );
             } else {

@@ -139,7 +139,7 @@ export class CartService {
         precioUnitario: item.product.precio,
         tiempoElaboracion: item.product.tiempoElaboracion,
         tipo: item.product.tipo,
-        estado: 'preparacion',
+        estado: 'preparación',
       })),
       uidUsuario: this.usuario.id,
     };
@@ -165,7 +165,7 @@ export class CartService {
 
   async getOrdersByProductType(): Promise<{ [key: string]: any[] }> {
     const pedidosRef = collection(this.firestore, 'pedidos');
-    const q = query(pedidosRef, where('EstadoDePedido', '==', 'preparacion'));
+    const q = query(pedidosRef, where('EstadoDePedido', '==', 'preparación'));
     const ordersSnapshot = await getDocs(pedidosRef);
 
     const ordersByType: { [key: string]: any[] } = {};

@@ -75,7 +75,7 @@ export class BartenderHomeComponent implements OnInit {
 
   private loadOrders() {
     const pedidosRef = collection(this.firestore, 'pedidos');
-    const q = query(pedidosRef, where('EstadoDePedido', '==', 'preparacion'));
+    const q = query(pedidosRef, where('EstadoDePedido', '==', 'preparación'));
 
     this.unsubscribeOrders = onSnapshot(q, (ordersSnapshot) => {
       this.orders = [];
