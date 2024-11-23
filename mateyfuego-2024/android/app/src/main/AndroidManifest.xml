@@ -36,7 +36,7 @@
     </provider>
 
     <service
-      android:name=".services.MyFirebaseMessagingService"
+      android:name="app.mateyfuego.services.MyFirebaseMessagingService"
       android:exported="false">
       <intent-filter>
         <action android:name="com.google.firebase.MESSAGING_EVENT" />

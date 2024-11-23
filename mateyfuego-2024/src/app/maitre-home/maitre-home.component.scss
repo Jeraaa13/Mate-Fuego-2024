@@ -1,14 +1,12 @@
 .users-grid {
   display: flex;
-  flex-direction: row;
-  overflow-x: auto;
+  flex-direction: column; /* Change this from row to column */
   gap: 25px;
   padding: 20px;
   background-color: #000000;
-  scroll-behavior: smooth;
-  -webkit-overflow-scrolling: touch; // Smooth scrolling on iOS
+  overflow-y: auto; /* Change from overflow-x to overflow-y for vertical scrolling */
+  -webkit-overflow-scrolling: touch;
 
-  // Hide scrollbar but keep functionality
   &::-webkit-scrollbar {
     display: none;
   }
@@ -17,8 +15,8 @@
 }
 
 .user-card {
-  flex: 0 0 auto; // Prevent cards from shrinking
-  width: 280px; // Fixed width for each card
+  width: 100%;
+  /* Remove flex: 0 0 auto since we want vertical stacking */
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -86,7 +84,7 @@
   }
 
   .user-card {
-    width: 240px;
+    width: 100%;
   }
   ion-col {
     min-width: 250px;
