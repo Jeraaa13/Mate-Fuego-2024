@@ -1,159 +1,152 @@
 # Mate & Fuego
 
-<img src="./readmeFotos/iconoapp.png" alt="Icono de la aplicación" width="200">
+<img src="./readmeFotos/iconoapp.png" alt="App icon" width="200">
 
-## Integrantes
+Restaurant management app built as the final integrative project (Trabajo Integrador Final) for
+the Computer Programming degree at UTN. Covers the full flow of a restaurant visit: table
+assignment via QR, ordering, kitchen/bar preparation, tips, surveys, and role-based dashboards
+for every staff role (owner, supervisor, maitre, waiter, cook, bartender).
 
-- **Gerardo Toranzo**
-- **Juan Manuel Portela**
-- **Quimey Rojo**
+Team project, built with Juan Manuel Portela and Quimey Rojo over five sprints.
 
-## 🖥 Primer Sprint
+## Stack
 
-### FECHA INICIO: 26-10-2024 / FECHA FINAL: 9-11-2024
+Ionic + Angular 18 (Capacitor for native builds), Firebase (Auth, Firestore, Cloud Functions,
+Cloud Messaging), Chart.js, Howler (sound), QR scanning via ZXing / barcode-scanner.
 
-- ✔ **Alta empleados** - Quimey Rojo
-- ✔ **Alta dueño / supervisor** - Quimey Rojo
-- ✔ **Alta clientes** - Juan Manuel Portela
-- ✔ **Alta de Mesa** - Juan Manuel Portela
-- ✔ **Alta de productos** - Gerardo Toranzo
-- ✔ **Login** - Gerardo Toranzo
-- ✔ **Icono y splash** - Gerardo Toranzo
-- ✔ **QR de ingreso al local** - Gerardo Toranzo
-- ✔ **QR de la mesa** - Juan Manuel Portela
-- ✔ **QR de propina** - Quimey Rojo
+## Known limitations
 
-## 🖥 Segundo Sprint
+- Client registration with a profile photo requires a Firebase Storage bucket on the Blaze
+  (pay-as-you-go) plan. This demo project is on the free Spark plan, so photo upload to Storage
+  fails with a CORS/404 error. The rest of the app works normally.
+- Push notifications depend on a separate notification server (not included in this repo).
 
-#### FECHA INICIO: 9-11 - FECHA FIN 11-11
+## Running locally
 
-- ✔ **Asignación de mesa** - Juan Manuel Portela
-- ✔ **Ingreso del local** - Juan Manuel Portela
-- ✔ **Solicitar pedido** - Rojo Quimey
-- ✔ **Carrito de productos solicitados** - Rojo Quimey
-- ✔ **Sector bartender** - Juan Manuel Portela
-- ✔ **Mostrar tiempo estimado del pedido** - Rojo Quimey
-- ✔ **Preparar pedido y entregar pedido al mozo** - Rojo Quimey
-- ✔ **QR ingreso al local** - Gerardo Toranzo
-- ✔ **QR lista de espera** - Juan Manuel Portela
-- ✔ **QR de la mesa** - Juan Manuel Portela / Gerardo Toranzo / Rojo Quimey
-- ✔ **Dueño/supervisor habilita entrada de clientes** - Juan Manuel Portela
-- ✔ **Metre habilita entrada de la lista de espera** - Juan Manuel Portela
+```bash
+cd mateyfuego-2024
+npm install
+ng serve
+```
 
-## 🖥 Tercera Sprint
+`npm install` used to fail on a peer dependency conflict between `@capacitor/core@6` and the
+(now unmaintained) `@capacitor-community/barcode-scanner@4`, which only supports Capacitor 5.
+Fixed via `.npmrc` (`legacy-peer-deps=true`) since replacing the scanner library would require a
+rewrite untestable without a physical device.
 
-#### FECHA INICIO: 11-11 - FECHA FIN 13-11
+## Sprint history
 
-- ✔ **Envio de correo electrónico** - Gerardo Toranzo
-- ✔ **3 Push Notifications** - Gerardo Toranzo / Rojo Quimey / Juan Manuel Portela
-- ✔ **Chat** - Rojo Quimey
-- ✔ **Listado pedidos del mozo** - Juan Manuel Portela
-- ✔ **Listado pedidos del cocinero** - Gerardo Toranzo
-- ✔ **Cuenta del pedido** - Rojo Quimey
-- ✔ **Sección post pedido** - Rojo Quimey
-- ✔ **Sección estado del pedido** - Gerardo Toranzo
-- ✔ **Estilos** - Gerardo Toranzo / Juan Manuel Portela / Rojo Quimey
-- ✔ **Sonido entre paginas** - Gerardo Toranzo
-- ✔ **Vibraciones en errores** - Gerardo Toranzo
+### Sprint 1 (Oct 26 - Nov 9, 2024)
 
-## 🖥 Cuarta Sprint
+- Employee sign-up - Quimey Rojo
+- Owner/supervisor sign-up - Quimey Rojo
+- Customer sign-up - Juan Manuel Portela
+- Table creation - Juan Manuel Portela
+- Product creation - Gerardo Toranzo
+- Login - Gerardo Toranzo
+- App icon and splash screen - Gerardo Toranzo
+- Venue entry QR - Gerardo Toranzo
+- Table QR - Juan Manuel Portela
+- Tip QR - Quimey Rojo
 
-#### FECHA INICIO: 13-11 - FECHA FIN 15-11
+### Sprint 2 (Nov 9-11, 2024)
 
-- ✔ **Arreglo palabras en ingles** - Gerardo Toranzo
-- ✔ **Arreglo espacios neutros en estado del pedido y importe más grande en cuenta del pedido** - Juan Manuel Portela
-- ✔ **Productos más grandes en listado de pedidos y mejora de visibilidad en el carrito** - Rojo Quimey
+- Table assignment - Juan Manuel Portela
+- Venue entry flow - Juan Manuel Portela
+- Order placing - Quimey Rojo
+- Order cart - Quimey Rojo
+- Bartender section - Juan Manuel Portela
+- Estimated order time - Quimey Rojo
+- Order prep and handoff to waiter - Quimey Rojo
+- Venue entry QR - Gerardo Toranzo
+- Waitlist QR - Juan Manuel Portela
+- Table QR - Juan Manuel Portela / Gerardo Toranzo / Quimey Rojo
+- Owner/supervisor approves customer entry - Juan Manuel Portela
+- Maitre approves waitlist entry - Juan Manuel Portela
 
-## 🖥 Quinta Sprint
+### Sprint 3 (Nov 11-13, 2024)
 
-#### FECHA INICIO: 15-11 - FECHA FIN 17-11
+- Email notifications - Gerardo Toranzo
+- 3 push notification types - Gerardo Toranzo / Quimey Rojo / Juan Manuel Portela
+- Chat - Quimey Rojo
+- Waiter's order list - Juan Manuel Portela
+- Cook's order list - Gerardo Toranzo
+- Order bill - Quimey Rojo
+- Post-order section - Quimey Rojo
+- Order status section - Gerardo Toranzo
+- Styling - Gerardo Toranzo / Juan Manuel Portela / Quimey Rojo
+- Page transition sounds - Gerardo Toranzo
+- Error vibration feedback - Gerardo Toranzo
 
-- ✔ **Juego de 10% descuento** - Rojo Quimey
+### Sprint 4 (Nov 13-15, 2024)
 
-## QRS
+- Fixed leftover English strings - Gerardo Toranzo
+- Fixed spacing in order status and enlarged bill amount - Juan Manuel Portela
+- Larger product cards in order list, better cart visibility - Quimey Rojo
 
-### QR Ingreso AL local
+### Sprint 5 (Nov 15-17, 2024)
 
-<img src="./readmeFotos/Codigo QR ingreso al local.png" alt="QR ingreso al local" width="200">
+- 10%-discount minigame - Quimey Rojo
 
-### QR Propinas
+## QR codes
 
-#### QR 0% Propina Malo
+### Venue entry QR
 
-<img src="./readmeFotos/PropinasQR/0%25.png" alt="QR 0% Propina" width="150">
+<img src="./readmeFotos/Codigo QR ingreso al local.png" alt="Venue entry QR" width="200">
 
-#### QR 5% Propina Regular
+### Tip QRs
 
-<img src="./readmeFotos/PropinasQR/5%25.png" alt="QR 5% Propina" width="150">
+| 0% | 5% | 10% | 15% | 20% |
+|---|---|---|---|---|
+| ![0%](./readmeFotos/PropinasQR/0%25.png) | ![5%](./readmeFotos/PropinasQR/5%25.png) | ![10%](./readmeFotos/PropinasQR/10%25.png) | ![15%](./readmeFotos/PropinasQR/15%25.png) | ![20%](./readmeFotos/PropinasQR/20%25.png) |
 
-#### QR 10% Propina Buena
+## App tour
 
-<img src="./readmeFotos/PropinasQR/10%25.png" alt="QR 10% Propina" width="150">
+### Customer interface
 
-#### QR 15% Propina Muy Buena
+**Entry:** on opening the app, the customer can log in, register as a regular customer, or
+continue as an anonymous customer.
 
-<img src="./readmeFotos/PropinasQR/15%25.png" alt="QR 15% Propina" width="150">
+![Login and registration](./readmeFotos/login-registros.png?qraw=true)
 
-#### QR 20% Propina Excelente
+**Getting in:** the customer scans a QR to join the waitlist. Once accepted and assigned a
+table, they scan that table's QR (and no other).
 
-<img src="./readmeFotos/PropinasQR/20%25.png" alt="QR 20% Propina" width="150">
+![Customer enters the table](./readmeFotos/ingreso-cliente.png?qraw=true)
 
-# Tour de la aplicación
+**Ordering:** the customer can chat with the waiter or place an order.
 
-## Interfaz del cliente
+![Placing an order](./readmeFotos/pedido.png?qraw=true)
 
-### Ingreso del cliente
+**After ordering:** the customer can confirm receipt, rescan the table QR to check order status,
+and once the order arrives, request the bill or fill out the survey.
 
-Al ingresar a la aplicación el cliente tiene la opcion de iniciar sesión si ya posee una cuenta, o de registrarse como cliente normal, o en su defecto, como cliente anonimo.
+![Waiting for the order](./readmeFotos/espera-del-pedido.png?qraw=true)
 
-![Ingreso a la aplicación](./readmeFotos/login-registros.png?qraw=true)
+**Bill:** the customer requests the bill, scans a QR to leave a tip, and can play a minigame for
+a first-try discount. After paying, they wait for the waiter's confirmation.
 
-### Una vez dentro...
+![Order bill](./readmeFotos/cuenta-del-pedido.png?qraw=true)
 
-El cliente debe escanear un QR que lo ingresa a la lista de espera. De ser aceptado y de habérsele asignado una mesa, debe escanear el QR de la misma (no puede escanear otro).
+**Survey results:** on leaving, the customer can rescan the venue entry QR to see survey charts.
 
-![Cliente ingresa a la mesa](./readmeFotos/ingreso-cliente.png?qraw=true)
+![Survey charts](./readmeFotos/estadisticas.png?qraw=true)
 
-### Realización de pedido
+### Staff interface
 
-Una vez aquí, el cliente tiene la opción de consultar al mozo mediante un chat, o realizar el pedido correspondiente.
+**Owner/supervisor and maitre:** approve customers entering the venue and joining the waitlist.
 
-![Realizar pedido](./readmeFotos/pedido.png?qraw=true)
+![Owner, supervisor and maitre tasks](./readmeFotos/dueno-maitre.png?qraw=true)
 
-### Luego de realizar el pedido...
+**Bartender, cook and waiter:** the bartender and cook prepare orders and hand them back to the
+waiter. Orders are split by product, so prep time follows the slowest item. The waiter routes
+orders to the right section, delivers them to the customer, and confirms payment.
 
-Aqui el cliente tiene la opción de confirmar la recepción de su pedido, además puede volver a escanear el código QR de la mesa para visualizar el estado del pedido, y una vez recibido puede pedir la cuenta o acceder a la encuesta.
+![Bartender, waiter and cook tasks](./readmeFotos/empleados-menu.png?qraw=true)
 
-![Cliente espera el pedido](./readmeFotos/espera-del-pedido.png?qraw=true)
+## Push notifications and email
 
-### Cuenta del pedido
+Examples of the emails sent when a customer enters the app and gets approved, and one of the
+push notifications sent throughout the flow.
 
-El cliente pide la cuenta y en la misma, se encuentra la opción de escanear un codigo QR para la propina, jugar un juego para obtener un descuento en el primer intento. Una vez realizado el pago, debe esperar la confirmación del mozo.
-
-![Cuenta del pedido](./readmeFotos/cuenta-del-pedido.png?qraw=true)
-
-### Visualización de los graficos de la encuesta
-
-Al retirarse del local el cliente puede escanear nuevamente el QR de ingreso al local para visualizar los graficos de las encuestas.
-
-![Graficos de las encuestas](./readmeFotos/estadisticas.png?qraw=true)
-
-## Interfaz de los empleados
-
-### Dueño/supervisor y Metre
-
-Aquí se encuentran las tareas que puede realizar cada uno, cuando alguien ingresa al local y cuando alguien ingresa a la lista de espera respectivamente.
-
-![Tareas dueño, supervisor y metre](./readmeFotos/dueno-maitre.png?qraw=true)
-
-### Bartender, Chef y Mozo
-
-En esta sección tanto el bartender como el chef realizan los pedidos y se los devuelven al mozo. Los pedidos se separan por producto, asi que el tiempo de realización es el del producto que mayor elaboración conlleve. El mozo se encarga de enviar los pedidos a las secciones anteriormente mencionadas, entregarlo al cliente y por último confirmar el pago.
-
-![Tareas bartender, mozo y chef](./readmeFotos/empleados-menu.png?qraw=true)
-
-## Push notification y correo electronico
-
-Aquí se pueden ver los correos electronicos que le llegarian la cliente al momento de ingresar a la aplicación y cuando es habilitado. También se encuentra una de las distintas push notification que se mandan a lo largo de la aplicación
-
-![Notificaciones](./readmeFotos/mails-push.png?qraw=true)
+![Notifications](./readmeFotos/mails-push.png?qraw=true)
